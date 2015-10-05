@@ -1,0 +1,173 @@
+body 
+{
+	padding-bottom: 32px;
+}
+
+#debug_tool 
+{
+	bottom: 0px;
+	left: 0px;
+	color: black;
+	position: fixed;
+	z-index:1000;
+	width: 100%;
+	text-align: center;
+	overflow:hidden;
+	font-size: 14px;
+	font-family: Calibri, Trebuchet MS, Comic sans MS, sans-serif;
+}
+
+#debug_tool #debug_barre
+{
+	background-color: whitesmoke;
+	border-top: 2px groove tan;
+	height: 30px;
+}
+
+#debug_tool #debug_barre img
+{
+	height: 22px;
+	width: 22px;
+}
+
+#debug_tool #debug_barre .bloc
+{
+	height:30px;
+	box-sizing: border-box;
+	border-right: 1px solid tan;
+	background-color: cornsilk;
+	width: auto;
+	float: left;  
+	position: relative;
+	padding: 0px 3px 0px 3px;
+}
+
+#debug_tool #debug_barre .separator
+{
+	width: 1px;
+	height: 30px;
+	background-color: tan;
+	float: left;
+}
+
+#debug_tool #debug_barre .bloc div.label
+{
+	cursor: pointer;
+	padding: 3px 4px 4px 2px;
+	float: left;
+	height: 30px;
+}
+
+#debug_tool #debug_barre .bloc div.value
+{
+	float: left;
+	padding: 4px;
+}
+
+#debug_tool #debug_barre #debug_barre_title
+{
+	background-color: transparent;
+	padding: 5px;
+}
+
+#debug_tool .bloc_info
+{
+	position: relative;
+	z-index: 1001;
+	border: 1px solid tan;
+	border-radius:3px 3px 0px 0px;
+	margin-bottom: -3px;
+	overflow:hidden;
+	padding:5px 10px 10px 10px;
+	display: none;
+	width:200px;
+	background-color: whitesmoke;
+}
+
+#debug_tool .bloc_info label
+{
+	float: left;
+	clear: left;
+	width: 60%;
+	text-align: left;
+}
+
+#debug_tool .bloc_info div
+{
+	float: left;
+	width: 40%;
+	text-align: right;
+}
+
+#debug_tool #debug_tool_server
+{
+	width: 300px;
+}
+
+#debug_tool #debug_tool_console
+{
+	width: 100%;
+	border-radius: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	padding: 0px;
+	overflow: auto;
+}
+
+#debug_tool #debug_tool_base
+{
+	width: 100%;
+	border-radius: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	padding: 0px;
+	overflow: auto;
+}
+
+#debug_tool #debug_tool_base table
+{
+	width:99%;
+	margin: 0.5%;
+	margin:10px;
+	border-collapse: collapse;
+	border: 1px solid tan;
+}
+
+#debug_tool #debug_tool_base table td, #debug_tool #debug_tool_base table th
+{
+	border: 1px solid tan;
+	padding: 2px 5px;
+	font-size: 12px;
+}
+
+#debug_tool #debug_tool_base table tr:nth-child(2n+1) td
+{
+	background-color: #F4ECE5;
+}
+
+#debug_tool #debug_tool_base table th
+{
+	background-color: #C19F80;
+	max-height: 20px;
+	color: white;
+}
+
+#debug_tool .bloc_info div.debug_tool_echo
+{
+	font-size: 16px;
+	background: #FFF9C4;
+	border: 1px red dashed;
+	padding: 0.5%;
+	margin: 0.5%;
+	width: 98%;
+	text-align: left;
+}
+
+#debug_tool .bloc_info div.debug_tool_echo div
+{
+	text-align: left;
+	width: auto;
+	padding: 0px;
+	margin: 0px;
+	float: none;
+}

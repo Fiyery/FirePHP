@@ -1,0 +1,166 @@
+#PHP VALUES
+<Files index.php>
+	php_value post_max_size 10M
+	php_value upload_max_filesize 6M
+</Files>
+
+# INTERDIRE L'ACCES AU FICHIER .htaccess DANS LE NAVIGATEUR.
+<Files .htaccess>
+	order allow,deny
+	deny from all
+</Files>
+
+# INTERDIRE L'INDEXATION DES DOSSIERS DANS LE NAVIGATEUR.
+Options -Indexes
+
+# SEUL LE FICHIER index.php EST SERVI COMME PREMIER FICHIER PAR DEFAUT. LES AUTRES SONT INTERDITS.
+DirectoryIndex index.php
+
+# INTERDIRE LES AUTRES TYPES DE FICHIER INDEX.
+<Files ~ "^(index)\.(p?s?x?htm?|txt|aspx?|cfml?|cgi|pl|php[3-9]|jsp|xml)$">
+	order allow,deny
+	deny from all
+</Files>
+
+# EXECUTES PAR LE SERVEUR MAIS INTERDIT D'AFFICHAGE PAR LE NAVIGATEUR WEB DE CERTAINS FORMATS DE FICHIER.
+<Files ~ "\.(inc|class|sql|ini|conf|exe|dll|bin|tpl|bkp|dat|c|h|py|spd|theme|module|json)$">
+	deny from all
+</Files>
+
+# ACTIVATION DE LA REECRITURE D URL.
+Options +FollowSymLinks
+RewriteEngine On
+
+# TOUT REDIRIGER VERS LA RACINE DU SITE.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /club-Manga/index.php/$1 [QSA,L]
+
+# GESTION DU CACHE DU NAVIGATEUR.
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresDefault "access plus 7200 seconds"
+	ExpiresByType image/jpg "access plus 2592000 seconds"
+	ExpiresByType image/jpeg "access plus 2592000 seconds"
+	ExpiresByType image/png "access plus 2592000 seconds"
+	ExpiresByType image/gif "access plus 2592000 seconds"
+	AddType image/x-icon .ico
+	ExpiresByType image/ico "access plus 2592000 seconds"
+	ExpiresByType image/icon "access plus 2592000 seconds"
+	ExpiresByType image/x-icon "access plus 2592000 seconds"
+	ExpiresByType text/css "access plus 2592000 seconds"
+	ExpiresByType text/javascript "access plus 259200 seconds"
+	ExpiresByType text/plain "access plus 259200 seconds"
+	ExpiresByType text/html "access plus 7200 seconds"
+	ExpiresByType application/xhtml+xml "access plus 7200 seconds"
+	ExpiresByType application/javascript A259200
+	ExpiresByType application/x-javascript "access plus 2592000 seconds"
+	ExpiresByType application/x-shockwave-flash "access plus 2592000 seconds"
+</IfModule>
+
+# BLOQUE LES BOTS MALWARE
+SetEnvIfNoCase User-Agent "^libwww-perl*" block_bad_bots
+Deny from env=block_bad_bots
+
+# PROTECTION CONTRE LES BOTS.
+RewriteCond %{HTTP_USER_AGENT} .*Atomic\_Email\_Hunter* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*HTTrack* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*Filangy* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*BackWeb* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*BackStreet* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Bandit* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*BatchFTP* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Bullseye* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*bumblebee* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*capture* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*CherryPicker* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*CherryPickrElite* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*CherryPickerSE* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*ChinaClaw* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*clipping* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*collage* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Collector* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Copier* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*Crescent* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*Download* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*eCatch* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*EirGrabber* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*email* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*EmeraldShield* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*FlashGet* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*FlickBot* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*FrontPage* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*GetRight* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*GetSmart* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*GetWeb* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*GetWebPage* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*gigabaz* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Go!Zilla* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*GornKer* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*gotit* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Grabber* [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} .*GrabNet* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*hloader* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*httpdown* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*InterGET* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*JustView* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*kapere* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*larbin* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*LeechFTP* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*LexiBot* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Missigua* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*MSIECrawler* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Vampire* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*NetAnts* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*NetMechanic* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Openfind* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*PageGrabber* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*pavuk* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*pcBrowser* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*PersonaPilot* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*PingALink* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Python-urllib* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*PycURL* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*RealDownload* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Reaper* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Recorder* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*ReGet* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*replacer* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*SearchExpress* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*SlySearch* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*SmartDownload* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*snagger* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Snake* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Stripper* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Sucker* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*SuperBot* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*SuperHTTP* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Surfbot* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Syntryx* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Teleport* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Telesoft* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*NetSpider* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebAuto* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebBandit* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebCapture* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Webclipping* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*webcollage* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebCopier* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebEMailExtrac* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebFetch* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebIndexer* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebLeacher* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebMiner* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebMirror* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebReaper* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebSauger* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Website* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Webster* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebStripper* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebWhacker* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*WebZIP* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Wget* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Whacker* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*whizbang* [OR]
+RewriteCond %{HTTP_USER_AGENT} .*Xenu*
+RewriteRule .* - [F]

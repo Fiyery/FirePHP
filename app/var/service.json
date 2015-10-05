@@ -1,0 +1,6 @@
+{
+	"conf" :		"config",
+	"tpl" :			"template",
+	"js" :			"javascript",
+	"req" :			"request"
+}

@@ -1,0 +1,133 @@
+#compteur 
+{
+	text-align:center;
+}
+
+#compteur div
+{
+	border: solid 1px #451804;
+	padding: 0px 5px 0px 5px;
+	width: 400px;
+	border-radius: 20px;
+	background-color: #EDE6DF;
+	margin-top: 20px;
+	margin-right:auto;
+	margin-left:auto;
+	text-align:center;
+}
+
+#bloc_last_cards
+{
+	overflow:hidden;	
+}
+
+#bloc_last_cards #last_cards
+{
+	margin:50px 100px 130px 40px;
+}
+
+#bloc_last_cards #last_cards li
+{
+	background:transparent;	
+	padding:0px;
+}
+
+.actu_index .footer_actu
+{
+	overflow:hidden;	
+	height:18px;
+}
+
+.actu_index p
+{
+	text-indent:50px;
+	text-align:left;	
+}
+
+.actu_index img
+{
+	float: left;
+	max-width: 650px;
+	margin:0px 5px 5px 0px;
+}
+
+.actu_index .actu_img
+{
+	float:left;
+	max-width:300px;	
+	max-height:400px;
+	margin:0px 5px 0px 0px;
+	max-width:100px;	
+	max-height:100px;
+}
+
+#bloc_presentation_suite
+{
+	display:none;	
+}
+
+.actu_index .cadre_fond 
+{
+	padding:5px;
+	margin:0px;
+}
+
+#bloc_ddl .link_ddl
+{
+	border: 1px solid #DB892B;	
+	margin: 2px;
+	padding: 0px;
+	border-radius: 3px;
+	overflow: hidden;
+	position: relative;
+}
+
+#bloc_ddl .link_ddl img
+{
+	width: 50px;
+	float: left;
+	margin-right: 10px;
+}
+
+#bloc_ddl .date_link
+{
+	right: 5px;
+	bottom: 5px;
+	font-size: 14px;
+	float: right;
+	z-index: 2;
+	position: absolute;
+}
+
+#bloc_critique .cadre_fond
+{
+	padding: 5px;
+	margin: 2px 0px 10px 0px;
+}
+
+#bloc_critique .cadre_fond pre
+{
+	font-size: 90%;
+}
+
+#bloc_critique .head
+{
+	text-align: left;
+	font-size: 90%;
+}
+
+#bloc_critique .content
+{
+	overflow: hidden;    
+  	text-overflow: ellipsis;
+  	max-height: 40px;
+  	word-wrap: break-word;
+  	width: 650px;
+  	white-space: nowrap;            
+}
+
+#bloc_critique .content p
+{
+	margin: 0px;
+  	text-indent: 0px;
+}

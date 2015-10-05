@@ -1,0 +1,140 @@
+// The configuration file accepts comments like that.
+// You can use one variable for one string in json like : {$property1.property2.(...).propertyn}
+// This means : value root->property1->property2->(...)->propertyn.
+{
+	"browser" : {
+		"file" : "{$path.app_var}browscap.ini"
+	},
+	
+	"db" : {
+		"host" : 		"localhost",
+		"name" : 		"club_manga",
+		"charset" : 	"utf-8",
+		"user" : 		"root",
+		"pass" : 		""
+	},
+
+	"path" : {
+		"app" : 			"app/",
+		"lib" : 			"{$path.app}lib/",
+		"lib_form" : 		"{$path.lib}form/",
+		"lib_dev" : 		"{$path.lib}dev/",
+		"lib_graph" : 		"{$path.lib}graph/",
+		"lib_plugin" : 		"{$path.app}plugins/",
+		"app_var": 			"{$path.app}var/",
+		"ressource" : 		"res/",
+		"tpl" : 			"{$path.ressource}views/",
+		"css" :				"{$path.ressource}css/",
+		"js" :				"{$path.ressource}js/",
+		"js_plugin" :		"{$path.js}plugins/",
+		"image" :			"{$path.ressource}img/",
+		"sources" :			"src/",
+		"controller" :		"{$path.sources}controllers/",
+		"model" : 			"{$path.sources}models/",
+		"module" : 			"{$path.sources}modules/",
+		"ajax" : 			"{$path.sources}ajax/",
+		"util" : 			"{$path.sources}util/",
+		"tmp" :				"{$path.app}tmp/",
+		"cache" : 			"{$path.tmp}cache/",
+		"sql_cache" :		"{$path.tmp}sql/",
+		"tpl_cache" : 		"{$path.tmp}tpl/",
+		"css_cache" : 		"{$path.tmp}css/",
+		"js_cache" : 		"{$path.tmp}js/",
+		"var" : 			"var/",
+		"save" : 			"{$path.var}saves/",
+		"db_save" : 		"{$path.save}database/"
+	},
+	
+	"feature" : {
+		"debug" : 				true,
+		"access" : 				true,
+		"access_redirection" : 	true,
+		"cache" : 				false,
+		"multi_request" : 		true,
+		"error_log" : 			true,
+		"session_instance" : 	true,
+		"tpl_save" : 			false,
+		"secure_html_post" : 	false
+	},
+	
+	"ftp" : {
+		"url" : 	"192.168.1.14",
+		"port" : 	"21",
+		"user" : 	"clubmanga",
+		"pass" : 	"B87q3R9mjVH2vb4qZL3k"
+	},
+	
+	"loader" : [
+		"{$path.lib}",
+		"{$path.lib_form}",
+		"{$path.lib_dev}",
+		"{$path.lib_plugin}",
+		"{$path.model}",
+		"{$path.util}"
+	],
+	
+	"mail" : {
+		"sender_name" : "Club-Manga",
+		"sender_mail" :	"contact@club-manga.fr",
+		"host" :		"localhost",
+		"port" :		"25"
+	},
+	
+	"msg" : {
+		"error_403" : "Erreur 403 : Vous n'avez pas la permission nécessaire pour voir cette page !",
+		"error_404" : "Erreur 404 : La page que vous demandez n'existe pas !"
+	},
+	
+	"personnal" : {
+		"default_mood" :			"Pas d'humeur",
+		"default_heberg_capacity" :	"50"
+	},
+	
+	"route" : {
+		"file" :  "{$path.app_var}route.json"
+	},
+	
+	"security" : {
+		"key_crypt" : 	"histoiredunmonde-cryptage-809177",
+		"prefix_salt" : "",
+		"suffix_salt" : ""
+	},
+		
+	"session" : {
+		"limit_time" : 0
+	},
+		
+	"site" : {
+		"title" : 			"FirePHP - Le framework PHP modulable",
+		"description" : 	"",
+		"author" :			"Yoann Chaumin",
+		"keywords" :		""
+	},
+	
+	"system" : {
+		"timezone" : 				"Europe/Paris",
+		"default_module" : 			"Index",
+		"default_action" : 			"index",
+		"css_class_form" : 			"form_style", 
+		"name_file_module" :		"module.php",
+		"prefix_action_function" : 	"action_",
+		"service_alias" :			"{$path.app_var}service.json"
+	},
+	
+	"tpl" : {
+		"module" : 				"bloc_content",
+		"css" :					"bloc_css",
+		"js" : 					"bloc_javascript",
+		"message" : 			"bloc_messages",
+		"title_site" :			"site_title",
+		"description_site" : 	"site_description",
+		"author_site" : 		"site_author",
+		"keyword_site" : 		"site_keyword",
+		"root" : 				"root_www",
+		"root_image" : 			"root_image"
+	},
+	
+	"upload" : {
+		"mime_types_file" : "{$path.app_var}mime_types.json"
+	}
+}

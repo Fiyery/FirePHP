@@ -1,0 +1,70 @@
+[
+	{
+		"url" : "*",
+		"method" : "*",
+        "controller" : "Default",
+        "module" : "Erreur",
+        "action" : "index"
+    }, 
+	{
+		"url" : "/css/*",
+		"dir" : "/tmp/css/",
+		"names" : [
+			"file"
+		],
+		"method" : "GET"
+    },
+    {
+		"url" : "/js/*",
+		"dir" : "/tmp/js/",
+		"names" : [
+			"file"
+		],
+		"method" : "GET"
+    }, 
+    {
+		"url" : "/ajax/*",
+		"names" : [
+			"file"
+		],
+		"method" : "*",
+        "controller" : "AjaxController",
+        "module" : "",
+        "action" : ""
+    }, 
+    {
+		"url" : "/",
+		"method" : "GET",
+        "controller" : "Default",
+        "module" : "Index",
+        "action" : "index"
+    }, 
+    {
+	    "url" : "/",
+    	"vars" : [
+    		"module"
+    	],
+        "controller" : "Default",
+        "module" : "?module",
+        "action" : "index"
+   	},
+   	{
+	    "url" : "/*/",
+    	"names" : [
+    		"module"
+    	],
+        "controller" : "Default",
+        "module" : "?module",
+        "action" : "index"
+   	},
+	{
+	    "url" : "/",
+    	"vars" : [
+    		"module",
+    		"action"
+    	],
+        "controller" : "Default",
+        "module" : "?module",
+        "action" : "?action"
+   	}
+]
