@@ -107,19 +107,19 @@ function init_core()
     $services->set('error', function() use ($services) {
         $service = ErrorManager::get_instance();
         $service->start();
-        $service->set_file($services->get('config')->path->var.'errors.log');
+        $service->set_file($services->get('config')->path->root_dir.$services->get('config')->path->var.'error.log');
         $service->add_data('ip',(isset($_SERVER['REMOTE_ADDR'])) ? ($_SERVER['REMOTE_ADDR']) : ('null'));
         $service->add_data('module',$services->get('route')->get_controller().'/'.$services->get('route')->get_module());
         $service->add_data('action',$services->get('route')->get_action());
         $service->active_error();
         $service->active_exception();
-        if ($services->get('config')->ENABLE_ERROR_SAVE)
+        if ($services->get('config')->feature->error_log)
         {
             $service->active_save();
         }
-        if ($services->get('config')->ENABLE_ERROR_SHOW)
+        if ($services->get('config')->feature->error_show == false)
         {
-            $service->show();
+            $service->hide();
         }
         return $service;
     });
