@@ -174,7 +174,7 @@ class FrontController
     				$this->error->handle_exception($e);
     				$this->route->set_controller('Default');
     				$this->route->set_module('Erreur');
-    				$this->route->set_action('500');
+    				$this->route->set_action('index');
     				$this->tpl->assign('error_msg', $e->getMessage());
     			}
     		}

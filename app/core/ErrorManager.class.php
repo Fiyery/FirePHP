@@ -203,8 +203,6 @@ class ErrorManager extends Singleton
 		}
 		return TRUE;
 	}
-	
-	
 
 	/**
 	 * Gère les exceptions.
@@ -240,7 +238,7 @@ class ErrorManager extends Singleton
 		$message = '';
 		if ($detail)
 		{
-			$message .= '['.date('Y-m-d H:i:s',$e['time']).'] ['.$e['type'].'] ';
+			$message .= '['.date('Y-m-d H:i:s',$e['time']).'] ['.$e['type'].']';
 			foreach ($this->_data as $n => $v)
 			{
 				$message .= ' ['.$n.'="'.$v.'"]';
@@ -291,6 +289,7 @@ class ErrorManager extends Singleton
 	 */
 	public function show()
 	{
+	    ini_set('display_errors', 1);
 		$this->_show = TRUE;
 	}
 	
@@ -299,6 +298,7 @@ class ErrorManager extends Singleton
 	 */
 	public function hide()
 	{
+	    ini_set('display_errors', 0);
 		$this->_show = FALSE;
 	}
 	
