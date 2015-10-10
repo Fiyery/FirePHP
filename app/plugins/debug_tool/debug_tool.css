@@ -12,7 +12,7 @@ body
 	z-index:1000;
 	width: 100%;
 	text-align: center;
-	overflow:hidden;
+	overflow: initial;
 	font-size: 14px;
 	font-family: Calibri, Trebuchet MS, Comic sans MS, sans-serif;
 }
@@ -30,16 +30,14 @@ body
 	width: 22px;
 }
 
-#debug_tool #debug_barre .bloc
+#debug_tool #debug_barre .bloc 
 {
 	height:30px;
-	box-sizing: border-box;
+	/*box-sizing: border-box;*/	
 	border-right: 1px solid tan;
 	background-color: cornsilk;
 	width: auto;
 	float: left;  
-	position: relative;
-	padding: 0px 3px 0px 3px;
 }
 
 #debug_tool #debug_barre .separator
@@ -67,21 +65,23 @@ body
 #debug_tool #debug_barre #debug_barre_title
 {
 	background-color: transparent;
-	padding: 5px;
+	padding: 5px 5px 0px 5px;
+	box-sizing: border-box;
 }
 
 #debug_tool .bloc_info
 {
-	position: relative;
 	z-index: 1001;
 	border: 1px solid tan;
 	border-radius:3px 3px 0px 0px;
-	margin-bottom: -3px;
-	overflow:hidden;
-	padding:5px 10px 10px 10px;
+	overflow: hidden;
+	padding: 5px 10px 10px 10px;
 	display: none;
-	width:200px;
 	background-color: whitesmoke;
+	bottom: 30px;
+	width: 100%;
+	box-sizing: border-box;
+	position: absolute;
 }
 
 #debug_tool .bloc_info label
@@ -97,31 +97,6 @@ body
 	float: left;
 	width: 40%;
 	text-align: right;
-}
-
-#debug_tool #debug_tool_server
-{
-	width: 300px;
-}
-
-#debug_tool #debug_tool_console
-{
-	width: 100%;
-	border-radius: 0px;
-	border-left: 0px;
-	border-right: 0px;
-	padding: 0px;
-	overflow: auto;
-}
-
-#debug_tool #debug_tool_base
-{
-	width: 100%;
-	border-radius: 0px;
-	border-left: 0px;
-	border-right: 0px;
-	padding: 0px;
-	overflow: auto;
 }
 
 #debug_tool #debug_tool_base table
@@ -171,3 +146,69 @@ body
 	margin: 0px;
 	float: none;
 }
+
+#debug_tool .bloc:hover > .bloc_info 
+{
+	display: block;
+	background-color: cornsilk;
+}
+
+#debug_tool .bloc:hover > .trigger
+{
+	margin-top: -1px;
+	padding-top: 1px;
+}
+
+#debug_tool .bloc .trigger
+{
+	background-color: cornsilk;
+	z-index: 1002;
+	position: relative;
+	border-top: 1px solid cornsilk;
+	padding: 0px 3px 0px 3px;
+}
+
+
+
+
+#debug_tool #debug_barre #debug_barre_console:hover > .bloc_info
+{
+	left: 0px;
+	width: 100%;
+	border-radius: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	padding: 0px;
+	overflow: auto;
+}
+
+#debug_tool #debug_barre #debug_barre_time:hover > .bloc_info
+{
+	width: 200px;
+	margin-left: -1px;
+}
+
+#debug_tool #debug_barre #debug_barre_base:hover > .bloc_info
+{
+	left: 0px;
+	width: 100%;
+	width: 100%;
+	border-radius: 0px;
+	border-left: 0px;
+	border-right: 0px;	
+	padding: 2px 5px 0px 2px;
+	overflow: auto;
+}
+
+#debug_tool #debug_barre #debug_barre_memory:hover > .bloc_info
+{
+	width: 200px;
+	margin-left: -1px;
+}
+
+#debug_tool #debug_barre #debug_barre_server:hover > .bloc_info
+{
+	width: 300px;
+	margin-left: -1px;
+}
+

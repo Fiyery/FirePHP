@@ -14,7 +14,9 @@ window.onload = function(){
 
 function load_onglets() {
 	$(function(){
+		/*
 		var blocs = $('#debug_tool #debug_barre .bloc');
+		console.log(blocs);
 		blocs.hover(function(){
 			var id = $(this).attr('id').substr(12);
 			$(this).css('z-index', '1002');
@@ -36,5 +38,15 @@ function load_onglets() {
 				$('#debug_tool #debug_tool_'+id).hide();
 			});
 		});
+		*/
 	});	
 }
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+
+	
+});
+
+
+
+
