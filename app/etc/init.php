@@ -22,9 +22,9 @@ function init_core()
         return Config::get_instance(__DIR__.'/../var/config.json');
     });
     $services->load_alias($services->get('config')->path->root_dir.$services->get('config')->system->service_alias);
-    
     require(__DIR__.'/config.php');
    
+    // Ajoute des dossiers de classe pour le class loader.
     foreach ($services->get('config')->loader as $dir)
     {
         $loader->add_dir($services->get('config')->path->root_dir.$dir);
@@ -146,7 +146,7 @@ function init_core()
     
     // Gestion du cache.
     $services->set('cache', function() use ($services) {
-        $service = Cache::get_instance($services->get('config')->path->cache);
+        $service = Cache::get_instance($services->get('config')->path->root_dir.$services->get('config')->path->cache);
         if ($services->get('config')->feature->cache)
         {
             $service->enable();
@@ -188,7 +188,7 @@ function init_core()
     
     // Définition de la base de données des types mimes et des extensions de fichiers.
     $services->set('upload', function() use ($services) {
-        return Upload::get_instance($services->get('config')->upload->mime_types_file);
+        return Upload::get_instance($services->get('config')->path->root_dir.$services->get('config')->upload->mime_types_file);
     });
     
     // Gestion des informations sur le navigateur du client.
