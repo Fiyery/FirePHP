@@ -52,7 +52,7 @@ class FrontController
 	    $var = $this->cache->read('css-'.$name, Cache::WEEK);
 		if ($var == NULL)
 		{
-		    $dir = $this->config->path->css;
+		    $dir = $this->config->path->root_dir.$this->config->path->css;
 			$this->css->add_package('main', $dir.'main/');
 			$this->css->get();
 			if ($this->css->select($name) == FALSE)
@@ -63,8 +63,8 @@ class FrontController
 			$this->css->add($dir.$module.'.css');
 			$this->css->add($dir.$module.'-'.$action.'.css');
 			$this->css->get();
-			$html = $this->css->get_html();
-			$html = str_replace($this->config->path->css_cache, $this->config->path->root_dir.'css/', $html);
+			$html = $this->css->get_html($this->config->path->root_dir, $this->config->path->root_url);
+			$html = str_replace($this->config->path->css_cache, 'css/', $html);
 			$this->cache->add('html', $html);
 			$this->cache->write();
 		}
@@ -98,12 +98,12 @@ class FrontController
 			{
 				$this->js->create($name);
 			}
-			$dir .= strtolower($this->route->get_controller()).'/modules/';
+			$dir .= strtolower($this->route->get_controller()).'/modules/'.$module.'/';
 			$this->js->add($dir.$module.'.js');
 			$this->js->add($dir.$module.'-'.$action.'.js');
 			$this->js->get();
-			$html = $this->js->get_html();
-			$html = str_replace($this->config->path->js_cache, $this->config->path->root_dir.'js/', $html);
+			$html = $this->js->get_html($this->config->path->root_dir, $this->config->path->root_url);
+			$html = str_replace($this->config->path->js_cache, 'js/', $html);
 			$this->cache->add('html', $html);
 			$this->cache->write();
 		}
