@@ -22,19 +22,19 @@ class PayPal
 	 * Identifiant de l'utilisateur de l'API.
 	 * @var string
 	 */
-	private $_user = 'yoann.chaumin-facilitator_api1.gmail.com';
+	private $_user = '';
 	
 	/**
 	 * Mot de passe de l'API.
 	 * @var string
 	 */
-	private $_pass = '1401790958';
+	private $_pass = '';
 	
 	/**
 	 * Signature de l'API.
 	 * @var string
 	 */
-	private $_signature = 'AiPC9BjkCyDFQXbSkoZcgqH3hpacAL0T9oU-ePRPpRkgjfibnKZTU1bu';
+	private $_signature = '';
 	
 	/**
 	 * Adresse de retour.

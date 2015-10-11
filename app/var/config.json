@@ -1,6 +1,6 @@
-// The configuration file accepts comments like that.
-// You can use one variable for one string in json like : {$property1.property2.(...).propertyn}
-// This means : value root->property1->property2->(...)->propertyn.
+// Fichier de configuration
+// Vous pouvez utiliser des variables comme : {$property1.property2.(...).propertyn}
+// Cela sera remplacé par la valeur de root->property1->property2->(...)->propertyn.
 {
 	"browser" : {
 		"file" : "{$path.app_var}browscap.ini"
@@ -59,10 +59,10 @@
 	},
 	
 	"ftp" : {
-		"url" : 	"192.168.1.14",
-		"port" : 	"21",
-		"user" : 	"clubmanga",
-		"pass" : 	"B87q3R9mjVH2vb4qZL3k"
+		"url" : 	"",
+		"port" : 	"",
+		"user" : 	"",
+		"pass" : 	""
 	},
 	
 	"loader" : [
@@ -75,8 +75,8 @@
 	],
 	
 	"mail" : {
-		"sender_name" : "Club-Manga",
-		"sender_mail" :	"contact@club-manga.fr",
+		"sender_name" : "admin@localhost.fr",
+		"sender_mail" :	"admin@localhost.fr",
 		"host" :		"localhost",
 		"port" :		"25"
 	},
@@ -87,8 +87,7 @@
 	},
 	
 	"personnal" : {
-		"default_mood" :			"Pas d'humeur",
-		"default_heberg_capacity" :	"50"
+		// Ecrivez ici vos propres paramètres.
 	},
 	
 	"route" : {
@@ -96,7 +95,7 @@
 	},
 	
 	"security" : {
-		"key_crypt" : 	"histoiredunmonde-cryptage-809177",
+		"key_crypt" : 	"",
 		"prefix_salt" : "",
 		"suffix_salt" : ""
 	},
