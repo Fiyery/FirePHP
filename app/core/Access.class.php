@@ -120,8 +120,8 @@ class Access extends Singleton
 		            	$perms[] = $module;
                         $perms[] = '*';
 		            }
+		            $access = (!!array_intersect($perms, $rules));
 		        }
-		        $access = (!!array_intersect($perms, $rules));
 		        $return = ($strict) ? ($return && $access) : ($return || $access);
 		    }
 		    return $return;
