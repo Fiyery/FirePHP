@@ -18,8 +18,10 @@
 				</div>
 			</div>
 			<div class='bloc_info'>
-				{$error}
-				{$echo}
+				<div class='bloc_content'>
+					{$error}
+					{$echo}
+				</div>
 			</div>
 		</div>
 		<div class='bloc' id='debug_barre_time'>

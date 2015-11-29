@@ -84,6 +84,44 @@ body
 	position: absolute;
 }
 
+#debug_tool .bloc_info .bloc_content 
+{
+	overflow: auto;
+	width: 100%;
+}
+
+@media all and (min-height: 1280px)
+{
+	#debug_tool .bloc_info .bloc_content
+	{
+		max-height: 1200px;
+	}
+}
+
+@media all and (min-height: 900px)
+{
+	#debug_tool .bloc_info .bloc_content
+	{
+		max-height: 880px;
+	}
+}
+
+@media all and (min-height: 720px)
+{
+	#debug_tool .bloc_info .bloc_content
+	{
+		max-height: 700px;
+	}
+}
+
+@media all and (min-height: 600px)
+{
+	#debug_tool .bloc_info .bloc_content
+	{
+		max-height: 580px;
+	}
+}
+
 #debug_tool .bloc_info label
 {
 	float: left;
