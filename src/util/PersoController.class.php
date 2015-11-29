@@ -23,6 +23,7 @@ class PersoController extends FrontController
         // Variables générales aux templates.
         $this->site->set_title($this->config->site->title);
         $this->site->set_description($this->config->site->description);
+        $this->tpl->assign($this->config->tpl->language, $this->config->site->author);
         $this->tpl->assign($this->config->tpl->author_site, $this->config->site->author);
         $this->tpl->assign($this->config->tpl->keyword_site, $this->config->site->keywords);
         $this->tpl->assign($this->config->tpl->root, $this->config->path->root_url);

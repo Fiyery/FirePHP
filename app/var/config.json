@@ -8,7 +8,7 @@
 	
 	"db" : {
 		"host" : 		"localhost",
-		"name" : 		"club_manga",
+		"name" : 		"",
 		"charset" : 	"utf-8",
 		"user" : 		"root",
 		"pass" : 		""
@@ -112,6 +112,7 @@
 	},
 	
 	"system" : {
+		"language" :				"fr-fr",
 		"timezone" : 				"Europe/Paris",
 		"default_module" : 			"Index",
 		"default_action" : 			"index",
@@ -130,6 +131,7 @@
 		"description_site" : 	"site_description",
 		"author_site" : 		"site_author",
 		"keyword_site" : 		"site_keyword",
+		"language" : 			"site_language",
 		"root" : 				"root_www",
 		"root_image" : 			"root_image"
 	},
