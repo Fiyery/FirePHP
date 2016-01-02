@@ -25,7 +25,13 @@ class Mail extends Singleton
 	 * Adresse mail de l'émetteur.
 	 * @var string
 	 */
-	private $_sender;
+	private $_sender_mail;
+	
+	/**
+	 * Nom affiché de l'émetteur.
+	 * @var string
+	 */
+	private $_sender_name;
 	
 	/**
 	 * Sujet du mail
@@ -284,7 +290,7 @@ class Mail extends Singleton
 		{
 		    return TRUE;
 		}
-	    if (!is_array($this->_receivers) || count($this->_sender) == 0)
+	    if (!is_array($this->_receivers) || count($this->_receivers) == 0)
         {
         	return FALSE;
         }
@@ -304,10 +310,10 @@ class Mail extends Singleton
         else 
         {	
         	$return = TRUE;      
-        	foreach ($this->_receivers as $receivers)
+        	foreach ($this->_receivers as $receiver)
         	{
-        		$delived = 'Delivered-to: '. $receivers."\n\n"; // Destinataire.
-        		$return = $return && mail($receivers, $subject, $message, $entete);
+        		$delived = 'Delivered-to: '. $receiver."\n\n"; // Destinataire.
+        		$return = $return && mail($receiver, $subject, $message, $entete);
         	}
         	return $return;
         }	
@@ -324,7 +330,8 @@ class Mail extends Singleton
 		$this->_foot = '';
 		$this->_charset = 'UTF-8';
 		$this->_receivers = array();
-		$this->_sender = '';
+		$this->_sender_mail = '';
+		$this->_sender_name = '';
 	}
 }
 ?>
