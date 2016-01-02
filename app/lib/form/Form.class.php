@@ -110,7 +110,8 @@ class Form extends HTMLTag
 			'NAME_INVALID' => 'Invalide name for Form field $var "',
 			'NAME_EXISTS' => 'Field name " $var " already exists'
 		];
-		$this->_source = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+		$this->_source = (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] != NULL) ? ($_SERVER['REQUEST_SCHEME']) : ('http');
+		$this->_source .= '://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		$name = 'form_token_'.time();
 		$this->_token[$name] = uniqid();
 		setcookie($name, $this->_token[$name], time() + 180);
