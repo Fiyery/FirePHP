@@ -70,7 +70,7 @@ function debug_tool_exec($controller, $echx)
     {
         $console_image = 'console_warning';
     }
-    $sql = $controller->base->get_history();
+    $sql = $controller->base->history();
     $html_sql = "<table id='debug_tool_sql_history'><thead><tr><th>N°</th><th>Time (ms)</th><th>SQL</th></tr></thead><tbody>";
     foreach ($sql as $i => $s)
     {
@@ -85,14 +85,14 @@ function debug_tool_exec($controller, $echx)
     $vars['echo'] = $echo;
     $vars['error'] = $error;
     $vars['time'] = number_format((microtime(TRUE) - ($_SERVER['REQUEST_TIME_FLOAT'])) * 1000); 
-    $vars['query_count'] = $controller->base->get_count();
-    $vars['query_time'] = str_replace(',', ' ', number_format($controller->base->get_time()*pow(10,3)));
+    $vars['query_count'] = $controller->base->count();
+    $vars['query_time'] = str_replace(',', ' ', number_format($controller->base->time()*pow(10,3)));
     $vars['history_sql'] = $html_sql;    
     $vars['memory_limit'] = $memory_limit;    
     $vars['memory_usage'] = File::format_size(memory_get_peak_usage());    
     $vars['php_version'] = phpversion();
     $vars['apache_version'] = $apache_version;
-    $vars['base_version'] = $controller->base->get_engine().' '.$controller->base->get_version();
+    $vars['base_version'] = $controller->base->engine().' '.$controller->base->version();
     $vars['ip_server'] = $_SERVER['SERVER_ADDR'];
     $vars['name_server'] = $_SERVER['SERVER_NAME'];    
     

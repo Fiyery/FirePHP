@@ -22,10 +22,9 @@ function init_core()
         return Config::get_instance(__DIR__.'/../var/config.json');
     });
     $services->load_alias($services->get('config')->path->root_dir.$services->get('config')->system->service_alias);
-    require(__DIR__.'/config.php');
    
     // Ajoute des dossiers de classe pour le class loader.
-    foreach ($services->get('config')->loader as $dir)
+    foreach ($services->get('config')->class_dirs as $dir)
     {
         $loader->add_dir($services->get('config')->path->root_dir.$dir);
     }    
@@ -40,21 +39,17 @@ function init_core()
     
     // Paramètres de connexion à la base.
     $services->set('base', function() use ($services) {
-        $service = Base::get_instance();
-        $service->add_base(
+        $service = new Base();
+        $service->connect(
             $services->get('config')->db->host, 
             $services->get('config')->db->name, 
             $services->get('config')->db->user, 
             $services->get('config')->db->pass, 
             $services->get('config')->db->charset
         );
-        if ($services->get('config')->feature->cache)
+        if ($services->get('config')->feature->cache && $services->get('config')->db->cache)
         {
-            $service->enable_cache($services->get('config')->path->sql_cache);
-        }
-        else 
-        {
-            $service->disable_cache();
+            $service->set_cache(TRUE, $services->get('config')->path->sql_cache, $services->get('config')->db->cache_time);
         }
         return $service;
     });
@@ -107,7 +102,7 @@ function init_core()
     $services->set('error', function() use ($services) {
         $service = ErrorManager::get_instance();
         $service->start();
-        $service->set_file($services->get('config')->path->root_dir.$services->get('config')->path->var.'error.log');
+        $service->set_file($services->get('config')->path->root_dir.$services->get('config')->path->log.'error.log');
         $service->add_data('ip',(isset($_SERVER['REMOTE_ADDR'])) ? ($_SERVER['REMOTE_ADDR']) : ('null'));
         $service->add_data('module',$services->get('route')->get_controller().'/'.$services->get('route')->get_module());
         $service->add_data('action',$services->get('route')->get_action());

@@ -4,5 +4,6 @@
 .settings
 var/*
 app/tmp/*
+app/var/log/*
 todo/
 

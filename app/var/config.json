@@ -3,15 +3,17 @@
 // Cela sera remplacé par la valeur de root->property1->property2->(...)->propertyn.
 {
 	"browser" : {
-		"file" : "{$path.app_var}browscap.ini"
+		"file" : "{$path.var}browscap.ini"
 	},
 	
 	"db" : {
 		"host" : 		"localhost",
-		"name" : 		"",
+		"name" : 		"firephp",
 		"charset" : 	"utf-8",
 		"user" : 		"root",
-		"pass" : 		""
+		"pass" : 		"",
+		"cache" :		true,
+		"cache_time" :	60 // En seconds.
 	},
 
 	"path" : {
@@ -21,7 +23,8 @@
 		"lib_dev" : 		"{$path.lib}dev/",
 		"lib_graph" : 		"{$path.lib}graph/",
 		"lib_plugin" : 		"{$path.app}plugins/",
-		"app_var": 			"{$path.app}var/",
+		"var": 				"{$path.app}var/",
+		"log":				"{$path.var}log/",
 		"ressource" : 		"res/",
 		"tpl" : 			"{$path.ressource}views/",
 		"css" :				"{$path.ressource}css/",
@@ -40,7 +43,6 @@
 		"tpl_cache" : 		"{$path.tmp}tpl/",
 		"css_cache" : 		"{$path.tmp}css/",
 		"js_cache" : 		"{$path.tmp}js/",
-		"var" : 			"var/",
 		"save" : 			"{$path.var}saves/",
 		"db_save" : 		"{$path.save}database/"
 	},
@@ -65,7 +67,7 @@
 		"pass" : 	""
 	},
 	
-	"loader" : [
+	"class_dirs" : [
 		"{$path.lib}",
 		"{$path.lib_form}",
 		"{$path.lib_dev}",
@@ -91,7 +93,7 @@
 	},
 	
 	"route" : {
-		"file" :  "{$path.app_var}route.json"
+		"file" :  "{$path.var}route.json"
 	},
 	
 	"security" : {
@@ -119,7 +121,7 @@
 		"css_class_form" : 			"form_style", 
 		"name_file_module" :		"module.php",
 		"prefix_action_function" : 	"action_",
-		"service_alias" :			"{$path.app_var}service.json"
+		"service_alias" :			"{$path.var}service.json"
 	},
 	
 	"tpl" : {
@@ -137,6 +139,6 @@
 	},
 	
 	"upload" : {
-		"mime_types_file" : "{$path.app_var}mime_types.json"
+		"mime_types_file" : "{$path.var}mime_types.json"
 	}
 }

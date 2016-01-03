@@ -62,7 +62,7 @@ class Config extends Singleton
 					}
 					else
 					{
-						trigger_error('Propriété non définie "{$'.$name.'}" dans le fichier de configuration');
+						trigger_error('Propriété non définie "'.$name.'" dans le fichier de configuration');
 					}
 				}
 			}
