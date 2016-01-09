@@ -125,7 +125,7 @@
 	},
 	
 	"tpl" : {
-		"enable" :				false,
+		"enable" :				true,
 		"module" : 				"bloc_content",
 		"css" :					"bloc_css",
 		"js" : 					"bloc_javascript",
