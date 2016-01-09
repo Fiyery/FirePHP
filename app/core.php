@@ -67,14 +67,22 @@ if (ob_start("ob_gzhandler") == FALSE)
 }
 
 // Affiche le template.
-try 
+if ($controller->config->tpl->enable)
 {
-    $controller->tpl->display($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
-}
-catch (Exception $e) 
+	try
+	{
+		$controller->tpl->display($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
+	}
+	catch (Exception $e)
+	{
+		var_dump($e);
+	}
+} 
+else 
 {
-    var_dump($e);
+	echo file_get_contents($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
 }
+
 
 // Lance de débogage.
 if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)

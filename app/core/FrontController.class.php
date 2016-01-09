@@ -46,18 +46,23 @@ class FrontController
 	 */
 	public function get_css()
 	{
-	    $name = strtolower($this->route->get_id());
+		if ($this->config->tpl->enable === FALSE)
+		{
+			return FALSE;
+		}
+		
+		$name = strtolower($this->route->get_id());
 		$module = strtolower($this->route->get_module());
-	    $action = strtolower($this->route->get_action());
-	    $var = $this->cache->read('css-'.$name, Cache::WEEK);
+		$action = strtolower($this->route->get_action());
+		$var = $this->cache->read('css-'.$name, Cache::WEEK);
 		if ($var == NULL)
 		{
-		    $dir = $this->config->path->root_dir.$this->config->path->css;
+			$dir = $this->config->path->root_dir.$this->config->path->css;
 			$this->css->add_package('main', $dir.'main/');
 			$this->css->get();
 			if ($this->css->select($name) == FALSE)
 			{
-			    $this->css->create($name);
+				$this->css->create($name);
 			}
 			$dir .= strtolower($this->route->get_controller()).'/modules/'.$module.'/';
 			$this->css->add($dir.$module.'.css');
@@ -82,6 +87,11 @@ class FrontController
 	 */
 	public function get_js()
 	{
+		if ($this->config->tpl->enable === FALSE)
+		{
+			return FALSE;
+		}
+		
 	    $name = strtolower($this->route->get_id());
 	    $module = strtolower($this->route->get_module());
 	    $action = strtolower($this->route->get_action());
@@ -131,11 +141,14 @@ class FrontController
 		$action = $this->route->get_action();
 		
 		// Initialisation des packages de ressources par défaut pour le module.
-		$this->js->create('main');
-		$this->css->create('main');
-		$name = strtolower($this->route->get_id());
-		$this->js->create($name);
-		$this->css->create($name);
+		if ($this->config->tpl->enable)
+		{
+			$this->js->create('main');
+			$this->css->create('main');
+			$name = strtolower($this->route->get_id());
+			$this->js->create($name);
+			$this->css->create($name);
+		}
 		
 		if(class_exists($module) == FALSE)
 		{
@@ -175,7 +188,10 @@ class FrontController
     				$this->route->set_controller('Default');
     				$this->route->set_module('Erreur');
     				$this->route->set_action('index');
-    				$this->tpl->assign('error_msg', $e->getMessage());
+    				if ($this->config->tpl->enable)
+    				{
+    					$this->tpl->assign('error_msg', $e->getMessage());
+    				}
     			}
     		}
     		elseif ($redirect)
@@ -197,7 +213,7 @@ class FrontController
 	 * @return $string Contenu du module.
 	 */
 	public function assign($var=NULL)
-	{
+	{	
 	    if ($var == NULL)
 	    {
 	        $var = $this->config->tpl->module;
@@ -206,26 +222,48 @@ class FrontController
 	    $module = strtolower($this->route->get_module());
 	    $action = strtolower($this->route->get_action());
 	    $root = $this->config->path->root_dir.$this->config->path->tpl;
-		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-		if (empty($html)) 
-		{
-		    $this->route->set_controller('Default'); 
-		    $this->route->set_module('Erreur'); 
-		    $this->route->set_action('404');
-		    $controller = strtolower($this->route->get_controller());
-		    $module = strtolower($this->route->get_module());
-		    $action = strtolower($this->route->get_action());
-		    $root = $this->config->path->root_dir.$this->config->path->tpl;
-		    $html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-		}
-		// Gestionnaire de feuilles de style.
-		$this->get_css();
-		
-		// Gestionnaire de scripts.
-		$this->get_js();
-		
-		$this->tpl->assign($var, $html);
-		$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
+	    
+	    $tpl_file = $root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl';
+	    if ($this->config->tpl->enable === FALSE)
+	    {
+	    	if (file_get_contents($tpl_file) == FALSE)
+	    	{
+	    		$this->route->set_controller('Default');
+	    		$this->route->set_module('Erreur');
+	    		$this->route->set_action('404');
+	    		$controller = strtolower($this->route->get_controller());
+	    		$module = strtolower($this->route->get_module());
+	    		$action = strtolower($this->route->get_action());
+	    		return file_get_contents($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+	    	}
+	    	else 
+	    	{
+				return file_get_contents($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+	    	}
+	    }
+	    else 
+	    {
+	    	$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+	    	if (empty($html))
+	    	{
+	    		$this->route->set_controller('Default');
+	    		$this->route->set_module('Erreur');
+	    		$this->route->set_action('404');
+	    		$controller = strtolower($this->route->get_controller());
+	    		$module = strtolower($this->route->get_module());
+	    		$action = strtolower($this->route->get_action());
+	    		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+	    	}
+	    	
+	    	// Gestionnaire de feuilles de style.
+	    	$this->get_css();
+	    	
+	    	// Gestionnaire de scripts.
+	    	$this->get_js();
+	    	
+	    	$this->tpl->assign($var, $html);
+	    	$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
+	    }
 	}
 	
 	/**

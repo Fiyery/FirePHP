@@ -55,15 +55,18 @@ function init_core()
     });
 
     // Moteur de template.
-    $services->set('template', function() use ($services) {
-        $service = Template::get_instance($services->get('config')->path->tpl_cache);
-        $service->set_syntaxe(Template::SMARTY_STRICT);
-        if ($services->get('config')->feature->tpl_save)
-        {
-            $service->save_tpl();
-        }
-        return $service;
-    });
+    if ($services->get('config')->tpl->enable)
+    {
+    	$services->set('template', function() use ($services) {
+    		$service = Template::get_instance($services->get('config')->path->tpl_cache);
+    		$service->set_syntaxe(Template::SMARTY_STRICT);
+    		if ($services->get('config')->feature->tpl_save)
+    		{
+    			$service->save_tpl();
+    		}
+    		return $service;
+    	});
+    }
     
     // Réception des données.
     $services->set('request', function() use ($services) {
@@ -85,8 +88,11 @@ function init_core()
         $config = $services->get('config');
         $service->set_default_module($config->system->default_module);
         $service->set_default_action($config->system->default_action);
-        $service->set_tpl_name_title($config->tpl->title_site);
-        $service->set_tpl_name_description($config->tpl->description_site);
+        if ($services->get('config')->tpl->enable)
+        {
+	        $service->set_tpl_name_title($config->tpl->title_site);
+	        $service->set_tpl_name_description($config->tpl->description_site);
+        }
         return $service;
     });
     
@@ -112,7 +118,7 @@ function init_core()
         {
             $service->active_save();
         }
-        if ($services->get('config')->feature->error_show == false)
+        if ($services->get('config')->tpl->enable === FALSE || $services->get('config')->feature->error_show == FALSE)
         {
             $service->hide();
         }
@@ -153,19 +159,23 @@ function init_core()
         return $service;
     });
     
-    // Gestion du CSS.
-    $services->set('css', function() use ($services) {
-        $service = Css::get_instance($services->get('config')->path->css_cache);
-        $service->set_cache_time(7200);
-        return $service;
-    });
-    
-    // Gestion du JavaScript.
-    $services->set('javascript', function() use ($services) {
-        $service = Javascript::get_instance($services->get('config')->path->js_cache);
-        $service->set_cache_time(7200);
-        return $service;
-    });
+	// Gestion des ressources si le templeting est activé.
+	if ($services->get('config')->tpl->enable)
+	{	
+		// Gestion du CSS.
+	    $services->set('css', function() use ($services) {
+	        $service = Css::get_instance($services->get('config')->path->css_cache);
+	        $service->set_cache_time(7200);
+	        return $service;
+	    });
+	    
+	    // Gestion du JavaScript.
+	    $services->set('javascript', function() use ($services) {
+	        $service = Javascript::get_instance($services->get('config')->path->js_cache);
+	        $service->set_cache_time(7200);
+	        return $service;
+	    });
+	}
     
     // Définition de la liaison de la base de données à la classe Model.
     Dao::set_base($services->get('base'));
