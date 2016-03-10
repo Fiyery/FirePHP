@@ -81,8 +81,11 @@ class Route extends Singleton
      * @var array
      */
     private $_shortcut = array(
-    	'*' => '(.*)',
-    	'/' => '\/'
+    	'*' 	=> '(.*)',
+    	'/' 	=> '\/',
+    	'[n]' 	=> '([0-9]+)',
+    	'[w]' 	=> '([a-z]+)',
+    	'[x]' 	=> '(\w+)'
     );
     
     /**
@@ -129,7 +132,7 @@ class Route extends Singleton
         	if ($route->method == '*' || $request_method == $route->method)
         	{
         	    $route->url_pattern = (isset($route->url_pattern)) ? ($route->url_pattern) : (FALSE);
-        	    if ($route->url_pattern == FALSE)
+        	    if ($route->url_pattern === FALSE)
         	    {
         	        $route->url_pattern = str_replace(array_keys($this->_shortcut), array_values($this->_shortcut), $route->url);
         	    }
