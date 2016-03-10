@@ -166,6 +166,7 @@ function init_core()
 	    $services->set('css', function() use ($services) {
 	        $service = Css::get_instance($services->get('config')->path->css_cache);
 	        $service->set_cache_time(7200);
+	        $service->enable_minification($services->get('config')->feature->minify_ressource);
 	        return $service;
 	    });
 	    
@@ -173,6 +174,7 @@ function init_core()
 	    $services->set('javascript', function() use ($services) {
 	        $service = Javascript::get_instance($services->get('config')->path->js_cache);
 	        $service->set_cache_time(7200);
+	        $service->enable_minification($services->get('config')->feature->minify_ressource);
 	        return $service;
 	    });
 	}

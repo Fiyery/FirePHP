@@ -57,7 +57,8 @@
 		"error_show" : 			true,
 		"session_instance" : 	true,
 		"tpl_save" : 			false,
-		"secure_html_post" : 	false
+		"secure_html_post" : 	false,
+		"minify_ressource" : 	true
 	},
 	
 	"ftp" : {

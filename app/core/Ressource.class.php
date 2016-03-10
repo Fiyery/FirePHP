@@ -62,6 +62,12 @@ class Ressource extends Singleton
 	 */
 	private $_links = NULL;
 	
+	/**	
+	 * Définie si les ressources seront minifiées.
+	 * @var bool
+	 */
+	private $_minify = TRUE;
+	
 	/**
 	 * Constructeur.
 	 * @param string $content_type Content-Type des ressources.
@@ -241,7 +247,10 @@ class Ressource extends Singleton
 	        $content = $this->get_content();
 	        if (empty($content) == FALSE)
 	        {
-	            $content = Minifier::minify($this->_content_type, $content);
+	            if ($this->_minify)
+	            {
+	            	$content = Minifier::minify($this->_content_type, $content);
+	            }
 	            $begin = "<?php header('Content-Type:".$this->_content_type."');header('Cache-Control:max-age=".$this->_cache_time.", public');header('Last-Modified:".gmdate('D, d M Y H:i:s ',time())."GMT');header_remove('Pragma');if(!ob_start('ob_gzhandler'))ob_start();?>";
 	            $end = "<?php ob_end_flush();?>";
 	            file_put_contents($filename, $begin.$content.$end);
@@ -349,6 +358,15 @@ class Ressource extends Singleton
 		{
 			$this->_cache_time = $seconds;
 		}
+	}
+	
+	/**
+	 * Définie si les ressources seront minifiées.
+	 * @param bool $bool
+	 */
+	public function enable_minification($bool)
+	{
+		$this->_minify = $bool;
 	}
 	
 	/**
