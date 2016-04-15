@@ -54,7 +54,7 @@
 		"cache" : 				false,
 		"multi_request" : 		true,
 		"error_log" : 			true,
-		"error_show" : 			true,
+		"error_show" : 			false,
 		"session_instance" : 	true,
 		"tpl_save" : 			false,
 		"secure_html_post" : 	false,

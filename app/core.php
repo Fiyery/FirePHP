@@ -18,8 +18,9 @@ function debug_tool_load($controller, $echx=NULL)
 }
 
 // Chargement des paramètres et classes outils et récupération du controller.
-require(__DIR__.'/../app/etc/init.php');
+require(__DIR__.'/init.php');
 $controller = init_core();
+
 
 // On impose à la fin du script le lancement de la barre de débug.
 if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)
