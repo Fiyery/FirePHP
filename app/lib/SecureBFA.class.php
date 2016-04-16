@@ -2,7 +2,6 @@
 /**
  * SecureBFA (Brut-Force Attack) protège contre les attaques massives.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses SingletonSession
  */
 class SecureBFA extends SingletonSession

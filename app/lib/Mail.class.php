@@ -2,7 +2,6 @@
 /**
  * Mail gère l'envoie de mail.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Singleton
  */
 class Mail extends Singleton

@@ -3,7 +3,6 @@
  * Browser renseigne toute sorte d'informations sur le navigateur du client.
  * Attention les informations ne sont données qu'à titre indicatif et peuvent tout à faire être fausse. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses SingletonSession
  */
 class Browser extends SingletonSession

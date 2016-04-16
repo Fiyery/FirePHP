@@ -3,7 +3,6 @@
  * Active ou désactive les fonctionnalités de la classe
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @version 1.0
- * @copyright 2011-2015 Yoann Chaumin
  */
 trait Enable
 {

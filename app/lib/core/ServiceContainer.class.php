@@ -2,7 +2,6 @@
 /**
  * ServiceContainer permet de charger des services et de gérer les injections de dépendance.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @use Singleton
  */
 class ServiceContainer extends Singleton

@@ -2,7 +2,6 @@
 /**
  * Dao est la classe générale et mère de toutes les Dao spécifiques d'accès au table de la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Base
  * @uses DaoException
  */

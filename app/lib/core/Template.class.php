@@ -2,7 +2,6 @@
 /**
  * Template est le moteur de template.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Template extends Singleton
 {

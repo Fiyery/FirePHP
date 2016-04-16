@@ -2,7 +2,6 @@
 /**
  * Cache est le système de mise en cache du traitement des variables du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Singleton
  */
 class Cache extends Singleton

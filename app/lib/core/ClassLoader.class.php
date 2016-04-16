@@ -2,7 +2,6 @@
 /**
  * ClassLoader gère le chargement des classe du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class ClassLoader
 {	

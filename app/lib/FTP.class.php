@@ -2,7 +2,6 @@
 /**
  * FTP est une interface simplifiée de l'utilisation du File Transfert Protocol.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class FTP
 {

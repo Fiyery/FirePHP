@@ -2,7 +2,6 @@
 /**
  * Form génère des formulaires HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses HTMLTag
  */
 class Form extends HTMLTag

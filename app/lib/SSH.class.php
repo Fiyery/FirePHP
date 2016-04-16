@@ -2,7 +2,6 @@
 /**
  * SSH est une interface qui permet la connexion simple à un serveur en SSH et également de faire du SFTP avec ce serveur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class SSH
 {

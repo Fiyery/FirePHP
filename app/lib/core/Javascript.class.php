@@ -2,7 +2,6 @@
 /**
  * Javascript gère le traitement des fichiers JS.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Ressource
  */
 class Javascript extends Ressource

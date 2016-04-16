@@ -2,7 +2,6 @@
 /**
  * FormDatalist génère les datalist pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses HTMLTag
  */
 class FormDatalist extends HTMLTag

@@ -2,7 +2,6 @@
 /**
  * Query est la classe qui permet de gérer les requêtes SQL depuis les models.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Query
 {	

@@ -2,7 +2,6 @@
 /**
  * Route permet la liaison entre l'url et le traitement spécfique du serveur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Request
  * @uses Singleton
  * @uses FireException

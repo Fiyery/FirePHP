@@ -2,7 +2,6 @@
 /**
  * Access gère les accès des utilisateurs aux pages du site. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses SingletonSession
  */
 class Access extends Singleton

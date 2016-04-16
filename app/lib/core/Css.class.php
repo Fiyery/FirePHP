@@ -2,7 +2,6 @@
 /**
  * Css gère le traitement des fichiers CSS.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Ressource
  */
 class Css extends Ressource

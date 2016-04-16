@@ -2,7 +2,6 @@
 /**
  * Table contient les fonctions utiles sur les tableaux PHP et HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Table
 {

@@ -2,7 +2,6 @@
 /**
  * Ressource gère le traitement des fichiers externes à une page web tels que les fichiers CSS, JavaScript, ...
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Minifier
  * @uses Singleton
  */

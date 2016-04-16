@@ -2,7 +2,6 @@
 /**
  * PayPal est une interface simplifiée de gestion de paiement en ligne via l'API NVP de PayPal.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class PayPal
 {	

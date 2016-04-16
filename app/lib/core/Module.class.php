@@ -2,7 +2,6 @@
 /**
  * Module est la classe mère de l'ensemble des actions de traitement de données de chaque page.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses ServiceContainer
  */
 class Module

@@ -2,7 +2,6 @@
 /**
  * Date est un outil de simplification de la gestion du temps.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Interval
  * @uses FireException
  */

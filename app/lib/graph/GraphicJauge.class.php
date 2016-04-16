@@ -2,7 +2,6 @@
 /**
  * GraphicJauge est une spécialisation de Graphic sous forme d'une jauge remplissable.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class GraphicJauge extends Graphic
 {
