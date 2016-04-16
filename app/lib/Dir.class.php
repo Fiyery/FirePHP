@@ -3,7 +3,7 @@
  * Dir est une classe qui rassemble des fonctions utiles sur les dossiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @copyright 2011-2015 Yoann Chaumin
- * @uses Error
+ * @uses FireException
  */
 class Dir
 {
@@ -16,14 +16,14 @@ class Dir
     /**
      * Constructeur.
      * @param string $dirname Chemin du dossier.
-     * @throws Error
+     * @throws FireException
      */
     public function __construct($dirname='.')
     {
         if (is_dir($dirname) == FALSE)
         {
             $d = debug_backtrace();
-            throw new Error('Invalid dirname', $d[0]['file'], $d[0]['line']);
+            throw new FireException('Dossier invalide', $d[0]['file'], $d[0]['line']);
         }
         $this->_dirname = (substr($dirname, -1) != '/') ? ($dirname.'/') : ($dirname);
     }

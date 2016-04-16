@@ -3,6 +3,7 @@
  * Base est l'interface de connexion et de requetage à la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @copyright 2011-2015 Yoann Chaumin
+ * @uses BaseException
  */
 class Base 
 {	
@@ -125,8 +126,9 @@ class Base
 	/**
 	 * Exécute une requête sql. 
 	 * @param string $sql Requête sql à exécuté.
-	 * @param array $value Tableau contenant les valeurs vérifier par PDO.
+	 * @param array $value Tableau contenant les valeurs "?" vérifier par PDO.
 	 * @return boolean|array Retourne le résultat de la requête, TRUE si cette dernière ne retourne rien, ou FALSE s'il y a une erreur. 
+	 * @throws BaseException
 	 */
 	public function query($sql, $value=NULL)
 	{
@@ -141,17 +143,22 @@ class Base
 		}
 		else
 		{
+			// Vérification du nombre de paramètres.
+			if (substr_count($sql, '?') > count($value))
+			{
+				throw new BaseException("Il manque des paramètres pour la requête préparée");
+			}
 		    $time = microtime(TRUE);
 		    $bd = $this->_connection;
 		    $res = $bd->prepare($sql);
-		    if (is_array($value) && count($value) > 0)
-		    {
-		    	$res->execute(array_values($value));
-		    }
-		    else
-		    {
-		    	$res->execute();
-		    }
+	    	if (is_array($value) && count($value) > 0)
+	    	{
+	    		$res->execute(array_values($value));
+	    	}
+	    	else
+	    	{
+	    		$res->execute();
+	    	}
 		    $end_time = microtime(TRUE);
 		    $this->_time += $end_time - $time;
 		    $history['time'] = $end_time - $time;
@@ -180,6 +187,7 @@ class Base
 	 * @param string $filename Chemin de l'exécutable MySQLDump.
 	 * @param array $excludes Liste des tables à exclure de la sauvegarde.
 	 * @return string Contenu de la sauvegarde de la base de données.
+	 * @throws BaseException
 	 */
 	public function save($filename=NULL, $excludes=NULL)
 	{
@@ -248,6 +256,7 @@ class Base
 	/**
 	 * Retourne la liste les tables de la base de données.
 	 * @return array<string> Liste des tables.
+	 * @throws BaseException
 	 */
 	public function tables()
 	{
@@ -273,6 +282,7 @@ class Base
 	 * Retourne la liste des champs d'une table.
 	 * @param string $name Nom de la table.
 	 * @return array Information sur les colonnes.
+	 * @throws BaseException
 	 */
 	public function fields($name)
 	{
@@ -290,6 +300,7 @@ class Base
 	 * Retourne l'ensemble des tables ayant une clé étrangère sur la table passée en paramètre.
 	 * @param string $table Nom de la table.
 	 * @return array La liste des clés étrangères et de leurs table.
+	 * @throws BaseException
 	 */
 	public function foreign_key($table)
 	{
@@ -353,6 +364,7 @@ class Base
 	/**
 	 * Retourne le dernier identifiant inséré.
 	 * @return int.
+	 * @throws BaseException
 	 */
 	public function last_id()
 	{
@@ -363,6 +375,7 @@ class Base
 	/**
 	 * Retourne la version de la base de données.
 	 * @return string
+	 * @throws BaseException
 	 */
 	public function version()
 	{
@@ -374,6 +387,7 @@ class Base
 	 * Vérifie si la table passée en paramètre existe.
 	 * @param string $name Nom de la table.
 	 * @return boolean
+	 * @throws BaseException
 	 */
 	public function table_exists($name)
 	{
@@ -501,13 +515,14 @@ class Base
 	
 	/**
 	 * Vérifie si la base est connectées à au moins une base de donnée.
+	 * @throws BaseException
 	 */
 	private function _check_connection()
 	{
 		if ($this->_connection === NULL)
 		{
 			$d = debug_backtrace();
-			throw new Error('Aucune base de donnée trouvée', $d[1]['file'], $d[1]['line']);
+			throw new BaseException('Aucune base de donnée trouvée', $d[1]['file'], $d[1]['line']);
 		}
 	}
 }

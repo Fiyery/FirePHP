@@ -5,7 +5,7 @@
  * @copyright 2011-2015 Yoann Chaumin
  * @uses Request
  * @uses Singleton
- * @uses Error
+ * @uses FireException
  * @uses File
  */
 class Route extends Singleton
@@ -176,13 +176,13 @@ class Route extends Singleton
      * Génère une erreur.
      * @param string $msg Message de l'erreur.
      * @param int $level Nombre de fonction à remonter pour l'erreur.
-     * @throws Error
+     * @throws FireException
      */
     private function _error($msg, $level=1)
     {
         $d = debug_backtrace();
         $d = $d[$level];
-        throw new Error($msg, $d['file'], $d['line']);
+        throw new FireException($msg, $d['file'], $d['line']);
     }
     
     /**

@@ -5,7 +5,7 @@
 * @copyright 2011-2015 Yoann Chaumin
 * @uses Singleton
 * @uses File
-* @uses Error
+* @uses FireException
 */
 class Upload extends Singleton
 {
@@ -122,6 +122,7 @@ class Upload extends Singleton
 	/**
 	 * Constructeur.
 	 * @param string $filename Chemin du fichier de base de données des types mimes et des extensions.
+	 * @throws FireException
 	 */
 	protected function __construct($filename)
 	{
@@ -129,7 +130,7 @@ class Upload extends Singleton
         {
            $d = debug_backtrace();
            $d = $d[1];
-           throw new Error("Invalid file for type mime data base", $d['file'], $d['line']);
+           throw new FireException("Liste des types mime introuvable", $d['file'], $d['line']);
         }
         $this->_db_name = $filename;
         $this->_db = json_decode(file_get_contents($this->_db_name));
@@ -137,7 +138,7 @@ class Upload extends Singleton
         {
             $d = debug_backtrace();
             $d = $d[1];
-            throw new Error("Invalid file for type mime data base", $d['file'], $d['line']);
+            throw new FireException("Liste des types mime invalide", $d['file'], $d['line']);
         }
         $this->_db = get_object_vars($this->_db);
 	}

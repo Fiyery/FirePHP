@@ -106,7 +106,7 @@ function init_core()
     
     // Gestion des Erreurs.
     $services->set('error', function() use ($services) {
-        $service = ErrorManager::get_instance();
+        $service = ExceptionManager::get_instance();
         $service->start();
         $service->set_file($services->get('config')->path->root_dir.$services->get('config')->path->log.'error.log');
         $service->add_data('ip',(isset($_SERVER['REMOTE_ADDR'])) ? ($_SERVER['REMOTE_ADDR']) : ('null'));
@@ -208,7 +208,7 @@ function init_core()
     $filename = $services->get('config')->path->root_dir.$services->get('config')->path->controller.$services->get('route')->get_controller().'.class.php';
     if (file_exists($filename) == FALSE)
     {
-        throw new Error('Controller not find !', __FILE__, __LINE__);
+        throw new FireException('Controller introuvable', __FILE__, __LINE__);
     }
     require($filename);
     

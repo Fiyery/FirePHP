@@ -136,7 +136,7 @@ class ServiceContainer extends Singleton
 					    catch (Exception $e)
 					    {
 					        $d = debug_backtrace();
-					        throw new Error('Unable to solve service "'.$name.'" : undefined default parameter for "'.$param->getName().'"', $d[1]['file'], $d[1]['line']);
+					        throw new FireException('Unable to solve service "'.$name.'" : undefined default parameter for "'.$param->getName().'"', $d[1]['file'], $d[1]['line']);
 					    }
 					}
 				}
@@ -149,7 +149,7 @@ class ServiceContainer extends Singleton
 			return $this->_instances[$name];
 		}
 		$d = debug_backtrace();
-		throw new Error('Unable to solve service "'.$name.'"', $d[1]['file'], $d[1]['line']); 	   
+		throw new FireException('Unable to solve service "'.$name.'"', $d[1]['file'], $d[1]['line']); 	   
 	}
 
 	/**

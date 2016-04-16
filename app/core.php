@@ -45,12 +45,13 @@ if ($controller->config->feature->access)
 	$controller->get_access($redirect);
 }
 
-// Exécution du Controller spécifique.
-$controller->execute();
 
-// Envoie des informations à la vue.
 try
 {
+	// Exécution du Controller spécifique.
+	$controller->execute();
+	
+	// Envoie des informations à la vue.
     $controller->assign();
 }
 catch (Exception $e) 

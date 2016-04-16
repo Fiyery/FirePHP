@@ -4,7 +4,7 @@
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @copyright 2011-2015 Yoann Chaumin
  * @uses Base
- * @uses Error
+ * @uses DaoException
  */
 abstract class Dao
 {
@@ -29,15 +29,14 @@ abstract class Dao
     /**
      * Retourne un attribut.
      * @param mixed $name Valeur de l'attribut.
-     * @throws Error
+     * @throws FireException
      */
     public function __get($name)
     {
         $caller = get_called_class();
     	if (property_exists($caller, $name) == FALSE)
     	{
-    	    $d = debug_backtrace();
-    	    throw new Error('Invalid property "'.$name.'" for class '.$caller, $d[0]['file'],  $d[0]['line']);
+    	    throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
     	}
         return $this->$name;
     }

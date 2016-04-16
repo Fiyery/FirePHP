@@ -4,7 +4,6 @@
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @copyright 2011-2015 Yoann Chaumin
  * @uses Singleton
- * @uses Error
  */
 class Cache extends Singleton
 {	
@@ -95,14 +94,12 @@ class Cache extends Singleton
 	 * @param string $name Nom du fichier du cache.
 	 * @param number $duration Nombre de seconde de mise en cache.
 	 * @return array Un tableau de variables est retourné ou NULL si le cache n'existe pas ou est expiré.
-	 * @throws Error
 	 */
 	public function read($name, $duration=self::HOUR)
 	{
 	    if (is_string($name) == FALSE || is_numeric($duration) == FALSE)
 	    {
-	    	$d = debug_backtrace();
-	        throw new Error('Invalid Argument.', $d[0]['file'], $d[0]['line']);
+	        return FALSE;
 	    }
 	    $this->_file = $name.'.tmp';
 	    if ($this->is_enabled())

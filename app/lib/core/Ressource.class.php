@@ -337,14 +337,14 @@ class Ressource extends Singleton
 	
 	/**
 	 * Vérifie si la ressource est utilisable.
-	 * @throws Exception
+	 * @throws RessourceException
 	 */
 	private function check()
 	{
 		if ($this->_file == NULL)
 		{
 		    $caller = Debug::get_caller(2);
-			throw new Error("Invalid ressource. The ressource must be created before use", $caller['file'], $caller['line']);
+			throw new RessourceException("Ressource invalide. La ressource doit être créée avant d'être utilisée", $caller['file'], $caller['line']);
 		}
 	}
 	

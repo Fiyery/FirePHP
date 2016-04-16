@@ -22,6 +22,7 @@
 		"lib_form" : 		"{$path.lib}form/",
 		"lib_dev" : 		"{$path.lib}dev/",
 		"lib_graph" : 		"{$path.lib}graph/",
+		"lib_error" : 		"{$path.lib}error/",
 		"lib_plugin" : 		"{$path.app}plugins/",
 		"var": 				"{$path.app}var/",
 		"log":				"{$path.var}log/",
@@ -73,6 +74,7 @@
 		"{$path.lib_form}",
 		"{$path.lib_dev}",
 		"{$path.lib_plugin}",
+		"{$path.lib_error}",
 		"{$path.model}",
 		"{$path.util}"
 	],
