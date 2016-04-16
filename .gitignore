@@ -6,4 +6,5 @@ var/*
 app/tmp/*
 app/var/log/*
 todo/
+res/docs
 
