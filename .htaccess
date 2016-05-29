@@ -31,10 +31,10 @@ DirectoryIndex index.php
 Options +FollowSymLinks
 RewriteEngine On
 
-# TOUT REDIRIGER VERS LA RACINE DU SITE.
+# TOUT REDIRIGER VERS LA RACINE DU SITE. A CHANGER SELON EMPLACEMENT DE L'APPLICATION.
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ /club-Manga/index.php/$1 [QSA,L]
+RewriteRule ^(.*)$ /FirePHP/index.php/$1 [QSA,L]
 
 # GESTION DU CACHE DU NAVIGATEUR.
 <IfModule mod_expires.c>

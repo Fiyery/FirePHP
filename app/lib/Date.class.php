@@ -2,9 +2,8 @@
 /**
  * Date est un outil de simplification de la gestion du temps.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Interval
- * @uses Error
+ * @uses FireException
  */
 class Date
 {
@@ -138,14 +137,14 @@ class Date
 	 * Constructeur.
 	 * @param string $date Date à traiter.
 	 * @param int $format Format de la date à traiter. N'accepte que NORMAL et TIMESTAMP
-	 * @throws Error
+	 * @throws FireException
 	 */
 	public function __construct($date=NULL, $format=self::NORMAL)
 	{
 		if ($format != self::NORMAL && $format != self::TIMESTAMP)
 		{
 			$d = debug_backtrace();
-			throw new Error('Date format is invalide', $d[0]['file'], $d[0]['line']);
+			throw new FireException('Le format de la date est invalide', $d[0]['file'], $d[0]['line']);
 		}
 		if ($format == self::TIMESTAMP)
 		{

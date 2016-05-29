@@ -2,7 +2,6 @@
 /**
  * Thread gère l'exécution de script en parallèle (multiplexage) par le biais de l'extension CURL.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Thread extends Singleton
 {

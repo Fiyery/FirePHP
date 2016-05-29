@@ -2,7 +2,6 @@
 /**
  * HTMLTag est la classe représentation HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class HTMLTag 
 {

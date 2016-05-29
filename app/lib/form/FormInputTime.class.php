@@ -2,7 +2,6 @@
 /**
  * FormInputTime génère input type time pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses FormInput
  */
 class FormInputTime extends FormInput

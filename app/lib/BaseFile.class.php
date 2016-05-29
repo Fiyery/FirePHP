@@ -2,7 +2,6 @@
 /**
  * Base est l'interface de connexion et de requetage à la base de données sous forme de fichiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class BaseFile extends Singleton
 {

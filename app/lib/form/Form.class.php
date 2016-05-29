@@ -2,7 +2,6 @@
 /**
  * Form génère des formulaires HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses HTMLTag
  */
 class Form extends HTMLTag
@@ -59,7 +58,7 @@ class Form extends HTMLTag
 	 * Liste des attributs 'name' des champs
 	 * @var array<string>
 	 */
-	private $_names = array();
+	private $_names = [];
 	
 	/**
 	 * Si TRUE, tous les champs du formulaire seront requis.
@@ -74,24 +73,47 @@ class Form extends HTMLTag
 	private $_error_field = NULL;
 	
 	/**
+	 * Adresse source du formulaire.
+	 * @var string
+	 */
+	private $_source = NULL;
+	
+	/**
+	 * Token généré à la création du formulaire. En clé, le nom du cookie.
+	 * @var array
+	 */
+	private $_token = [];
+	
+	/**
+	 * Javascript pour protéger la cible du formulaire.
+	 * @var string
+	 */
+	private $_js_security = NULL;
+	
+	/**
 	 * Constructeur.
 	 * @param string $action Adresse de traitement du formulaire.
 	 * @param string $id Identifiant du formulaire.
 	 * @param string $method Méthode d'envoie.
 	 */
-	public function __construct($action, $id, $method=NULL)
+	public function __construct($action=NULL, $id=NULL, $method=NULL)
 	{
 		parent::__construct('form');
 		$this->_attrs['action'] = (is_string($action)) ? ($action) : (NULL);
-		$this->_attrs['id'] = (is_string($id)) ? ($id) : (NULL);
+		$this->_attrs['id'] = (is_string($id)) ? ($id) : (uniqid('form_'));
 		$this->_attrs['method'] = (is_string($method) && strtoupper($method) == 'GET') ? ('GET') : ('POST');
 		$this->_attrs['class'] = self::$_default_class;
 		$this->_attrs['enctype'] = NULL;
-		$this->_errors = array(
+		$this->_errors = [
 			'FIELD_NOT_FOUND' => 'Form field " $var " not found',
 			'NAME_INVALID' => 'Invalide name for Form field $var "',
 			'NAME_EXISTS' => 'Field name " $var " already exists'
-		);
+		];
+		$this->_source = (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] != NULL) ? ($_SERVER['REQUEST_SCHEME']) : ('http');
+		$this->_source .= '://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+		$name = 'form_token_'.time();
+		$this->_token[$name] = uniqid();
+		setcookie($name, $this->_token[$name], time() + 180);
 	}
 
 	/**
@@ -165,17 +187,17 @@ class Form extends HTMLTag
 		$class_name = 'Form'.$type;
 		if (class_exists($class_name) == FALSE)
 		{
-			$this->error('FIELD_NOT_FOUND',$type);
+			$this->_error('FIELD_NOT_FOUND',$type);
 			return NULL;
 		}
 		if (is_scalar($name) == FALSE && is_null($name) == FALSE)
 		{
-			$this->error('NAME_INVALID',$type);
+			$this->_error('NAME_INVALID',$type);
 			return NULL;
 		}
 		if (is_null($name) == FALSE && isset($this->_names[$name]) && $type != self::RADIO)
 		{
-			$this->error('NAME_EXISTS',$name);
+			$this->_error('NAME_EXISTS',$name);
 			return NULL;
 		}
 		if ($type == self::FILE)
@@ -221,6 +243,16 @@ class Form extends HTMLTag
 	}
 	
 	/**
+	 * Ajoute une sécurité sur l'action qui est traduite par du JS. 
+	 */
+	public function add_js_security()
+	{
+	    $action = $this->_attrs['action'];
+	    $this->_attrs['action'] = 'http://'.$_SERVER['SERVER_NAME'];
+	    $this->_js_security = "var f = document.getElementById('".$this->_attrs['id']."');f.action = '".$action."';";
+	}
+	
+	/**
 	 * Termine la redirection des nouveau champ vers le fieldset.
 	 * @return Form
 	 */
@@ -262,7 +294,7 @@ class Form extends HTMLTag
 	 * @param string $name Nom de l'erreur.
 	 * @param string $var Nom de la variable.
 	 */
-	private function error($name, $var=NULL)
+	private function _error($name, $var=NULL)
 	{
 		$info = str_replace('$var',$var,$this->_errors[$name]);
 		trigger_error($info);
@@ -273,14 +305,14 @@ class Form extends HTMLTag
 	 */
 	public function assign()
 	{
-	    $this->assign_list($this->_content);
+	    $this->_assign_list($this->_content);
 	}
 	
 	/**
 	 * Charge des valeurs de la requête dans une liste de champs.
 	 * @param array<HTMLTag> $content Liste de champs.
 	 */
-	private function assign_list($content)
+	private function _assign_list($content)
 	{
 	    foreach ($content as $field)
 	    {
@@ -300,7 +332,7 @@ class Form extends HTMLTag
 	    	}
 	    	elseif ($field->_name == 'fieldset')
 	    	{
-	    		$this->assign_list($field->_content);
+	    		$this->_assign_list($field->_content);
 	    	}
 	    }
 	}
@@ -322,6 +354,25 @@ class Form extends HTMLTag
 	        $this->_error_field = NULL;
 	        return TRUE;
 	    }
+	}
+	
+	/**
+	 * Vérifie si l'adresse de création du formulaire est la même que l'adresse d'envoi.
+	 * @return bool
+	 */
+	public function check_source()
+	{
+	    return (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] == $this->_source);
+	}
+	
+	/**
+	 * Vérifie le token.
+	 * @return bool
+	 */
+	public function check_token()
+	{
+	    $name = array_keys($this->_token)[0];
+	    return (isset($_COOKIE[$name]) && $_COOKIE[$name] == $this->_token[$name]);
 	}
 	
 	/**
@@ -349,7 +400,7 @@ class Form extends HTMLTag
 	        }
 	        elseif ($field->_name == 'fieldset')
 	    	{
-	    		$field_invalid = $this->assign_list($field->_content);
+	    		$field_invalid = $this->_assign_list($field->_content);
 	    	}
 	    	next($content);
 	    }
@@ -364,7 +415,7 @@ class Form extends HTMLTag
 	public function get($name)
 	{
 	    $name = strtolower($name);
-	    return $this->get_list($name, $this->_content);
+	    return $this->_get_list($name, $this->_content);
 	}
 	
 	/**
@@ -373,7 +424,7 @@ class Form extends HTMLTag
 	 * @param array<HTMLTag> Liste de champs.
 	 * @return HTMLTag
 	 */
-	private function get_list($name, $content)
+	private function _get_list($name, $content)
 	{
 	    reset($content);
 	    $field_searched = NULL;
@@ -385,7 +436,7 @@ class Form extends HTMLTag
 	    	}
 	    	elseif ($field->_name == 'fieldset')
 	    	{
-	    		$field_searched = $this->get_list($name, $field->_content);
+	    		$field_searched = $this->_get_list($name, $field->_content);
 	    	}
 	    	next($content);
 	    }
@@ -407,8 +458,23 @@ class Form extends HTMLTag
 	}
 	
 	/**
+	 * Retourne le code HTML du formulaire.
+	 * @return string
+	 */
+	public function __toString()
+	{
+        $html = '';
+	    if ($this->_js_security !== NULL)
+	    {
+	        $html = "<script type='text/javascript'>".$this->_js_security.'</script>';
+	    }
+	    return parent::__toString().$html;
+	}
+	
+	/**
 	 * Charge un formulaire sauvegardé.
 	 * @param string $id Identifiant du formulaire.
+	 * @param boolean $assign Défini si le formulaire sera autocomplété par les valeurs.
 	 * @return Form Instance du formulaire ou NULL.
 	 */
 	public static function load($id, $assign=TRUE)

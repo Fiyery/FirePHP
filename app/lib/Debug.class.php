@@ -2,7 +2,6 @@
 /**
  * Debug gère la gestion du debugage du site par les affichages de variable, de la consommation en mémoire, du temps d'exécution d'un bout de code, l'affichage du backtrace et la création manuelle de log.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Debug 
 {

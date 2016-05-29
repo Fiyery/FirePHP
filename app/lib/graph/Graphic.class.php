@@ -2,7 +2,6 @@
 /**
  * Graphic est la classe mère des graphiques.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 abstract class Graphic 
 {

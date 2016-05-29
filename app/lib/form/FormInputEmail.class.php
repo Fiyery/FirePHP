@@ -2,7 +2,6 @@
 /**
  * FormInputEmail génère input type email pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses FormInput
  */
 class FormInputEmail extends FormInput

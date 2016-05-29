@@ -2,7 +2,6 @@
 /**
  * String regroupe des fonctions utiles sur les chaînes de caractères.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class String
 {

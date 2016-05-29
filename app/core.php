@@ -18,8 +18,9 @@ function debug_tool_load($controller, $echx=NULL)
 }
 
 // Chargement des paramètres et classes outils et récupération du controller.
-require(__DIR__.'/../app/etc/init.php');
+require(__DIR__.'/init.php');
 $controller = init_core();
+
 
 // On impose à la fin du script le lancement de la barre de débug.
 if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)
@@ -44,12 +45,13 @@ if ($controller->config->feature->access)
 	$controller->get_access($redirect);
 }
 
-// Exécution du Controller spécifique.
-$controller->execute();
 
-// Envoie des informations à la vue.
 try
 {
+	// Exécution du Controller spécifique.
+	$controller->execute();
+	
+	// Envoie des informations à la vue.
     $controller->assign();
 }
 catch (Exception $e) 
@@ -67,14 +69,22 @@ if (ob_start("ob_gzhandler") == FALSE)
 }
 
 // Affiche le template.
-try 
+if ($controller->config->tpl->enable)
 {
-    $controller->tpl->display($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
-}
-catch (Exception $e) 
+	try
+	{
+		$controller->tpl->display($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
+	}
+	catch (Exception $e)
+	{
+		var_dump($e);
+	}
+} 
+else 
 {
-    var_dump($e);
+	echo file_get_contents($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
 }
+
 
 // Lance de débogage.
 if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)

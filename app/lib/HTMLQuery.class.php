@@ -2,7 +2,6 @@
 /**
  * HTMLQuery permet de récupérer une portion d'un code HTML en fonction d'un XPath ou d'un sélection CSS. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class HTMLQuery 
 {

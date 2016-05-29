@@ -3,7 +3,6 @@
 /**
  * Minifier gère la minification des fichiers CSS et JS.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Minifier
 {

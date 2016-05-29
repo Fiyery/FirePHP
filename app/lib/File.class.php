@@ -2,8 +2,7 @@
 /**
  * File est une classe qui rassemble des fonctions utiles sur les fichiers et dossiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
- * @uses Error
+ * @uses FireException
  */
 class File 
 {    
@@ -333,13 +332,13 @@ class File
      * Génère une erreur.
      * @param string $msg Message de l'erreur.
      * @param int $level Nombre de fonction à remonter pour l'erreur.
-     * @throws Error
+     * @throws FireException
      */
     private static function set_error($msg, $level=1)
     {
         $d = debug_backtrace();
         $d = $d[$level];
-        throw new Error($msg, $d['file'], $d['line']);
+        throw new FireException($msg, $d['file'], $d['line']);
     }
     
     /**

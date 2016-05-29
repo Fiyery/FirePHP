@@ -1,17 +1,19 @@
-// The configuration file accepts comments like that.
-// You can use one variable for one string in json like : {$property1.property2.(...).propertyn}
-// This means : value root->property1->property2->(...)->propertyn.
+// Fichier de configuration
+// Vous pouvez utiliser des variables comme : {$property1.property2.(...).propertyn}
+// Cela sera remplacé par la valeur de root->property1->property2->(...)->propertyn.
 {
 	"browser" : {
-		"file" : "{$path.app_var}browscap.ini"
+		"file" : "{$path.var}browscap.ini"
 	},
 	
 	"db" : {
 		"host" : 		"localhost",
-		"name" : 		"club_manga",
+		"name" : 		"firephp",
 		"charset" : 	"utf-8",
 		"user" : 		"root",
-		"pass" : 		""
+		"pass" : 		"",
+		"cache" :		true,
+		"cache_time" :	60 // En seconds.
 	},
 
 	"path" : {
@@ -20,8 +22,10 @@
 		"lib_form" : 		"{$path.lib}form/",
 		"lib_dev" : 		"{$path.lib}dev/",
 		"lib_graph" : 		"{$path.lib}graph/",
+		"lib_error" : 		"{$path.lib}error/",
 		"lib_plugin" : 		"{$path.app}plugins/",
-		"app_var": 			"{$path.app}var/",
+		"var": 				"{$path.app}var/",
+		"log":				"{$path.var}log/",
 		"ressource" : 		"res/",
 		"tpl" : 			"{$path.ressource}views/",
 		"css" :				"{$path.ressource}css/",
@@ -40,7 +44,6 @@
 		"tpl_cache" : 		"{$path.tmp}tpl/",
 		"css_cache" : 		"{$path.tmp}css/",
 		"js_cache" : 		"{$path.tmp}js/",
-		"var" : 			"var/",
 		"save" : 			"{$path.var}saves/",
 		"db_save" : 		"{$path.save}database/"
 	},
@@ -52,31 +55,33 @@
 		"cache" : 				false,
 		"multi_request" : 		true,
 		"error_log" : 			true,
-		"error_show" : 			true,
+		"error_show" : 			false,
 		"session_instance" : 	true,
 		"tpl_save" : 			false,
-		"secure_html_post" : 	false
+		"secure_html_post" : 	false,
+		"minify_ressource" : 	true
 	},
 	
 	"ftp" : {
-		"url" : 	"192.168.1.14",
-		"port" : 	"21",
-		"user" : 	"clubmanga",
-		"pass" : 	"B87q3R9mjVH2vb4qZL3k"
+		"url" : 	"",
+		"port" : 	"",
+		"user" : 	"",
+		"pass" : 	""
 	},
 	
-	"loader" : [
+	"class_dirs" : [
 		"{$path.lib}",
 		"{$path.lib_form}",
 		"{$path.lib_dev}",
 		"{$path.lib_plugin}",
+		"{$path.lib_error}",
 		"{$path.model}",
 		"{$path.util}"
 	],
 	
 	"mail" : {
-		"sender_name" : "Club-Manga",
-		"sender_mail" :	"contact@club-manga.fr",
+		"sender_name" : "admin@localhost.fr",
+		"sender_mail" :	"admin@localhost.fr",
 		"host" :		"localhost",
 		"port" :		"25"
 	},
@@ -87,16 +92,15 @@
 	},
 	
 	"personnal" : {
-		"default_mood" :			"Pas d'humeur",
-		"default_heberg_capacity" :	"50"
+		// Ecrivez ici vos propres paramètres.
 	},
 	
 	"route" : {
-		"file" :  "{$path.app_var}route.json"
+		"file" :  "{$path.var}route.json"
 	},
 	
 	"security" : {
-		"key_crypt" : 	"histoiredunmonde-cryptage-809177",
+		"key_crypt" : 	"",
 		"prefix_salt" : "",
 		"suffix_salt" : ""
 	},
@@ -113,16 +117,18 @@
 	},
 	
 	"system" : {
+		"language" :				"fr-fr",
 		"timezone" : 				"Europe/Paris",
 		"default_module" : 			"Index",
 		"default_action" : 			"index",
 		"css_class_form" : 			"form_style", 
 		"name_file_module" :		"module.php",
 		"prefix_action_function" : 	"action_",
-		"service_alias" :			"{$path.app_var}service.json"
+		"service_alias" :			"{$path.var}service.json"
 	},
 	
 	"tpl" : {
+		"enable" :				true,
 		"module" : 				"bloc_content",
 		"css" :					"bloc_css",
 		"js" : 					"bloc_javascript",
@@ -131,11 +137,12 @@
 		"description_site" : 	"site_description",
 		"author_site" : 		"site_author",
 		"keyword_site" : 		"site_keyword",
+		"language" : 			"site_language",
 		"root" : 				"root_www",
 		"root_image" : 			"root_image"
 	},
 	
 	"upload" : {
-		"mime_types_file" : "{$path.app_var}mime_types.json"
+		"mime_types_file" : "{$path.var}mime_types.json"
 	}
 }

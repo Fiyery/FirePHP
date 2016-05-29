@@ -2,7 +2,6 @@
 /**
  * Cron permet de simuler la commande cronjob en PHP.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  */
 class Cron
 {

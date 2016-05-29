@@ -2,7 +2,6 @@
 /**
  * SingletonSession est une spécialisation de Singleton. Le Singleton est aussi sauvegardé en session.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @copyright 2011-2015 Yoann Chaumin
  * @uses Singleton
  */
 abstract class SingletonSession extends Singleton
