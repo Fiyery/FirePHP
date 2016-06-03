@@ -378,7 +378,10 @@ class Base
 	 */
 	public function version()
 	{
-		$this->_check_connection();
+		if ($this->_connection === NULL)
+		{
+			return NULL;
+		}
 		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 	
@@ -520,8 +523,7 @@ class Base
 	{
 		if ($this->_connection === NULL)
 		{
-			$d = debug_backtrace();
-			throw new BaseException('Aucune base de donnée trouvée', $d[1]['file'], $d[1]['line']);
+			throw new BaseException('Aucune base de donnée trouvée', 2);
 		}
 	}
 }
