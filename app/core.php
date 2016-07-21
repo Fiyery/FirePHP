@@ -49,10 +49,11 @@ if ($controller->config->feature->access)
 try
 {
 	// Exécution du Controller spécifique.
-	$controller->execute();
-	
-	// Envoie des informations à la vue.
-    $controller->assign();
+	if ($controller->execute() !== FALSE)
+	{
+		// Envoie des informations à la vue.
+		$controller->assign();
+	}
 }
 catch (Exception $e) 
 {

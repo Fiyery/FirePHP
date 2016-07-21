@@ -179,7 +179,7 @@ class FrontController
     		    // Exécution du module.
     		    try 
     		    {
-    		    	$m->$called_action();
+    		    	$return = $m->$called_action();
     		    }
     			catch (Exception $e)
     			{
