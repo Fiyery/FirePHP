@@ -1,5 +1,5 @@
 <?php
-class user extends Dao
+class User extends Dao
 {
 	protected $nom;
 	

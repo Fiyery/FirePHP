@@ -59,7 +59,7 @@ class Query
 	 * @param string $class Nom de la classe de retour du resultat.
 	 * @param string $table Nom de la table à requêter.
 	 */
-	public function __construct(Base $base, $class, $table)
+	public function __construct(Base $base = NULL, $class = NULL, $table = NULL)
 	{
 		$this->_base = $base;
 		$this->_class = $class;
@@ -75,6 +75,7 @@ class Query
 	public function table($name)
 	{
 		$this->_table = $name;
+		$this->select();
 		return $this;
 	}
 	
@@ -109,7 +110,55 @@ class Query
 	public function count()
 	{
 		$this->_type = self::COUNT;
-		$this->_sql = 'SELECT COUNT(*) NB FROM '.$this->_table;
+		$this->_sql = 'SELECT COUNT(*) nb FROM '.$this->_table;
+		return $this;
+	}
+	
+	/**
+	 * Effectue une jointure simple entre deux tables.
+	 * @param string $table Nom de la table à joindre.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
+	 */
+	public function join($table, $id_table = NULL, $id_primary = NULL)
+	{
+		return $this->_join('INNER', $table, $id_table, $id_primary);
+	}
+	
+	/**
+	 * Effectue une jointure gauche entre deux tables.
+	 * @param string $table Nom de la table à joindre.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
+	 */
+	public function join_left($table, $id_table = NULL, $id_primary = NULL)
+	{
+		return $this->_join('LEFT', $table, $id_table, $id_primary);
+	}
+	
+	/**
+	 * Effectue une jointure droite entre deux tables.
+	 * @param string $table Nom de la table à joindre.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
+	 */
+	public function join_right($table, $id_table = NULL, $id_primary = NULL)
+	{
+		return $this->_join('RIGHT', $table, $id_table, $id_primary);
+	}
+	
+	/**
+	 * Effectue une jointure entre deux tables.
+	 * @param string $type Type de jointure.
+	 * @param string $table Nom de la table à joindre.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
+	 */
+	private function _join($type, $table, $id_table = NULL, $id_primary = NULL)
+	{
+		$id_table = ($id_table != NULL) ? ($id_table) : ('id');
+		$id_primary = ($id_primary != NULL) ? ($id_primary) : ($this->_table.'.id_'.$table);
+		$this->_sql .= ' '.$type.' JOIN '.$table.' ON '.$table.'.'.$id_table.' = '.$id_primary;
 		return $this;
 	}
 	
@@ -313,8 +362,13 @@ class Query
 	 * @param int $end Position du dernier enregistrement qui sera prit en compte.
 	 * @return Query
 	 */
-	public function limit($begin, $end)
+	public function limit($begin, $end=NULL)
 	{
+		if ($end === NULL)
+		{
+			$end = $begin - 1;
+			$begin = 0;
+		}
 		$this->_sql .= ' LIMIT '.($end-$begin+1).' OFFSET '.$begin;
 		return $this;
 	}

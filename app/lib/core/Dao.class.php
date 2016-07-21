@@ -215,6 +215,28 @@ abstract class Dao
     }
     
     /**
+     * Recherche des instances, si on ne précise aucun argument, la fonction renvoie tous les enregistrements.
+     * @param array $fields Tableau associatif de champs et leur valeur.
+     * @param int $begin Position du premier enregistrement.
+     * @param int $end Position du dernier enregistrement.
+     * @param array $order Tableau associatif avec en clée les noms des champs et en valeur l'ordre.
+     * @return array<object> Liste des objets trouvés ou un tableau vide.
+     */
+    public static function search($fields=[], $begin=NULL, $end=NULL, $order=[])
+    {
+    	$query = self::query()->where($fields);
+    	foreach ($order as $n => $o)
+    	{
+    		$query->order($n, $o);
+    	}
+    	if ($begin !== NULL)
+    	{
+    		$query->limit($begin, $end);
+    	}
+    	return $query->run();
+    }
+    
+    /**
      * Compte le nombre d'enregistrements.
      * @param array $fields Tableau associatif d'égalité entre champ valeur.
      * @return int Nombre d'enregistrements.
