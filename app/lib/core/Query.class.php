@@ -42,10 +42,10 @@ class Query
 	private $_values = [];
 	
 	/**
-	 * Nom des tables.
-	 * @var array
+	 * Nom de la table.
+	 * @var string
 	 */
-	private $_tables = [];
+	private $_table = [];
 	
 	/**
 	 * Nom de la classe des objets retournés.
@@ -63,7 +63,7 @@ class Query
 	{
 		$this->_base = $base;
 		$this->_class = $class;
-		$this->_tables[] = $table;
+		$this->_table = $table;
 		$this->select();
 	}
 	
@@ -74,7 +74,7 @@ class Query
 	 */
 	public function table($name)
 	{
-		$this->_tables = [$name];
+		$this->_table = $name;
 		$this->select();
 		return $this;
 	}
@@ -98,7 +98,7 @@ class Query
 	public function select(Array $fields=[])
 	{
 		$this->_type = self::SELECT;
-		$this->_sql = 'SELECT '.((count($fields) > 0) ? (implode(', ', $fields)) : ('*')).' FROM '.$this->_tables[0];
+		$this->_sql = 'SELECT '.((count($fields) > 0) ? (implode(', ', $fields)) : ('*')).' FROM '.$this->_table;
 		return $this;
 	}
 	
@@ -110,95 +110,55 @@ class Query
 	public function count()
 	{
 		$this->_type = self::COUNT;
-		$this->_sql = 'SELECT COUNT(*) nb FROM '.$this->_tables[0];
+		$this->_sql = 'SELECT COUNT(*) nb FROM '.$this->_table;
 		return $this;
 	}
 	
 	/**
 	 * Effectue une jointure simple entre deux tables.
 	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
-	 * @param string $foreign_table Nom de la table de la requête.
-	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
 	 */
-	public function join($table, $id_tables = NULL, $foreign_table = NULL, $id_foreign = NULL)
+	public function join($table, $id_table = NULL, $id_primary = NULL)
 	{
-		return $this->_join('INNER', $table, $id_tables, $foreign_table, $id_foreign);
+		return $this->_join('INNER', $table, $id_table, $id_primary);
 	}
 	
 	/**
 	 * Effectue une jointure gauche entre deux tables.
 	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
-	 * @param string $foreign_table Nom de la table de la requête.
-	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
 	 */
-	public function join_left($table, $id_tables = NULL, $foreign_table = NULL, $id_foreign = NULL)
+	public function join_left($table, $id_table = NULL, $id_primary = NULL)
 	{
-		return $this->_join('LEFT', $table, $id_tables, $foreign_table, $id_foreign);
+		return $this->_join('LEFT', $table, $id_table, $id_primary);
 	}
 	
 	/**
 	 * Effectue une jointure droite entre deux tables.
 	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
-	 * @param string $foreign_table Nom de la table de la requête.
-	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
 	 */
-	public function join_right($table, $id_tables = NULL, $foreign_table = NULL, $id_foreign = NULL)
+	public function join_right($table, $id_table = NULL, $id_primary = NULL)
 	{
-		return $this->_join('RIGHT', $table, $id_tables, $foreign_table, $id_foreign);
+		return $this->_join('RIGHT', $table, $id_table, $id_primary);
 	}
 	
 	/**
 	 * Effectue une jointure entre deux tables.
 	 * @param string $type Type de jointure.
 	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
-	 * @param string $foreign_table Nom de la table de la requête.
-	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation
+	 * @param string $id_primary Nom du champ à mettre en relation
 	 */
-	private function _join($type, $table, $id_tables, $foreign_table, $id_foreign)
+	private function _join($type, $table, $id_table = NULL, $id_primary = NULL)
 	{
-		$table = strtolower($table);
-		if ($id_tables === NULL || $foreign_table === NULL || $id_foreign === NULL)
-		{
-			$foreign_fields = $this->_base->fields($table);
-			$foreign_fields = array_map(function($a){
-				return $a['Field'];
-			}, $foreign_fields);
-			foreach ($this->_tables as $t)
-			{
-				if (in_array('id_'.$t, $foreign_fields))
-				{
-					$id_tables = 'id_'.$t;
-					$foreign_table = $t;
-					$id_foreign = 'id';
-				}
-			}
-			if ($id_tables === NULL)
-			{
-				foreach ($this->_tables as $t)
-				{
-					$foreign_fields = $this->_base->fields($t);
-					$foreign_fields = array_map(function($a){
-						return $a['Field'];
-					}, $foreign_fields);
-					if (in_array('id_'.$table, $foreign_fields))
-					{
-						$id_tables = 'id';
-						$foreign_table = $t;
-						$id_foreign = 'id_'.$table;
-					}
-				}
-			}
-		}
-		else 
-		{
-			$id_tables = ($id_tables != NULL) ? ($id_tables) : ('id');
-			$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ($this->_tables[0].'.id_'.$table);
-		}
-		$this->_sql .= ' '.$type.' JOIN '.$table.' ON '.$table.'.'.$id_tables.' = '.$foreign_table.'.'.$id_foreign;
+		$id_table = ($id_table != NULL) ? ($id_table) : ('id');
+		$id_primary = ($id_primary != NULL) ? ($id_primary) : ($this->_table.'.id_'.$table);
+		$this->_sql .= ' '.$type.' JOIN '.$table.' ON '.$table.'.'.$id_table.' = '.$id_primary;
 		return $this;
 	}
 	
@@ -209,7 +169,7 @@ class Query
 	public function describe()
 	{
 		$this->_type = self::DESCRIBE;
-		$this->_sql = 'DESCRIBE '.$this->_tables[0];
+		$this->_sql = 'DESCRIBE '.$this->_table;
 		return $this;
 	}
 	
@@ -220,7 +180,7 @@ class Query
 	public function delete()
 	{
 		$this->_type = self::DELETE;
-		$this->_sql = 'DELETE FROM '.$this->_tables[0];
+		$this->_sql = 'DELETE FROM '.$this->_table;
 		return $this;
 	}
 	
@@ -232,7 +192,7 @@ class Query
 	public function insert(Array $fields=[])
 	{
 		$this->_type = self::INSERT;
-		$this->_sql = 'INSERT INTO '.$this->_tables[0];
+		$this->_sql = 'INSERT INTO '.$this->_table;
 		if (count($fields) > 0)
 		{
 			$this->_sql .= ' (`'.implode('`, `', $fields).'`)';
