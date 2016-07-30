@@ -9,7 +9,7 @@ function debug_tool_exec($controller, $echx)
     define('DEBUG_TOOL_EXEC', 1);
     
     // Affichage des erreurs résiduelles.
-    $error = "<div class='debug_tool_echo'>Zone affichage debug<br/>";
+    $error = "<div class='debug_tool_echo'>Affichage erreur :<br/>";
     $list = array_merge($controller->error->get_all_exceptions(), $controller->error->get_all_errors());
     $error_exists = (count($list) > 0);
     foreach($list as $e)
@@ -26,7 +26,7 @@ function debug_tool_exec($controller, $echx)
     $error .= "</div>";
     
     // Affichages parasites.
-    $echo = "<div class='debug_tool_echo'>Zone affichages divers dans code<br/>";
+    $echo = "<div class='debug_tool_echo'>Affichage echo / print :<br/>";
     $echo_exists = ($echx != NULL);
     $echo .= $echx;
     $echo .= "</div>";
@@ -71,7 +71,7 @@ function debug_tool_exec($controller, $echx)
         $console_image = 'console_warning';
     }
     $sql = $controller->base->history();
-    $html_sql = "<table id='debug_tool_sql_history'><thead><tr><th>N°</th><th>Time (ms)</th><th>SQL</th></tr></thead><tbody>";
+    $html_sql = "<table class='table_debug'><thead><tr><th>N°</th><th>Temps (ms)</th><th>SQL</th></tr></thead><tbody>";
     foreach ($sql as $i => $s)
     {
         $html_sql .= '<tr><td>'.$i.'</td><td>';
@@ -81,7 +81,6 @@ function debug_tool_exec($controller, $echx)
     $html_sql .= '</tbody></table>';  
     $vars = array();
     $vars['css'] = file_get_contents($dir.'debug_tool.css');
-    $vars['javascript'] = file_get_contents($dir.'debug_tool.js');
     $vars['echo'] = $echo;
     $vars['error'] = $error;
     $vars['time'] = number_format((microtime(TRUE) - ($_SERVER['REQUEST_TIME_FLOAT'])) * 1000); 
@@ -95,6 +94,41 @@ function debug_tool_exec($controller, $echx)
     $vars['base_version'] = $controller->base->engine().' '.$controller->base->version();
     $vars['ip_server'] = $_SERVER['SERVER_ADDR'];
     $vars['name_server'] = $_SERVER['SERVER_NAME'];    
+    $vars['cache_active'] = ($controller->config->feature->cache) ? ('On') : ('Off');
+    $html_head = "<table class='table_debug'><thead><tr><th>Nom</th><th>Valeur</th><th>Type</th></tr></thead><tbody>";
+    $content = '';
+    foreach ($_SESSION as $n => $v)
+    {
+        if ($n !== '__vars')
+        {
+            $t = gettype($v);
+            $v = (is_scalar($v)) ? ($v) : (str_replace([','], '<br/>', json_encode($v)));
+            $content .= '<tr><td>'.$n.'</td><td>'.$v.'</td><td>'.$t.'</td></tr>';
+        }
+    }
+    foreach ($_SESSION['__vars'] as $n => $v)
+    {
+        $t = gettype($v);
+        $v = (is_scalar($v)) ? ($v) : (str_replace([','], '<br/>', json_encode($v)));
+        $content .= '<tr><td>'.$n.'</td><td>'.$v.'</td><td>'.$t.'</td></tr>';
+    }
+    $vars['session_vars'] = $html_head.$content.'</tbody></table>'; 
+    $content = '';
+    foreach ($_POST as $n => $v)
+    {
+        $t = gettype($v);
+        $v = (is_scalar($v)) ? ($v) : (str_replace([','], '<br/>', json_encode($v)));
+        $content .= '<tr><td>'.$n.'</td><td>'.$v.'</td><td>'.$t.'</td></tr>';
+    }
+    $vars['post_vars'] = $html_head.$content.'</tbody></table>'; 
+    $content = '';
+    foreach ($_GET as $n => $v)
+    {
+        $t = gettype($v);
+        $v = (is_scalar($v)) ? ($v) : (str_replace([','], '<br/>', json_encode($v)));
+        $content .= '<tr><td>'.$n.'</td><td>'.$v.'</td><td>'.$t.'</td></tr>';
+    }
+    $vars['get_vars'] = $html_head.$content.'</tbody></table>'; 
     
     // Images.
     $vars['time_image'] = 'data:image/png;base64,'.base64_encode(file_get_contents($dir.'img/time.png'));

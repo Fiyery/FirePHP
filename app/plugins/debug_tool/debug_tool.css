@@ -82,6 +82,7 @@ body
 	width: 100%;
 	box-sizing: border-box;
 	position: absolute;
+	box-shadow: 0 -1px 5px #ceb594;
 }
 
 #debug_tool .bloc_info .bloc_content 
@@ -92,7 +93,7 @@ body
 
 @media all and (min-height: 1280px)
 {
-	#debug_tool .bloc_info .bloc_content
+	#debug_tool .bloc_info
 	{
 		max-height: 1200px;
 	}
@@ -100,7 +101,7 @@ body
 
 @media all and (min-height: 900px)
 {
-	#debug_tool .bloc_info .bloc_content
+	#debug_tool .bloc_info
 	{
 		max-height: 880px;
 	}
@@ -108,7 +109,7 @@ body
 
 @media all and (min-height: 720px)
 {
-	#debug_tool .bloc_info .bloc_content
+	#debug_tool .bloc_info
 	{
 		max-height: 700px;
 	}
@@ -116,7 +117,7 @@ body
 
 @media all and (min-height: 600px)
 {
-	#debug_tool .bloc_info .bloc_content
+	#debug_tool .bloc_info
 	{
 		max-height: 580px;
 	}
@@ -135,34 +136,6 @@ body
 	float: left;
 	width: 40%;
 	text-align: right;
-}
-
-#debug_tool #debug_tool_base table
-{
-	width:99%;
-	margin: 0.5%;
-	margin:10px;
-	border-collapse: collapse;
-	border: 1px solid tan;
-}
-
-#debug_tool #debug_tool_base table td, #debug_tool #debug_tool_base table th
-{
-	border: 1px solid tan;
-	padding: 2px 5px;
-	font-size: 12px;
-}
-
-#debug_tool #debug_tool_base table tr:nth-child(2n+1) td
-{
-	background-color: #F4ECE5;
-}
-
-#debug_tool #debug_tool_base table th
-{
-	background-color: #C19F80;
-	max-height: 20px;
-	color: white;
 }
 
 #debug_tool .bloc_info div.debug_tool_echo
@@ -206,47 +179,81 @@ body
 	padding: 0px 3px 0px 3px;
 }
 
-
-
-
-#debug_tool #debug_barre #debug_barre_console:hover > .bloc_info
+#debug_tool #debug_barre #debug_barre_console:hover > .bloc_info,
+#debug_tool #debug_barre #debug_barre_base:hover > .bloc_info,
+#debug_tool #debug_barre #debug_barre_env:hover > .bloc_info
 {
 	left: 0px;
-	width: 100%;
-	border-radius: 0px;
-	border-left: 0px;
-	border-right: 0px;
-	padding: 0px;
-	overflow: auto;
-}
-
-#debug_tool #debug_barre #debug_barre_time:hover > .bloc_info
-{
-	width: 200px;
-	margin-left: -1px;
-}
-
-#debug_tool #debug_barre #debug_barre_base:hover > .bloc_info
-{
-	left: 0px;
-	width: 100%;
 	width: 100%;
 	border-radius: 0px;
 	border-left: 0px;
 	border-right: 0px;	
-	padding: 2px 5px 0px 2px;
+	padding: 10px;
 	overflow: auto;
 }
 
-#debug_tool #debug_barre #debug_barre_memory:hover > .bloc_info
-{
-	width: 200px;
-	margin-left: -1px;
-}
-
+#debug_tool #debug_barre #debug_barre_memory:hover > .bloc_info,
+#debug_tool #debug_barre #debug_barre_time:hover > .bloc_info,
 #debug_tool #debug_barre #debug_barre_server:hover > .bloc_info
 {
-	width: 300px;
+	width: 250px;
 	margin-left: -1px;
 }
 
+#debug_tool #debug_barre #debug_tool_env 
+{
+	overflow-y: auto;
+}
+
+#debug_tool #debug_barre #debug_tool_env div 
+{
+	min-width: 300px;
+	width: 100%;
+	padding-bottom: 10px; 
+}
+
+#debug_tool #debug_barre #debug_tool_env table th:last-child
+{
+	width: 10%;
+}
+
+#debug_tool #debug_barre #debug_tool_env table th:first-child
+{
+	width: 20%;
+}
+
+#debug_tool .bloc_info table.table_debug
+{
+	width: 100%;
+	margin: auto;
+	border-collapse: collapse;
+	text-align: center;
+	background-color: #FFF;
+	border: 1px solid #9a7647;
+}
+
+#debug_tool .bloc_info table.table_debug th, 
+#debug_tool .bloc_info table.table_debug td
+{
+	padding: 5px;
+}
+
+#debug_tool .bloc_info table.table_debug th
+{
+	background-color: #9a7647;
+	color: #FFF;
+	font-weight: bold;
+}
+
+#debug_tool .bloc_info table.table_debug tr:nth-child(2n)
+{
+	background-color:#e2c299;
+}
+
+#debug_tool .bloc_info .title
+{
+	color: #9a7647;
+	font-weight: bold;
+	font-size: 120%;
+	text-align: left;
+}
