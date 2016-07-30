@@ -5,12 +5,6 @@
 interface Observer
 {
     /**
-     * Liste des événements à écouter.
-     * @var array<string>
-     */
-    private $_listen = [];
-   
-    /**
      * Ajout des événéments à écouter.
      * @param array $name Nom des événements.
      */

@@ -70,11 +70,6 @@
 	},
 	
 	"class_dirs" : [
-		"{$path.lib}",
-		"{$path.lib_form}",
-		"{$path.lib_dev}",
-		"{$path.lib_plugin}",
-		"{$path.lib_error}",
 		"{$path.model}",
 		"{$path.util}"
 	],

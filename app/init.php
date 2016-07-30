@@ -11,7 +11,7 @@ function init_core()
     require(__DIR__.'/lib/core/ClassLoader.class.php');
     $loader = new ClassLoader();
     $loader->set_ext('class.php');
-    $loader->add_dir(__DIR__.'/lib/core/');
+    $loader->add_dir_recursive(__DIR__.'/lib/');
     $loader->enable();
     
     // Initialisation du service container.
@@ -28,6 +28,9 @@ function init_core()
     {
         $loader->add_dir($services->get('config')->path->root_dir.$dir);
     }    
+
+    // Importe les interfaces.
+    $loader->import(__DIR__.'/lib/interfaces/*.interface.php');
     
     // Fuseau horaire français.
     date_default_timezone_set($services->get('config')->system->timezone);

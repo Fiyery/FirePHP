@@ -36,6 +36,31 @@ class ClassLoader
 			$this->_dirs[] = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
 		}
 	}
+
+	/**
+	 * Ajoute le dossier et les sous dossier récursivement.
+	 * @param string $dir Chemin du dosier de classes.
+	 * @param int $depth Niveau des sous-dode sous dossier à ajouter
+	 */
+	public function add_dir_recursive($dir, $depth=-1)
+	{
+		if (is_string($dir) && file_exists($dir))
+		{
+			$dir = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
+			$this->_dirs[] = $dir;
+			if ($depth != 0)
+			{
+				$dirs = array_diff(scandir($dir), ['..', '.']);
+				foreach ($dirs as $d)
+				{
+					if (is_dir($dir.$d))
+					{
+						$this->add_dir_recursive($dir.$d, $depth-1);
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Définie l'extention des fichiers.
