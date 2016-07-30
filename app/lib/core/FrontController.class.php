@@ -242,8 +242,15 @@ class FrontController
 	    }
 	    else 
 	    {
-	    	$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	if (empty($html))
+			try 
+			{
+	    		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+			}
+			catch (Exception $e)
+			{
+				$html = NULL;
+			}
+	    	if ($html === NULL)
 	    	{
 	    		$this->route->set_controller('Default');
 	    		$this->route->set_module('Erreur');

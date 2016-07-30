@@ -243,9 +243,9 @@ class Template extends Singleton
 	 * @param string $var Valeur de remplacement de la variable dans le message d'erreur.
 	 * @param string $level Niveau d'erreur.
 	 */
-	private function error($type,$var=NULL,$level=E_USER_WARNING)
+	private function error($type, $var=NULL)
 	{
-		trigger_error(str_replace('$var',$var,$this->_list_errors[$type]['message']),$level);
+		throw new FireException(str_replace('$var', $var, $this->_list_errors[$type]['message']), 2);
 	}
 	
 	/**
