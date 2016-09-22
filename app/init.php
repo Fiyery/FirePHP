@@ -7,6 +7,9 @@ function init_core()
 {
     // Entête de la requête de retour.
     header('Content-type:text/html; charset=utf-8');
+
+    // Protection contre l'iframe.
+    header( 'X-Frame-Options: DENY' )
     
     require(__DIR__.'/lib/core/ClassLoader.class.php');
     $loader = new ClassLoader();
@@ -35,6 +38,12 @@ function init_core()
     // Fuseau horaire français.
     date_default_timezone_set($services->get('config')->system->timezone);
     
+    // Paramétrage des logs.
+    $services->set('log', function() use ($services) {
+        $service = new FileLogger($services->get('config')->path->log, $services->get('config')->log->granularity);
+        return $service;
+    });
+
     // Initialisation de la session.
     $services->set('session', function(){
         return Session::get_instance();
