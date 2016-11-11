@@ -7,15 +7,26 @@ function init_core()
 {
     // Entête de la requête de retour.
     header('Content-type:text/html; charset=utf-8');
+
+    // Protection contre l'iframe.
+    header('X-Frame-Options: DENY');
     
-    require(__DIR__.'/lib/core/ClassLoader.class.php');
+    require(__DIR__.'/lib/ClassLoader.class.php');
     $loader = new ClassLoader();
     $loader->set_ext('class.php');
-    $loader->add_dir(__DIR__.'/lib/core/');
+
+    // Chargement des classes du framework.
+    $loader->add_dir_recursive(__DIR__.'/lib/', ['obsolete']);
+
     $loader->enable();
     
     // Initialisation du service container.
     $services = ServiceContainer::get_instance();
+
+    // Changement du class loader en tant que service.
+    $services->set('loader', function() use ($loader) {
+        return $loader;
+    });
     
     // Définition des paramètres et de la configuration.
     $services->set('config', function(){
@@ -28,10 +39,19 @@ function init_core()
     {
         $loader->add_dir($services->get('config')->path->root_dir.$dir);
     }    
+
+    // Importe les interfaces.
+    $loader->import(__DIR__.'/lib/interfaces/*.interface.php');
     
     // Fuseau horaire français.
     date_default_timezone_set($services->get('config')->system->timezone);
     
+    // Paramétrage des logs.
+    $services->set('log', function() use ($services) {
+        $service = new FileLogger($services->get('config')->path->log, $services->get('config')->log->granularity);
+        return $service;
+    });
+
     // Initialisation de la session.
     $services->set('session', function(){
         return Session::get_instance();

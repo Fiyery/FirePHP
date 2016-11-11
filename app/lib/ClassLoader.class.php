@@ -7,7 +7,7 @@ class ClassLoader
 {	
 	/**
 	 * Tableau des localisations des fichiers des classes.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_dirs = array();	
 	
@@ -31,9 +31,35 @@ class ClassLoader
 	 */
 	public function add_dir($dir)
 	{
-		if (is_string($dir) && file_exists($dir) && in_array($dir, $this->_dirs) == FALSE)
+		if (is_string($dir) && file_exists($dir) && in_array($dir, $this->_dirs) === FALSE)
 		{
 			$this->_dirs[] = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
+		}
+	}
+
+	/**
+	 * Ajoute le dossier et les sous dossier récursivement.
+	 * @param string $dir Chemin du dosier de classes.
+	 * @param string[] $excluded Nom de dossier 
+	 * @param int $depth Niveau des sous-dode sous dossier à ajouter
+	 */
+	public function add_dir_recursive($dir, $excluded, $depth=-1)
+	{
+		if (is_string($dir) && file_exists($dir))
+		{
+			$dir = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
+			$this->_dirs[] = $dir;
+			if ($depth != 0)
+			{
+				$dirs = array_diff(scandir($dir), ['..', '.']);
+				foreach ($dirs as $d)
+				{
+					if (is_dir($dir.$d) && in_array($d, $excluded) === FALSE)
+					{
+						$this->add_dir_recursive($dir.$d, $excluded, $depth-1);
+					}
+				}
+			}
 		}
 	}
 	
@@ -94,14 +120,14 @@ class ClassLoader
 	 */
 	public function load($name)
 	{
-		if (count($this->_dirs) == 0 || class_exists($name))
+		if (count($this->_dirs) === 0 || class_exists($name))
 		{
 			return FALSE;
 		}
 		$find = FALSE;
 		$file = $name.$this->_ext;
 		reset($this->_dirs);
-		while ($find == FALSE && ($dir = current($this->_dirs)))
+		while ($find === FALSE && ($dir = current($this->_dirs)))
 		{
 			if (file_exists($dir.$file))
 			{

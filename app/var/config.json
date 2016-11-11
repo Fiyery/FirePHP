@@ -2,10 +2,6 @@
 // Vous pouvez utiliser des variables comme : {$property1.property2.(...).propertyn}
 // Cela sera remplacé par la valeur de root->property1->property2->(...)->propertyn.
 {
-	"browser" : {
-		"file" : "{$path.var}browscap.ini"
-	},
-	
 	"db" : {
 		"host" : 		"localhost",
 		"name" : 		"",
@@ -48,6 +44,15 @@
 		"db_save" : 		"{$path.save}database/"
 	},
 	
+	"browser" : {
+		"file" : "{$path.var}browscap.ini"
+	},
+	
+	"class_dirs" : [
+		"{$path.model}",
+		"{$path.util}"
+	],
+
 	"feature" : {
 		"debug" : 				true,
 		"access" : 				true,
@@ -68,16 +73,10 @@
 		"user" : 	"",
 		"pass" : 	""
 	},
-	
-	"class_dirs" : [
-		"{$path.lib}",
-		"{$path.lib_form}",
-		"{$path.lib_dev}",
-		"{$path.lib_plugin}",
-		"{$path.lib_error}",
-		"{$path.model}",
-		"{$path.util}"
-	],
+
+	"log" : {
+		"granularity" : 2 // Séparation des fichiers de log par 1 (jour), 2 (mois), 3 (année) oiu 4 (tout dans le même fichier).
+	},
 	
 	"mail" : {
 		"sender_name" : "admin@localhost.fr",

@@ -5,30 +5,6 @@
 interface Observable 
 {
     /**
-     * Premier état de l'objet.
-     * @var int
-     */
-    const BEGIN = 0;
-    
-    /**
-     * Dernier état de l'objet.
-     * @var int
-     */
-    const END = -1;
-    
-    /**
-     * Etat de l'objet.
-     * @var int
-     */
-    private $_state = 0;
-
-    /**
-     * Liste des noms des événements que la classe peut émettre.
-     * @var array<string>
-     */
-    private $_events = [];
-    
-    /**
      * Ajoute un observateur à l'objet.
      * @param Observer $observer
      */

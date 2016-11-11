@@ -2,9 +2,9 @@
 /**
  * Form génère des formulaires HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses HTMLTag
+ * @uses HTMLElement
  */
-class Form extends HTMLTag
+class Form extends HTMLElement
 {
     /**
      * Liste des constantes disponibles pour l'ajout de champ.
@@ -44,7 +44,7 @@ class Form extends HTMLTag
     
     /**
      * Liste des erreurs.
-     * @var array<string>
+     * @var string[]
      */
 	private $_errors;
 	
@@ -56,7 +56,7 @@ class Form extends HTMLTag
 	
 	/** 
 	 * Liste des attributs 'name' des champs
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_names = [];
 	
@@ -310,7 +310,7 @@ class Form extends HTMLTag
 	
 	/**
 	 * Charge des valeurs de la requête dans une liste de champs.
-	 * @param array<HTMLTag> $content Liste de champs.
+	 * @param HTMLElement[] $content Liste de champs.
 	 */
 	private function _assign_list($content)
 	{
@@ -410,7 +410,7 @@ class Form extends HTMLTag
 	/**
 	 * Retourne le champ avec le name passé en paramètre.
 	 * @param string $name Valeur de l'attribut name du champ recherché.
-	 * @return HTMLTag 
+	 * @return HTMLElement 
 	 */
 	public function get($name)
 	{
@@ -421,8 +421,8 @@ class Form extends HTMLTag
 	/**
 	 * Retourne le champ avec le name passé en paramètre dans une liste de champ.
 	 * @param string $name Valeur de l'attribut name du champ recherché.
-	 * @param array<HTMLTag> Liste de champs.
-	 * @return HTMLTag
+	 * @param HTMLElement[] Liste de champs.
+	 * @return HTMLElement
 	 */
 	private function _get_list($name, $content)
 	{

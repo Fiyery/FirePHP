@@ -6,8 +6,6 @@
  */
 class Mail extends Singleton
 {
-	Use Enable; 
-	
 	/**
 	 * Instance de singleton.
 	 * @var Mail
@@ -67,6 +65,12 @@ class Mail extends Singleton
 	 * @var string
 	 */
 	private $_charset = NULL;
+
+	/**
+	 * Etat courant de l'activité de la classe.
+	 * @var boolean 
+	 */
+	private $_enable = TRUE;
 	
 	/**
 	 * Constructeur de la classe.
@@ -301,7 +305,7 @@ class Mail extends Singleton
         $entete .= 'Bcc: '.$this->_bcc."\n"; // Copie cachée Bcc.
         $message = $this->generate();
         $subject = $this->_subject;
-       	if (count($this->_sender) == 1)
+       	if (count($this->_receivers) === 1)
         {
         	$entete .= 'Delivered-to: '.$this->_receivers[0]."\n\n"; // Destinataire.
         	return mail($this->_receivers[0], $subject, $message, $entete);
@@ -317,6 +321,31 @@ class Mail extends Singleton
         	return $return;
         }	
 	}	
+
+	/**
+	 * Active les fonctionnalités de la classe.
+	 */
+	public function enable() 
+	{
+		$this->_enable = TRUE;
+	}
+	
+	/**
+	 * Désactive les fonctionnalités de la classe.
+	 */
+	public function disable()
+	{
+		$this->_enable = FALSE;
+	}
+	
+	/**
+	 * Vérifie si la classe est active.
+	 * @return boolean
+	 */
+	public function is_enabled()
+	{
+		return $this->_enable;
+	}
 	
 	/**
 	 * Réinitialise les paramètres du mail.

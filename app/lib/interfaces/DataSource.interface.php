@@ -1,15 +1,15 @@
 <?php
 interface DataSource
 {
-    public function query(String $query);
+    public function query(string $query);
     
-    public function insert(Array $list);
+    public function insert(array $list);
     
-    public function delete(Array $key);
+    public function delete(array $key);
     
-    public function load(Array $key);
+    public function load(array $key);
     
-    public function search(Array $fields);
+    public function search(array $fields);
 }
 
 ?>
