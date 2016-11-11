@@ -9,7 +9,7 @@ function init_core()
     header('Content-type:text/html; charset=utf-8');
 
     // Protection contre l'iframe.
-    header( 'X-Frame-Options: DENY' )
+    header('X-Frame-Options: DENY');
     
     require(__DIR__.'/lib/core/ClassLoader.class.php');
     $loader = new ClassLoader();
