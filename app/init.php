@@ -11,14 +11,22 @@ function init_core()
     // Protection contre l'iframe.
     header('X-Frame-Options: DENY');
     
-    require(__DIR__.'/lib/core/ClassLoader.class.php');
+    require(__DIR__.'/lib/ClassLoader.class.php');
     $loader = new ClassLoader();
     $loader->set_ext('class.php');
-    $loader->add_dir_recursive(__DIR__.'/lib/');
+
+    // Chargement des classes du framework.
+    $loader->add_dir_recursive(__DIR__.'/lib/', ['obsolete']);
+
     $loader->enable();
     
     // Initialisation du service container.
     $services = ServiceContainer::get_instance();
+
+    // Changement du class loader en tant que service.
+    $services->set('loader', function() use ($loader) {
+        return $loader;
+    });
     
     // Définition des paramètres et de la configuration.
     $services->set('config', function(){

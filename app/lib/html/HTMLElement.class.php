@@ -1,13 +1,13 @@
 <?php
 /**
- * HTMLTag est la classe représentation HTML.
+ * HTMLElement est la classe représentant un élément HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class HTMLTag 
+class HTMLElement
 {
     /**
      * Liste des attributs.
-     * @var array<string>
+     * @var string[]
      */
 	protected $_attrs;
 	
@@ -19,7 +19,7 @@ class HTMLTag
 	
 	/**
 	 * Contenu de la balise.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	protected $_content;
 	
@@ -34,7 +34,7 @@ class HTMLTag
 	 * @param string $name Nom de la balise
 	 * @param boolean $short Si TRUE, la balise sera en un seul bloc au lieu de deux (balise ouvrante et fermante).
 	 */
-	public function __construct($name,$short=FALSE)
+	public function __construct($name, $short=FALSE)
 	{
 		$this->_name = strtolower($name);
 		$this->_short = (is_bool($short)) ? ($short) : (FALSE);
@@ -44,7 +44,7 @@ class HTMLTag
 		
 	/**
 	 * Retourne tous les attributs.
-	 * @return array<string>
+	 * @return string[]
 	 */
 	public function get_attrs()
 	{
@@ -55,7 +55,7 @@ class HTMLTag
 	 * Définie ou retourne un attribut.
 	 * @param string $name Nom de l'attribut.
 	 * @param string $value Valeur de l'attribut.
-	 * @return HTMLTag
+	 * @return HTMLElement
 	 */
 	public function attr($name, $value)
 	{
@@ -86,8 +86,8 @@ class HTMLTag
 	
 	/**
 	 * Définie le contenu de la balise.
-	 * @param array<string>|string $content Contenu de la balise.
-	 * @return HTMLTag|string Retourne l'objet en cas d'affection ou le contenu de l'objet si aucun paramètre n'est passé.
+	 * @param HTMLElement|HTMLElement[]|string $content Contenu de la balise.
+	 * @return HTMLElement|string Retourne l'objet en cas d'affection ou le contenu de l'objet si aucun paramètre n'est passé.
 	 */
 	public function content($content=NULL)
 	{
@@ -104,8 +104,8 @@ class HTMLTag
 	
 	/**
 	 * Ajoute du contenu de la balise.
-	 * @param array<string>|string $content Contenu de la balise.
-	 * @return HTMLTag La balise.
+	 * @param HTMLElement|HTMLElement[]|string $content Contenu de la balise.
+	 * @return HTMLElement La balise.
 	 */
 	public function add_content($content)
 	{
@@ -116,7 +116,7 @@ class HTMLTag
 	/**
 	 * Définie ou retourne la classe de la balise.
 	 * @param string $class Nom de la ou les classe.
-	 * @return HTMLTag|string Retourne l'objet en cas d'affection ou les classes de l'objet si aucun paramètre n'est passé.
+	 * @return HTMLElement|string Retourne l'objet en cas d'affection ou les classes de l'objet si aucun paramètre n'est passé.
 	 */
 	public function classe($class=NULL)
 	{
@@ -138,7 +138,7 @@ class HTMLTag
 	/**
 	 * Ajoute une classe.
 	 * @param string $class Nom de la classe.
-	 * @return HTMLTag La balise.
+	 * @return HTMLElement La balise.
 	 */
 	public function add_classe($class)
 	{
@@ -149,7 +149,7 @@ class HTMLTag
 	/**
 	 * Définie ou retourne l'identifiant de la balise.
 	 * @param string $id Identifiant de la balise.
-	 * @return HTMLTag|string Retourne l'objet en cas d'affection ou l'identifiant de l'objet si aucun paramètre n'est passé.
+	 * @return HTMLElement|string Retourne l'objet en cas d'affection ou l'identifiant de l'objet si aucun paramètre n'est passé.
 	 */
 	public function id($id=NULL)
 	{
@@ -188,7 +188,7 @@ class HTMLTag
 	 */
 	public function __set($name, $value)
 	{
-	    $this->attr($name,$value);
+	    $this->attr($name, $value);
 	}
 	
 	/**
@@ -217,7 +217,7 @@ class HTMLTag
 	 * Définie la valeur d'un attribut et renvoie l'objet.
 	 * @param string $name Nom de l'attribut
 	 * @param mixed $value Valeur de l'attribut.
-	 * @return HTMLTag
+	 * @return HTMLElement
 	 */
 	public function __call($name, $value)
 	{

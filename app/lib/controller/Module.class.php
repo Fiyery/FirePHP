@@ -21,11 +21,15 @@ class Module
 	
 	/**
 	 * Constructeur.
-	 * @param array<object> $config Tableau qui défini la valeur de chaque attribut de la classe.
+	 * @param object[] $config Tableau qui défini la valeur de chaque attribut de la classe.
 	 */
 	public function __construct($services)
 	{
-	    $this->_services = $services;
+		$this->_services = $services;
+
+		// Récupération du dossier models pour l'import des classes privées.
+		$dirname = dirname((new ReflectionClass($this))->getFileName());
+	    $this->loader->add_dir($dirname.'/models/');
 	}
 	
 	/**

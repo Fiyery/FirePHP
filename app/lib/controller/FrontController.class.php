@@ -134,8 +134,6 @@ class FrontController
         // Exécution des commandes spécifiques avant le chargements du modules.
 	    $this->before_execute();
 	    
-	    $return = TRUE;
-	    
 		$module = $this->route->get_module(); 
 		$action = $this->route->get_action();
 		
@@ -149,61 +147,63 @@ class FrontController
 			$this->css->create($name);
 		}
 		
-		if(class_exists($module) == FALSE)
+		// Importation du fichier du module.
+		$dir_module = $this->config->path->module.strtolower($this->route->get_controller()).'/';
+		$filename = $dir_module.strtolower($module).'/'.$this->config->system->name_file_module;
+		if(file_exists($filename))
 		{
-		    $dir_module = $this->config->path->module.strtolower($this->route->get_controller()).'/';
-		    $filename = $dir_module.strtolower($module).'/'.$this->config->system->name_file_module;
-			if(file_exists($filename))
-			{
-				require($filename);
-				if (class_exists($module) == FALSE && $redirect)
-				{
-					$this->site->add_message($this->config->msg->error_404);
-					$this->route->prev();
-					$return = FALSE;
-				}
-			}
-			elseif ($redirect)
+			require($filename);
+			if (class_exists($module) === FALSE && $redirect)
 			{
 				$this->site->add_message($this->config->msg->error_404);
 				$this->route->prev();
-				$return = FALSE;
+				return FALSE;
 			}
 		}
-		if (class_exists($module))
+		elseif ($redirect)
+		{
+			$this->site->add_message($this->config->msg->error_404);
+			$this->route->prev();
+			return FALSE;
+		}
+
+		// Exécution de la méthode du module.
+		$m = NULL;
+		if (class_exists($module)) 
 		{
 		    $m = new $module($this->_services, get_object_vars($this));
-    		$called_action = $this->config->system->prefix_action_function.$action;
-    		if(method_exists($module, $called_action))
-    		{
-    		    // Exécution du module.
-    		    try 
-    		    {
-    		    	$return = $m->$called_action();
-    		    }
-    			catch (Exception $e)
-    			{
-    				$this->error->handle_exception($e);
-    				$this->route->set_controller('Default');
-    				$this->route->set_module('Erreur');
-    				$this->route->set_action('index');
-    				if ($this->config->tpl->enable)
-    				{
-    					$this->tpl->assign('error_msg', $e->getMessage());
-    				}
-    			}
-    		}
-    		elseif ($redirect)
-    		{
-    			$this->site->add_message($this->config->msg->error_404);
-    			$this->route->redirect();
-    			$return = FALSE;
-    		}
+		}
+
+		$called_action = $this->config->system->prefix_action_function.$action;
+		if(method_exists($m, $called_action))
+		{
+			// Exécution du module.
+			try 
+			{
+				$return = $m->$called_action();
+			}
+			catch (Exception $e)
+			{
+				$this->error->handle_exception($e);
+				$this->route->set_controller('Default');
+				$this->route->set_module('Erreur');
+				$this->route->set_action('index');
+				if ($this->config->tpl->enable)
+				{
+					$this->tpl->assign('error_msg', $e->getMessage());
+				}
+			}
+		}
+		elseif ($redirect)
+		{
+			$this->site->add_message($this->config->msg->error_404);
+			$this->route->redirect();
+			return FALSE;
 		}
 		
 		// Exécution des commandes spécifiques après le chargements du modules.
 		$this->after_execute();
-		return $return;
+		return TRUE;
 	}
 	
 	/**
