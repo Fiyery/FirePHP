@@ -305,7 +305,7 @@ class Mail extends Singleton
         $entete .= 'Bcc: '.$this->_bcc."\n"; // Copie cachée Bcc.
         $message = $this->generate();
         $subject = $this->_subject;
-       	if (count($this->_sender) == 1)
+       	if (count($this->_receivers) === 1)
         {
         	$entete .= 'Delivered-to: '.$this->_receivers[0]."\n\n"; // Destinataire.
         	return mail($this->_receivers[0], $subject, $message, $entete);
