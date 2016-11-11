@@ -1,6 +1,17 @@
 <?php
+/**
+ * Logger défini le comportement minimal d'un d'une classe qui traite les journaux d'événements.
+ * @author Yoann Chaumin <yoann.chaumin@gmail.com>
+ * @uses Observer
+ */
 abstract class Logger implements Observer
 {
+    /**
+     * Liste des événements reçus.
+     * @var array
+     */
+    protected $_events = [];
+
     /**
      * Constructeur.
      */
@@ -10,16 +21,17 @@ abstract class Logger implements Observer
     }
 
     /**
-     * Récupère une information.
-     * @param string $text Contenu de l'information.
-     * @param string $name Titre de l'information.
-     * @param string $type Catégorie de l'information permettant le trie.
+     * Traite l'action suite à un événement généré par la classe à observer.
+     * @param Event $event
      */
-    public abstract function log($text, $name = NULL, $type = NULL);
+    public function notify(Event $event)
+    {
+        $this->_events[] = $event;
+    }
 
     /**
      * Sauvegarde les informations récupérées.
      */
-    public abstract function save();
+    public abstract function write();
 }
 ?>

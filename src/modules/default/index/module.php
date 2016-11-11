@@ -13,6 +13,15 @@ class Index extends Module
 		// mais seulement le principale qui retournera la réponse.
  		// $this->tpl->assign('ajax', 'test');
 		// return FALSE;
+
+		// $l = new FileLogger();
+		// $l->path('./app/var/log')->granularity(FileLogger::TIME_MONTH);
+		// $e = new Event("User", "Début de la récupération des utilisateurs", "error", ['args'=> func_get_args(), 'test'=>['1',2,3]]);
+		// $e->fire();
+		// $l->notify($e);
+		// $l->write();
+
+		
 	}
 }
 ?>
