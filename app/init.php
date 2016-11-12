@@ -78,7 +78,7 @@ function init_core()
     if ($services->get('config')->tpl->enable)
     {
     	$services->set('template', function() use ($services) {
-    		$service = Template::get_instance($services->get('config')->path->tpl_cache);
+    		$service = new Template($services->get('config')->path->tpl_cache);
     		$service->set_syntaxe(Template::SMARTY_STRICT);
     		if ($services->get('config')->feature->tpl_save)
     		{
