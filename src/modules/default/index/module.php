@@ -17,6 +17,14 @@ class Index extends Module
 		// $e->fire();
 		// $l->notify($e);
 		// $l->write();
+		
+		// Exemple Template dynamique
+		$t = new Template('.');
+		$t->assign('onglet_buttons', ['Onglet 1', 'Onglet 2']);
+		$t->set_syntaxe(Template::SMARTY_STRICT);
+		$this->tpl->assign('var', $t->fetch('res/views/components/ul.tpl'));
+
+		
 	}
 }
 ?>

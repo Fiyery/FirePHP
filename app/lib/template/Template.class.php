@@ -3,7 +3,7 @@
  * Template est le moteur de template.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class Template extends Singleton
+class Template 
 {
 	/**
 	 * Constant pour la syntaxe d'interpréation en php.
@@ -24,12 +24,6 @@ class Template extends Singleton
 	const SMARTY_STRICT = 3;
 	
 	/**
-	 * Instance de Singleton.
-	 * @var Template
-	 */
-	protected static $_instance = NULL;
-	
-	/**
 	 * Syntaxe d'interprétation du moteur de template.
 	 * @var int
 	 */
@@ -43,7 +37,7 @@ class Template extends Singleton
 	
 	/**
 	 * Tableau contenant les valeurs à assigner aux templates.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_assigns;
 	
@@ -64,7 +58,7 @@ class Template extends Singleton
 	 */
 	public function __construct($tmp_dir)
 	{
-		if (file_exists($tmp_dir) == FALSE)
+		if (file_exists($tmp_dir) === FALSE)
 		{
 			mkdir($tmp_dir, 0755, TRUE);
 		}
@@ -75,7 +69,7 @@ class Template extends Singleton
 			'TPL_ERROR_UNDEFINED_VARIABLE' => array('code'=>2,'message'=>'Undefined variable "$var" for Template'),
 			'TPL_ERROR_ASSIGN' => array('code'=>3,'message'=>'Name of variable "$var" is wong : It must only content [a-zA-Z0-9]')
 		);
-		$this->_assigns = array();
+		$this->_assigns = [];
 	}	
 	
 	/**
@@ -100,7 +94,7 @@ class Template extends Singleton
 	 * @param string|array $value Valeur de la variable.
 	 * @return boolean
 	 */
-	public function assign($name,$value)
+	public function assign($name, $value)
 	{
 		if (is_array($name))
 		{
@@ -153,10 +147,9 @@ class Template extends Singleton
 	 */
 	public function fetch($template=NULL)
 	{
-		$template = $template;
 		if (empty($template) || !file_exists($template) || !is_readable($template))
 		{
-			$this->error('TPL_ERROR_FILE_NOT_FOUND',$template);
+			$this->error('TPL_ERROR_FILE_NOT_FOUND', $template);
 			return NULL;
 		}
 		return $this->parse($template);
@@ -225,7 +218,7 @@ class Template extends Singleton
 		    $filename = $this->_tmp_dir.basename($template).'-'.md5(time()).rand(0,100).'.php';
 		    file_put_contents($filename, $content);
 		    require($filename);
-		    if ($this->_save_tpl == FALSE)
+		    if ($this->_save_tpl === FALSE)
 		    {
 		    	unlink($filename);
 		    }
@@ -254,16 +247,6 @@ class Template extends Singleton
 	public function save_tpl()
 	{
 	    $this->_save_tpl = TRUE;
-	}
-	
-	/**
-	 * Retourne une instance de Template avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Base
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
 	}
 }
 ?>
