@@ -34,14 +34,14 @@ class Config extends Singleton
 	}
 	
 	/**
-	 * Remplace les variables du ficheir de configuration par leur valeur.
+	 * Remplace les variables du fichier de configuration par leur valeur.
 	 * @param stdClass $var Objet des paramètres.
 	 */
 	private function _parse(&$var)
 	{
 		foreach ($var as &$v)
 		{
-			if (is_string($v) && empty($v) == FALSE)
+			if (is_string($v) && empty($v) === FALSE)
 			{
 				if (preg_match('#{\$([\w\.]*)}#', $v, $m))
 				{
@@ -52,7 +52,8 @@ class Config extends Singleton
 					$value = $this->_params;
 					while($i < $max && property_exists($value, $m[$i]))
 					{
-						$value = $value->$m[$i];
+						$attr = $m[$i];
+						$value = $value->$attr;
 						$i++;
 					}
 					if ($i == $max && is_scalar($value))
