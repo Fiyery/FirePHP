@@ -13,43 +13,43 @@ class Interval
 	
 	/**
 	 * Nombre de secondes.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_second;
 	
 	/**
 	 * Nombre de minutes.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_minute;
 	
 	/**
 	 * Nombre d'heures.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_hour;
 	
 	/**
 	 * Nombre de jours.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_day;
 	
 	/**
 	 * Nombre total de jours.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_day_all;
 	
 	/**
 	 * Nombre de mois.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_month;
 	
 	/**
 	 * Nombre d'années.
-	 * @var number.
+	 * @var numeric
 	 */
 	private $_year;
 	
@@ -78,63 +78,63 @@ class Interval
 	
 	/**
 	 * Retourne la seconde de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_second()
+	public function second()
 	{
 		return $this->_second;
 	}
 	
 	/**
 	 * Retourne la minute de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_minute()
+	public function minute()
 	{
 		return $this->_minute;
 	}
 	
 	/**
 	 * Retourne l'heure de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_hour()
+	public function hour()
 	{
 		return $this->_hour;
 	}
 	
 	/**
 	 * Retourne le jour de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_day()
+	public function day()
 	{
 		return $this->_day;
 	}
 	
 	/**
 	 * Retourne le mois de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_month()
+	public function month()
 	{
 		return $this->_month;
 	}
 	
 	/**
 	 * Retourne l'année de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_year()
+	public function year()
 	{
 		return $this->_year;
 	}
 	
 	/**
 	 * Retourne toutes les secondes de la date courante.
-	 * @return number
+	 * @return numeric
 	 */
-	public function get_all_second()
+	public function all_second()
 	{
 		$seconds = $this->_second;
 		$seconds += $this->_minute * 60;
@@ -145,9 +145,9 @@ class Interval
 	
 	/**
 	 * Retourne toutes les minutes de la date courante.
-	 * @return number
+	 * @return numeric
 	 */
-	public function get_all_minute()
+	public function all_minute()
 	{
 		$minutes = $this->_minute;
 		$minutes += $this->_hour * 60;
@@ -157,9 +157,9 @@ class Interval
 
 	/**
 	 * Retourne toutes les heures de la date courante.
-	 * @return number
+	 * @return numeric
 	 */
-	public function get_all_hour()
+	public function all_hour()
 	{
 		$hours = $this->_hour;
 		$hours += $this->_day_all * 24;
@@ -168,18 +168,18 @@ class Interval
 	
 	/**
 	 * Retourne tous les jours de la date courante.
-	 * @return number
+	 * @return numeric
 	 */
-	public function get_all_day()
+	public function all_day()
 	{
 		return $this->_day_all;
 	}
 	
 	/**
 	 * Retourne tous les mois de la date courante.
-	 * @return number
+	 * @return numeric
 	 */
-	public function get_all_month()
+	public function all_month()
 	{
 		$mois = $this->_month;
 		$mois += $this->_year * 12;
@@ -188,9 +188,9 @@ class Interval
 	
 	/**
 	 * Retourne toutes les années de la date courante.
-	 * @return number.
+	 * @return numeric
 	 */
-	public function get_all_year()
+	public function all_year()
 	{
 		return $this->_year;
 	}
