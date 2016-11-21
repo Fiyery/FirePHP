@@ -3,7 +3,6 @@
  * Date est un outil de simplification de la gestion du temps.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Interval
- * @uses FireException
  */
 class Date
 {
@@ -11,109 +10,55 @@ class Date
      * Format YYMMDDHHMMSS. Peut être reçu par le constructeur.
      * @var int
      */
-    const NORMAL = 1;
+    const NORMAL = 'YmdHis';
     
     /**
      * Format timestamps. Peut être reçu par le constructeur.
      * @var int
      */
-    const TIMESTAMP = 2;
+    const TIMESTAMP = 'U';
     
     /**
      * Format YYYY-MM-DD HH:MM:SS.
      * @var int
      */
-    const ENGLISH = 3;
+    const ENGLISH = 'Y-m-d H:i:s';
     
     /**
      * Format DD/MM/YYYY HH:MM:SS.
      * @var int
      */
-    const FRENCH = 4;
+    const FRENCH = 'd/m/Y H:i:s';
     
     /**
-     * Format DAY_NAME DD MONTH_NAME YYYY à HH h MM.
+     * Format DAY_NAME DD MONTH_NAME YYYY HHhMM.
      * @var int
      */
-    const FULLWORD = 6;
+    const FULLWORD = 'l d F Y H\hi';
     
      /**
-     * Format DD MONTH_NAME YYYY à HH h MM.
+     * Format DD MONTH_NAME YYYY HHhMM.
      * @var int
      */
-    const SIMPLE = 7;
+    const SIMPLE = 'd F Y H\hi';
     
     /**
      * Format HH:MM:SS.
      * @var int
      */
-    const HORAIRE = 8;
+    const HORAIRE = 'H:i:s';
     
     /**
-     * Format HH h MM.
+     * Format HHhMM.
      * @var int
      */
-    const HOUR = 9;
+    const HOUR = 'H\hi';
     
     /**
      * Format DD MONTH_NAME YYYY.
      * @var int
      */
-    const DAY = 10;
-    
-    /**
-     * Nombre de secondes de la date.
-     * @var number
-     */
-	private $_second;
-	
-	/**
-	 * Nombre de minutes de la date.
-	 * @var number
-	 */
-	private $_minute;
-	
-	/**
-	 * Nombre d'heures de la date.
-	 * @var number
-	 */
-	private $_hour;
-	
-	/**
-	 * Nombre de jours de la date.
-	 * @var number
-	 */
-	private $_day;
-	
-	/**
-	 * Nombre de mois de la date.
-	 * @var number
-	 */
-	private $_month;
-	
-	/**
-	 * Nombre d'année de la date.
-	 * @var number
-	 */
-	private $_year;
-	
-	/**
-	 * Nombre de semaine de la date.
-	 * @var number
-	 */
-	private $_week;
-	
-	/**
-	 * Numero du jour de la semaine de la date.
-	 * @var int
-	 */
-	private $_day_week;
-	
-	/**
-	 * Numero du jour de l'année de la date.
-	 * @var number
-	 */
-	private $_day_year;
+    const DAY = 'd F Y';
 	
 	/**
 	 * Timestamp de la date.
@@ -123,56 +68,59 @@ class Date
 	
 	/**
 	 * Liste des noms des jours de la semaine.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_day_names;
+	private static $_day_names;
 	
 	/**
 	 * Liste des noms des jours de la semaine.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_month_names;
+	private static $_month_names;
 	
 	/**
 	 * Constructeur.
 	 * @param string $date Date à traiter.
-	 * @param int $format Format de la date à traiter. N'accepte que NORMAL et TIMESTAMP
-	 * @throws FireException
+	 * @param int $format Format de la date à traiter. 
 	 */
-	public function __construct($date=NULL, $format=self::NORMAL)
+	public function __construct($date=NULL, $format=NULL)
 	{
-		if ($format != self::NORMAL && $format != self::TIMESTAMP)
+		if ($format !== NULL)
 		{
-			$d = debug_backtrace();
-			throw new FireException('Le format de la date est invalide', $d[0]['file'], $d[0]['line']);
+			$date = DateTime::createFromFormat($format, $this->format());
+			$this->_timestamp = (is_object($date)) ? ($date->getTimestamp()) : (time());	
 		}
-		if ($format == self::TIMESTAMP)
+		else
 		{
-			$value = date('YmdHis',$date);
-			if ($value == FALSE)
+			$this->_timestamp = strtotime($date);
+			if ($this->_timestamp === FALSE) 
 			{
-				$format = self::NORMAL;
-			}
-			else
-			{
-			    $this->_timestamp = $date;
+				$this->_timestamp = (is_numeric($date)) ? ($date) : (time());
 			}
 		}
-		if ($format == self::NORMAL)
-		{
-			$value = ($this->check($date)) ? ($date) : (self::get_now());
-		}
-		$this->_year = substr($value,0,4);
-		$this->_month = substr($value,4,2);
-		$this->_day = substr($value,6,2);
-		$this->_hour = substr($value,8,2);
-		$this->_minute = substr($value,10,2);
-		$this->_second = substr($value,12,2);
-		$this->_day_names = array('1'=>'Lundi','2'=>'Mardi','3'=>'Mercredi','4'=>'Jeudi','5'=>'Vendredi','6'=>'Samedi','7'=>'Dimanche');
-		$this->_month_names = array('1'=>'Janvier','2'=>'Février','3'=>'Mars','4'=>'Avril','5'=>'Mai','6'=>'Juin','7'=>'Juillet','8'=>'Août','9'=>'Septembre','10'=>'Octobre','11'=>'Novembre','12'=>'Décembre');
-		$this->_week = NULL;
-		$this->_day_week = NULL;
-		$this->_day_year = NULL;
+		self::$_day_names = [
+			'Lundi',
+			'Mardi',
+			'Mercredi',
+			'Jeudi',
+			'Vendredi',
+			'Samedi',
+			'Dimanche'
+		];
+		self::$_month_names = [
+			'Janvier',
+			'Février',
+			'Mars',
+			'Avril',
+			'Mai',
+			'Juin',
+			'Juillet',
+			'Août',
+			'Septembre',
+			'Octobre',
+			'Novembre',
+			'Décembre'
+		];
 	}
 	
 	/**
@@ -188,13 +136,8 @@ class Date
 	 * Retourne le timestamps de la date courrante.
 	 * @return number 
 	 */
-	public function get_timestamp()
+	public function timestamp()
 	{
-		if ($this->_timestamp == NULL)
-		{
-			$date = DateTime::createFromFormat('YmdHis',$this->format());
-			$this->_timestamp = (is_object($date)) ? ($date->getTimestamp()) : (FALSE);
-		}
 		return $this->_timestamp;
 	}
 	
@@ -202,83 +145,81 @@ class Date
 	 * Retourne les secondes de la date courante.
 	 * @return number
 	 */
-	public function get_second()
+	public function second()
 	{
-		return $this->_second;
+		return date('s', $this->_timestamp);
 	}
 	
 	/**
 	 * Retourne les minutes de la date courante.
 	 * @return number
 	 */
-	public function get_minute()
+	public function minute()
 	{
-		return $this->_minute;	}
+		return date('i', $this->_timestamp);
+	}
+
+	/**
+	 * Retourne les heures de la date courante.
+	 * @return number
+	 */
+	public function hour()
+	{
+		return date('H', $this->_timestamp);
+	}
 	
 	/**
 	 * Retourne le jour de la date courante.
 	 * @return number
 	 */
-	public function get_day()
+	public function day()
 	{
-		return $this->_day;
+		return date('d', $this->_timestamp);
 	}
 	
 	/**
 	 * Retourne le mois de la date courante.
 	 * @return number
 	 */
-	public function get_month()
+	public function month()
 	{
-		return $this->_month;
+		return date('m', $this->_timestamp);
 	}
 	
 	/**
 	 * Retourne l'année de la date courante.
 	 * @return number
 	 */
-	public function get_year()
+	public function year()
 	{
-		return $this->_year;
+		return date('Y', $this->_timestamp);
 	}
 	
 	/**
 	 * Retourne le numéro de semaine de la date courrante.
 	 * @return number
 	 */
-	public function get_week()
+	public function week()
 	{
-		if ($this->_week == NULL)
-		{
-			$this->_week = date('W',$this->get_timestamp());
-		}
-		return $this->_week;
+		return date('W', $this->_timestamp);
 	}
 
 	/**
 	 * Retourne le numéro de la semaine de la date courrante.
 	 * @return int
 	 */
-	public function get_day_week()
+	public function day_week()
 	{
-		if ($this->_day_week == NULL)
-		{
-			$this->_day_week = date('w',$this->get_timestamp());
-		}
-		return $this->_day_week;
+		return	date('w', $this->_timestamp);
 	}
 
 	/**
 	 * Rretourne le numéro du jour de l'année de la date courrante.
 	 * @return number
 	 */
-	public function get_day_year()
+	public function day_year()
 	{
-		if ($this->_day_year == NULL)
-		{
-			$this->_day_year = date('z',$this->get_timestamp()) + 1;
-		}
-		return $this->_day_year;
+		return date('z', $this->_timestamp) + 1;
 	}
 	
 	/**
@@ -288,76 +229,20 @@ class Date
 	 */
 	public function format($format=self::NORMAL)
 	{
-		$date = NULL;
-		if ($format == self::NORMAL)
+		$date = date($format, $this->_timestamp);
+		$date = str_replace(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'], self::$_day_names, $date);
+		foreach (self::$_day_names as $d)
 		{
-			$date = $this->_year.$this->_month.$this->_day.$this->_hour.$this->_minute.$this->_second;
+			$sub_day_names[] = substr($d, 0, 3);
 		}
-		elseif ($format == self::ENGLISH)
+		$date = str_replace(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], $sub_day_names, $date);
+		$date = str_replace(['January','February','March','April','May','June','July','August','September','October','November','December'], self::$_month_names, $date);
+		foreach (self::$_month_names as $m)
 		{
-			$date = $this->_year.'-'.$this->_month.'-'.$this->_day.' '.$this->_hour.':'.$this->_minute.':'.$this->_second;
+			$sub_month_names[] = substr($m, 0, 3);
 		}
-		elseif ($format == self::FRENCH)
-		{
-			$date = $this->_day.'/'.$this->_month.'/'.$this->_year.' '.$this->_hour.':'.$this->_minute.':'.$this->_second;
-		}
-		elseif ($format == self::FULLWORD)
-		{
-			$date = $this->_day_names[$this->get_day_week()].' '.$this->_day.' '.$this->_month_names[(int)$this->_month].' '.$this->_year.' à '.$this->_hour.' h '.$this->_minute;
-		}
-		elseif ($format == self::SIMPLE)
-		{
-			$date = $this->_day.' '.$this->_month_names[(int)$this->_month].' '.$this->_year.' à '.$this->_hour.' h '.$this->_minute;
-		}
-		elseif ($format == self::HORAIRE)
-		{
-			$date = $this->_hour.':'.$this->_minute.':'.$this->_second;
-		}
-		elseif ($format == self::HOUR)
-		{
-			$date = $this->_hour.' h '.$this->_minute;
-		}
-		elseif ($format == self::DAY)
-		{
-			$date = $date = $this->_day.' '.$this->_month_names[(int)$this->_month].' '.$this->_year;
-		}
-		elseif ($format == self::FRENCH)
-		{
-			$date = $this->_day.'/'.$this->_month.'/'.$this->_year.' à '.$this->_hour.'h'.$this->_minute;
-		}
-		else
-		{
-			$date = date($format,$this->get_timestamp());
-			$date = str_replace(array('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'), $this->_day_names, $date);
-			foreach ($this->_day_names as $d)
-			{
-				$sub_day_names[] = substr($d,0,3);
-			}
-			$date = str_replace(array('Mon','Tue','Wed','Thu','Fri','Sat','Sun'),$sub_day_names,$date);
-			$date = str_replace(array('January','February','March','April','May','June','July','August','September','October','November','December'),$this->_month_names,$date);
-			foreach ($this->_month_names as $m)
-			{
-				$sub_month_names[] = substr($m,0,3);
-			}
-			$date = str_replace(array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'),$sub_month_names,$date);
-		}
+		$date = str_replace(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], $sub_month_names, $date);
 		return $date;
-	}
-	
-	/**
-	 * Extrait les différentes parties de la date courante.
-	 * @return array<number> Liste des valeur avec leur clé.
-	 */
-	public function extract()
-	{
-		$tab['date'] = $this->format();
-		$tab['year'] = $this->_year;
-		$tab['month'] = $this->_month;
-		$tab['day'] = $this->_day;
-		$tab['hour'] = $this->_hour;
-		$tab['minute'] = $this->_minute;
-		$tab['second'] = $this->_second;
-		return $tab;
 	}
 
 	/**
@@ -371,18 +256,18 @@ class Date
 		{
 			return NULL;
 		}
-		$datetime1 = new DateTime($this->_year.'-'.$this->_month.'-'.$this->_day.' '.$this->_hour.':'.$this->_minute.':'.$this->_second);
-		$datetime2 = new DateTime($date->_year.'-'.$date->_month.'-'.$date->_day.' '.$date->_hour.':'.$date->_minute.':'.$date->_second);
+		$datetime1 = new DateTime($this->format(self::ENGLISH));
+		$datetime2 = new DateTime($date->format(self::ENGLISH));
 		return new Interval($datetime1->diff($datetime2));
 	}
-	
+
 	/**
-	 * Retourne la date actuelle au format NORMAL.
-	 * @return string
+	 * Compare deux dates.
+	 * @return int
 	 */
-	public static function get_now()
+	public function compare(Date $d)
 	{
-		return date('YmdHis');
+		return $this->_timestamp <=> $d->timestamp();
 	}
 
 	/**
@@ -396,13 +281,13 @@ class Date
 		{
 			return FALSE;
 		}
-		$year = substr($date,0,4);
-		$month = substr($date,4,2);
-		$day = substr($date,6,2);
-		$hour = substr($date,8,2);
-		$minute = substr($date,10,2);
-		$second = substr($date,12,2);
-		if (checkdate($month,$day,$year) == FALSE || $hour > 23 || $minute > 59 || $second > 59)
+		$year = substr($date, 0, 4);
+		$month = substr($date, 4, 2);
+		$day = substr($date, 6, 2);
+		$hour = substr($date, 8, 2);
+		$minute = substr($date, 10, 2);
+		$second = substr($date, 12, 2);
+		if (checkdate($month, $day, $year) == FALSE || $hour > 23 || $minute > 59 || $second > 59)
 		{
 			return FALSE;
 		}
@@ -421,32 +306,24 @@ class Date
 		{
 			return NULL;
 		}
-		$d = $this->extract();
+		$second = $this->second(); 
+		$minute = $this->minute(); 
+		$hour = $this->hour(); 	
+		$day = $this->day(); 
+		$month = $this->month(); 
+		$year = $this->year(); 
 		switch ($period)
 		{
-			case 'second': $d['second'] += $value; break;
-			case 'minute': $d['minute'] += $value; break;
-			case 'hour': $d['hour'] += $value; break;
-			case 'day': $d['day'] += $value; break;
-			case 'week': $d['day'] += $value*7; break;
-			case 'month': $d['month'] += $value; break;
-			case 'year': $d['year'] += $value; break;
+			case 'second': $second += $value; break;
+			case 'minute': $minute += $value; break;
+			case 'hour': $hour += $value; break;
+			case 'day': $day += $value; break;
+			case 'week': $day += $value*7; break;
+			case 'month': $month += $value; break;
+			case 'year': $year += $value; break;
 			default: break;
 		}
-		$timestamp = mktime($d['hour'],$d['minute'],$d['second'],$d['month'],$d['day'],$d['year']);
-		$value = date('YmdHis',$timestamp);
-		if ($value !== FALSE)
-		{
-			$this->_year = substr($value,0,4);
-			$this->_month = substr($value,4,2);
-			$this->_day = substr($value,6,2);
-			$this->_hour = substr($value,8,2);
-			$this->_minute = substr($value,10,2);
-			$this->_second = substr($value,12,2);
-			$this->_week = NULL;
-			$this->_day_week = NULL;
-			$this->_day_year = NULL;
-		}
+		$this->_timestamp = mktime($hour, $minute, $second, $month, $day, $year);
 		return $this;
 	}
 }
