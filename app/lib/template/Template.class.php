@@ -91,11 +91,11 @@ class Template
 	}
 	/**
 	 * Assigne une valeur à une variable du template.
-	 * @param string $name Nom de la variable.
-	 * @param string|array $value Valeur de la variable.
+	 * @param mixed $name Nom de la variable.
+	 * @param mixed $value Valeur de la variable.
 	 * @return boolean
 	 */
-	public function assign($name, $value)
+	public function assign($name, $value = NULL)
 	{
 		if (is_array($name))
 		{
