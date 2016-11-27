@@ -11,7 +11,7 @@ function init_core()
     // Protection contre l'iframe.
     header('X-Frame-Options: DENY');
     
-    require(__DIR__.'/lib/ClassLoader.class.php');
+    require(__DIR__.'/lib/loader/ClassLoader.class.php');
     $loader = new ClassLoader();
     $loader->set_ext('class.php');
 
