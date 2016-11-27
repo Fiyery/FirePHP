@@ -4,7 +4,7 @@
 		"method" : "*",
         "controller" : "Default",
         "module" : "Erreur",
-        "action" : "index"
+        "action" : "404"
     }, 
 	{
 		"url" : "/css/*",
