@@ -6,9 +6,10 @@ interface Observer
 {
     /**
      * Ajout des événéments à écouter.
-     * @param array $name Nom des événements.
+     * @param string $name Nom des événements.
+     * @return Observer
      */
-    public function listen(array $name);
+    public function listen(string $name);
    
     /**
      * Traite l'action suite à un événement généré par la classe à observer.

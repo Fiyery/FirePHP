@@ -14,7 +14,7 @@ class Request extends Singleton
 	
 	/**
 	 * Liste des balises HTML dangereuses.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_tags;
 	

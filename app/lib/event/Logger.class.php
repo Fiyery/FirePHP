@@ -32,6 +32,6 @@ abstract class Logger implements Observer
     /**
      * Sauvegarde les informations récupérées.
      */
-    public abstract function write();
+    public abstract function log();
 }
 ?>

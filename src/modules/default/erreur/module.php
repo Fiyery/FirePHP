@@ -7,8 +7,6 @@ class Erreur extends Module
         {
             $this->tpl->assign('error_msg', $this->req->error_msg);
         }
-
-        $u = new User();
     }
 }
 ?>

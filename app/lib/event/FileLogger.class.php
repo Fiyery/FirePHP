@@ -73,7 +73,7 @@ class FileLogger extends Logger
     /**
      * Sauvegarde les informations récupérées.
      */
-    public function write()
+    public function log()
     {
         $this->_path = (substr(str_replace('\\', '/', $this->_path), -1) !== '/') ? ($this->_path.'/') : ($this->_path);
         foreach ($this->_events as $e)
@@ -89,19 +89,19 @@ class FileLogger extends Logger
             }
             switch ($this->_granularity)
             {
-                case self::TIME_DAY : $filename .= date('Y-m-d', $e->time()).'.log'; break;
-                case self::TIME_MONTH : $filename .= date('Y-m', $e->time()).'.log'; break;
-                case self::TIME_YEAR : $filename .= date('Y', $e->time()).'.log'; break;
+                case self::TIME_DAY : $filename .= date('Y-m-d', $e->context()->time()).'.log'; break;
+                case self::TIME_MONTH : $filename .= date('Y-m', $e->context()->time()).'.log'; break;
+                case self::TIME_YEAR : $filename .= date('Y', $e->context()->time()).'.log'; break;
                 default:$filename .= 'default.log';
             }
             $f = fopen($filename, 'a+');
-            $content = date('Y-m-d H:i:s', $e->time()).' '.$e->msg().
-                "\n\tTime : ".$e->time().' ms'.
-                "\n\tRequest time : ".$e->request_time().' ms'.
-                "\n\tFile : ".$e->file().':'.$e->line().
-                "\n\tFunction : ".(($e->classe() !== NULL) ? ($e->classe().$e->func_type().$e->func()) : ($e->func())).'()'.
-                "\n\tClient : ".$e->client().' ('.$e->client_agent().')';
-            foreach ($e->args() as $name => $value)
+            $content = date('Y-m-d H:i:s', $e->context()->time()).' '.$e->msg().
+                "\n\tTime : ".$e->context()->time().' ms'.
+                "\n\tRequest time : ".$e->context()->request_time().' ms'.
+                "\n\tFile : ".$e->context()->file().':'.$e->context()->line().
+                "\n\tFunction : ".(($e->context()->classe() !== NULL) ? ($e->context()->classe().$e->context()->func_type().$e->context()->func()) : ($e->context()->func())).'()'.
+                "\n\tClient : ".$e->context()->client().' ('.$e->context()->client_agent().')';
+            foreach ($e->context()->args() as $name => $value)
             {
                 if (is_scalar($value) === FALSE)
                 {

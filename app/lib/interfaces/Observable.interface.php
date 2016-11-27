@@ -30,7 +30,7 @@ interface Observable
     
     /**
      * Retourne tous les observateurs de l'objet.
-     * @return array<Observer>
+     * @return Observer[]
      */
     public function get_observers();
 }

@@ -3,6 +3,12 @@
  * FrontController est la classe de chargement des modules du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses ServiceContainer
+ * @uses Event
+ * @event Core::init Event envoyé au moment de l'initialisation.
+ * @event Core::execute_before Event envoyé avant l'exécution sur module.
+ * @event Core::execute_after Event envoyé après l'exécution sur module.
+ * @event Core::assign Event envoyé après la génération du template du module.
+ * @event Core::run Envoyé pour lancer le module normalement appelé par la requête.
  */
 class FrontController
 {         
@@ -18,6 +24,9 @@ class FrontController
 	public function __construct(ServiceContainer $services)
 	{
         $this->_services = $services;
+
+		// Event pour lancer les actions du Hook.
+		$this->hook->notify(new Event('Core::init'));
 	}
 	
 	/**
@@ -131,6 +140,9 @@ class FrontController
 	 */
 	public function execute($redirect=FALSE)
 	{
+		// Event pour lancer les actions du Hook.
+		$this->hook->notify(new Event('Core::execute_before'));
+
         // Exécution des commandes spécifiques avant le chargements du modules.
 	    $this->before_execute();
 	    
@@ -152,7 +164,7 @@ class FrontController
 		$filename = $dir_module.strtolower($module).'/'.$this->config->system->name_file_module;
 		if(file_exists($filename))
 		{
-			require($filename);
+			// require($filename);
 			if (class_exists($module) === FALSE && $redirect)
 			{
 				$this->site->add_message($this->config->msg->error_404);
@@ -180,6 +192,9 @@ class FrontController
 			// Exécution du module.
 			try 
 			{
+				// Event pour lancer les actions du Hook.
+				$this->hook->notify(new Event('Core::run'));
+
 				$return = $m->$called_action();
 			}
 			catch (Exception $e)
@@ -200,6 +215,9 @@ class FrontController
 			$this->route->redirect();
 			return FALSE;
 		}
+
+		// Event pour lancer les actions du Hook.
+		$this->hook->notify(new Event('Core::execute_after'));
 		
 		// Exécution des commandes spécifiques après le chargements du modules.
 		$this->after_execute();
@@ -209,7 +227,7 @@ class FrontController
 	/**
 	 * Charge le contenu du module dans la page.
 	 * @param string $var Nom de la variable du template.
-	 * @return $string Contenu du module.
+	 * @return string Contenu du module.
 	 */
 	public function assign($var=NULL)
 	{	
@@ -270,6 +288,9 @@ class FrontController
 	    	$this->tpl->assign($var, $html);
 	    	$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
 	    }
+
+		// Event pour lancer les actions du Hook.
+		$this->hook->notify(new Event('Core::assign'));
 	}
 	
 	/**

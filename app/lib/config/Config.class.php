@@ -4,14 +4,8 @@
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @use Singleton
  */
-class Config extends Singleton
+class Config 
 {
-	/**
-	 * Instance de singleton de Config.
-	 * @var Config
-	 */
-	protected static $_instance = NULL;
-	
 	/**
 	 * Object contenant l'ensemble des paramètres du site.
 	 * @var stdClass
@@ -21,7 +15,7 @@ class Config extends Singleton
 	/**
 	 * Constructeur.
 	 */ 
-	protected function __construct($file)
+	public function __construct($file)
 	{
 		$content = file_get_contents($file);
 		$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
@@ -30,7 +24,6 @@ class Config extends Singleton
 		{
 			$this->_parse($this->_params);
 		}
-		$this->_parse_root();
 	}
 	
 	/**
@@ -71,17 +64,6 @@ class Config extends Singleton
 				$this->_parse($v);
 			}
 		}
-	}
-	
-	/**   
-	 * Définie le chemin absolute de l'application en répertoire et url. 
-	 */
-	private function _parse_root()
-	{
-	    $this->_params->path->root_dir = str_replace('\\', '/', realpath(__DIR__.'/../../../')).'/';
-	    $root = (substr($_SERVER['DOCUMENT_ROOT'], -1) == '/') ? (substr($_SERVER['DOCUMENT_ROOT'], 0, -1)) : ($_SERVER['DOCUMENT_ROOT']);
-	    $root = str_replace($root, 'http://' . $_SERVER['SERVER_NAME'], $this->_params->path->root_dir);
-	    $this->_params->path->root_url = (substr($root, - 1) != '/') ? ($root . '/') : ($root);
 	}
 	
 	/**
@@ -131,16 +113,6 @@ class Config extends Singleton
 		{
 			unset($this->_params[$name]);
 		}
-	}
-	
-	/**
-	 * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Browser
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
 	}
 }
 ?>

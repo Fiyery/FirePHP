@@ -1,42 +1,28 @@
 <?php
-// Début de la capture des affichages type echo / erreurs.
-ob_start();
-
-// On affichage la barre de debug à la fin du script.
-function debug_tool_load($controller, $echx=NULL)
-{
-    if ($echx === NULL)
-    {
-        $echx = ob_get_clean();
-    }    
-    chdir(__DIR__);
-	if ($controller->config->ENABLE_DEBUG !== FALSE && file_exists(__DIR__.'/../app/plugins/debug_tool/debug_tool.php'))
-	{
-		require_once(__DIR__.'/../app/plugins/debug_tool/debug_tool.php');
-		debug_tool_exec($controller, $echx);
-	}
-}
+require(__DIR__.'\lib\core\Core.class.php');
+$core = new Core();
 
 // Chargement des paramètres et classes outils et récupération du controller.
-require(__DIR__.'/init.php');
-$controller = init_core();
+$controller = $core->get_controller();
 
-
-// On impose à la fin du script le lancement de la barre de débug.
+// On impose à la fin du script le lancement de la barre de debug.
 if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)
 {
-	register_shutdown_function('debug_tool_load', $controller);
+	register_shutdown_function(function() use ($controller)
+	{
+		$controller->hook->notify(new Event('Core::end_script'));
+	});
 }
 
 // Message à afficher si la reprise de session ne peut se faire.
-if ($controller->session->get_status() == -1)
-{
-	$controller->site->add_message('Votre session a expirée. Vous avez été déconnecté.');
-}
-elseif ($controller->session->get_status() == -2)
-{
-	$controller->site->add_message('Votre session est invalide. Vous avez été déconnecté.');
-}
+// if ($controller->session->get_status() == -1)
+// {
+// 	$controller->site->add_message('Votre session a expirée. Vous avez été déconnecté.');
+// }
+// elseif ($controller->session->get_status() == -2)
+// {
+// 	$controller->site->add_message('Votre session est invalide. Vous avez été déconnecté.');
+// }
 
 // Chargement du Controller du site.
 $redirect = ($controller->config->feature->access_redirection === TRUE) ? (TRUE) : (FALSE);
@@ -44,7 +30,6 @@ if ($controller->config->feature->access)
 {
 	$controller->get_access($redirect);
 }
-
 
 try
 {
@@ -84,13 +69,6 @@ if ($controller->config->tpl->enable)
 else 
 {
 	echo file_get_contents($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
-}
-
-
-// Lance de débogage.
-if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)
-{
-	debug_tool_load($controller, $echx);
 }
 
 // On vide le buffer.
