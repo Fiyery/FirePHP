@@ -24,7 +24,7 @@ class Config extends Singleton
 	protected function __construct($file)
 	{
 		$content = file_get_contents($file);
-		$content = preg_replace("#\/\/.*\n#", '', $content);
+		$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
 		$this->_params = json_decode($content);
 		if (is_object($this->_params))
 		{
