@@ -14,16 +14,6 @@ if ($controller->config->feature->debug && $controller->req->disable_debug_tool 
 	});
 }
 
-// Message à afficher si la reprise de session ne peut se faire.
-// if ($controller->session->get_status() == -1)
-// {
-// 	$controller->site->add_message('Votre session a expirée. Vous avez été déconnecté.');
-// }
-// elseif ($controller->session->get_status() == -2)
-// {
-// 	$controller->site->add_message('Votre session est invalide. Vous avez été déconnecté.');
-// }
-
 // Chargement du Controller du site.
 $redirect = ($controller->config->feature->access_redirection === TRUE) ? (TRUE) : (FALSE);
 if ($controller->config->feature->access)
