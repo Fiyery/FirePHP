@@ -14,7 +14,8 @@ interface Observer
     /**
      * Traite l'action suite à un événement généré par la classe à observer.
      * @param Event $event
+     * @return bool
      */
-    public function notify(Event $event);
+    public function notify(Event $event) : bool;
 }
 ?>

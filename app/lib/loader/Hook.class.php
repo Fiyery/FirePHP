@@ -33,13 +33,16 @@ class Hook implements Observer
     /**
      * Informe les modules du déclenchement d'un événement.
      * @param Module $module
+     * @return bool
      */
-    public function notify(Event $e)
+    public function notify(Event $e) : bool
     {
+        $return = FALSE;
         foreach ($this->_modules as $m)
         {
-            $m->notify($e);
+            $return = $return || $m->notify($e);
         }
+        return $return;
     }
 
     /**

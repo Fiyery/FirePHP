@@ -26,7 +26,14 @@ class FrontController
         $this->_services = $services;
 
 		// Event pour lancer les actions du Hook.
-		$this->hook->notify(new Event('Core::init'));
+		try 
+		{
+			$this->hook->notify(new Event('Core::init'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
 	}
 	
 	/**
@@ -141,7 +148,15 @@ class FrontController
 	public function execute($redirect=FALSE)
 	{
 		// Event pour lancer les actions du Hook.
-		$this->hook->notify(new Event('Core::execute_before'));
+		try 
+		{
+			$this->hook->notify(new Event('Core::execute_before'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
+		
 
         // Exécution des commandes spécifiques avant le chargements du modules.
 	    $this->before_execute();
@@ -159,65 +174,42 @@ class FrontController
 			$this->css->create($name);
 		}
 		
-		// Importation du fichier du module.
-		$dir_module = $this->config->path->module.strtolower($this->route->get_controller()).'/';
-		$filename = $dir_module.strtolower($module).'/'.$this->config->system->name_file_module;
-		if(file_exists($filename))
+		// Exécution du module.
+		try 
 		{
-			// require($filename);
-			if (class_exists($module) === FALSE && $redirect)
+			// Event pour lancer le module.
+			if ($this->hook->notify(new Event($module.'::'.$action)) === FALSE)
 			{
-				$this->site->add_message($this->config->msg->error_404);
-				$this->route->prev();
-				return FALSE;
-			}
-		}
-		elseif ($redirect)
-		{
-			$this->site->add_message($this->config->msg->error_404);
-			$this->route->prev();
-			return FALSE;
-		}
-
-		// Exécution de la méthode du module.
-		$m = NULL;
-		if (class_exists($module)) 
-		{
-		    $m = new $module($this->_services, get_object_vars($this));
-		}
-
-		$called_action = $this->config->system->prefix_action_function.$action;
-		if(method_exists($m, $called_action))
-		{
-			// Exécution du module.
-			try 
-			{
-				// Event pour lancer les actions du Hook.
-				$this->hook->notify(new Event('Core::run'));
-
-				$return = $m->$called_action();
-			}
-			catch (Exception $e)
-			{
-				$this->error->handle_exception($e);
+				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
 				$this->route->set_controller('Default');
-				$this->route->set_module('Erreur');
-				$this->route->set_action('index');
-				if ($this->config->tpl->enable)
-				{
-					$this->tpl->assign('error_msg', $e->getMessage());
-				}
+				$this->route->set_module('Error');
+				$this->route->set_action('404');
+				$this->hook->notify(new Event('Error::404'));
 			}
 		}
-		elseif ($redirect)
+		catch (Exception $e)
 		{
-			$this->site->add_message($this->config->msg->error_404);
-			$this->route->redirect();
-			return FALSE;
+			// En cas d'Exception
+			// On log l'erreur.
+			$this->error->handle_exception($e);
+
+			// On fait appel au module d'erreur.
+			$this->route->set_controller('Default');
+			$this->route->set_module('Error');
+			$this->route->set_action('index');
+			$this->tpl->assign('error_msg', $e->getMessage());
+			$this->hook->notify(new Event('Error::index'));
 		}
 
 		// Event pour lancer les actions du Hook.
-		$this->hook->notify(new Event('Core::execute_after'));
+		try 
+		{
+			$this->hook->notify(new Event('Core::execute_after'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
 		
 		// Exécution des commandes spécifiques après le chargements du modules.
 		$this->after_execute();
@@ -246,7 +238,7 @@ class FrontController
 	    	if (file_get_contents($tpl_file) == FALSE)
 	    	{
 	    		$this->route->set_controller('Default');
-	    		$this->route->set_module('Erreur');
+	    		$this->route->set_module('Error');
 	    		$this->route->set_action('404');
 	    		$controller = strtolower($this->route->get_controller());
 	    		$module = strtolower($this->route->get_module());
@@ -271,7 +263,7 @@ class FrontController
 	    	if ($html === NULL)
 	    	{
 	    		$this->route->set_controller('Default');
-	    		$this->route->set_module('Erreur');
+	    		$this->route->set_module('Error');
 	    		$this->route->set_action('404');
 	    		$controller = strtolower($this->route->get_controller());
 	    		$module = strtolower($this->route->get_module());
@@ -290,7 +282,14 @@ class FrontController
 	    }
 
 		// Event pour lancer les actions du Hook.
-		$this->hook->notify(new Event('Core::assign'));
+		try 
+		{
+			$this->hook->notify(new Event('Core::assign'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
 	}
 	
 	/**

@@ -43,7 +43,11 @@ abstract class Module implements Observer
 	 */
 	public function __construct(ServiceContainer $services)
 	{
+		// Récupération des services.
 		$this->_services = $services;
+
+		// Nom du module.
+		$this->_name = strtolower(get_called_class());
 
 		// Chargement des paramètres du module.
 		$dirname = dirname((new ReflectionClass($this))->getFileName());
@@ -114,18 +118,26 @@ abstract class Module implements Observer
 	/**
 	 * Emplenche l'exécution du module à l'écoute d'un Event.
 	 * @param Event $event
+	 * @return bool
 	 */
-	public function notify(Event $event)
+	public function notify(Event $event) : bool
 	{
-		if (substr($event->name(), 0, strlen($this->_name) + 2) === $this->_name.'::')
+		if (substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
 		{
-			$method = $this->_services->config->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2);
-			$this->init($event)->method();
+			$method = $this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2);
+			if (method_exists($this, $method))
+			{
+				$this->init($event)->$method();
+				return TRUE;
+			}
+			return FALSE;
 		}
 		elseif (in_array($event->name(), $this->_events))
 		{
 			$this->init($event)->run();
+			return TRUE;
 		}
+		return FALSE;
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 <?php
-class Erreur extends Module
+class Error extends Module
 {
     public function action_index()
     {
