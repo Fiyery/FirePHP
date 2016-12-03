@@ -18,7 +18,7 @@ class Template
 	const SMARTY = 2;
 	
 	/**
-	 * Constant pour la syntaxe d'interpréation en Smarty (petite perte de performance).
+	 * Constant pour la syntaxe d'interpréation en Smarty (plus performant que SMARTY).
 	 * @var int
 	 */
 	const SMARTY_STRICT = 3;
@@ -27,7 +27,7 @@ class Template
 	 * Syntaxe d'interprétation du moteur de template.
 	 * @var int
 	 */
-	private $_syntaxe = self::PHP;
+	private $_syntaxe = self::SMARTY;
 	
 	/**
 	 * Dossier temporaire pour les templates.
@@ -55,8 +55,9 @@ class Template
 
 	/**
 	 * Constructeur.
+	 * @param string $tmp_dir Dossier temporaire.
 	 */
-	public function __construct($tmp_dir)
+	public function __construct(string $tmp_dir)
 	{
 		if (file_exists($tmp_dir) === FALSE)
 		{
@@ -90,11 +91,11 @@ class Template
 	}
 	/**
 	 * Assigne une valeur à une variable du template.
-	 * @param string $name Nom de la variable.
-	 * @param string|array $value Valeur de la variable.
+	 * @param mixed $name Nom de la variable.
+	 * @param mixed $value Valeur de la variable.
 	 * @return boolean
 	 */
-	public function assign($name, $value)
+	public function assign($name, $value = NULL)
 	{
 		if (is_array($name))
 		{
@@ -129,6 +130,16 @@ class Template
 			}
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Retourne la valeur de la variable.
+	 * @param string $name Nom de la variable.
+	 * @return mixed Valeur de la variable ou FALSE si elle n'est pas définie.
+	 */
+	public function get($name)
+	{
+		return ($this->_assigns[$name]) ?? (FALSE);
 	}
 
 	/**

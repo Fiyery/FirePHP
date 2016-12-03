@@ -3,6 +3,12 @@
  * FrontController est la classe de chargement des modules du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses ServiceContainer
+ * @uses Event
+ * @event Core::init Event envoyé au moment de l'initialisation.
+ * @event Core::execute_before Event envoyé avant l'exécution sur module.
+ * @event Core::execute_after Event envoyé après l'exécution sur module.
+ * @event Core::assign Event envoyé après la génération du template du module.
+ * @event Core::run Envoyé pour lancer le module normalement appelé par la requête.
  */
 class FrontController
 {         
@@ -18,6 +24,16 @@ class FrontController
 	public function __construct(ServiceContainer $services)
 	{
         $this->_services = $services;
+
+		// Event pour lancer les actions du Hook.
+		try 
+		{
+			$this->hook->notify(new Event('Core::init'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
 	}
 	
 	/**
@@ -82,7 +98,7 @@ class FrontController
 	
 	/**
 	 * Configure les scripts JS pour l'envoie au template.
-	 * @return string Contenu HTML.
+	 * @return string Contenu HTML. 
 	 */
 	public function get_js()
 	{
@@ -131,11 +147,19 @@ class FrontController
 	 */
 	public function execute($redirect=FALSE)
 	{
+		// Event pour lancer les actions du Hook.
+		try 
+		{
+			$this->hook->notify(new Event('Core::execute_before'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
+		
+
         // Exécution des commandes spécifiques avant le chargements du modules.
 	    $this->before_execute();
-	    
-		$module = $this->route->get_module(); 
-		$action = $this->route->get_action();
 		
 		// Initialisation des packages de ressources par défaut pour le module.
 		if ($this->config->tpl->enable)
@@ -147,58 +171,41 @@ class FrontController
 			$this->css->create($name);
 		}
 		
-		// Importation du fichier du module.
-		$dir_module = $this->config->path->module.strtolower($this->route->get_controller()).'/';
-		$filename = $dir_module.strtolower($module).'/'.$this->config->system->name_file_module;
-		if(file_exists($filename))
+		// Exécution du module.
+		try 
 		{
-			require($filename);
-			if (class_exists($module) === FALSE && $redirect)
+			// Event pour lancer le module.
+			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()))) === FALSE)
 			{
-				$this->site->add_message($this->config->msg->error_404);
-				$this->route->prev();
-				return FALSE;
-			}
-		}
-		elseif ($redirect)
-		{
-			$this->site->add_message($this->config->msg->error_404);
-			$this->route->prev();
-			return FALSE;
-		}
-
-		// Exécution de la méthode du module.
-		$m = NULL;
-		if (class_exists($module)) 
-		{
-		    $m = new $module($this->_services, get_object_vars($this));
-		}
-
-		$called_action = $this->config->system->prefix_action_function.$action;
-		if(method_exists($m, $called_action))
-		{
-			// Exécution du module.
-			try 
-			{
-				$return = $m->$called_action();
-			}
-			catch (Exception $e)
-			{
-				$this->error->handle_exception($e);
+				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
 				$this->route->set_controller('Default');
 				$this->route->set_module('Erreur');
-				$this->route->set_action('index');
-				if ($this->config->tpl->enable)
-				{
-					$this->tpl->assign('error_msg', $e->getMessage());
-				}
+				$this->route->set_action('404');
+				$this->hook->notify(new Event('Erreur::404'));
 			}
 		}
-		elseif ($redirect)
+		catch (Exception $e)
 		{
-			$this->site->add_message($this->config->msg->error_404);
-			$this->route->redirect();
-			return FALSE;
+			// En cas d'Exception
+			// On log l'erreur.
+			$this->error->handle_exception($e);
+
+			// On fait appel au module d'erreur.
+			$this->route->set_controller('Default');
+			$this->route->set_module('Erreur');
+			$this->route->set_action('500');
+			$this->tpl->assign('error_msg', $e->getMessage());
+			$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module())));
+		}
+
+		// Event pour lancer les actions du Hook.
+		try 
+		{
+			$this->hook->notify(new Event('Core::execute_after'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
 		}
 		
 		// Exécution des commandes spécifiques après le chargements du modules.
@@ -209,67 +216,43 @@ class FrontController
 	/**
 	 * Charge le contenu du module dans la page.
 	 * @param string $var Nom de la variable du template.
-	 * @return $string Contenu du module.
+	 * @return string Contenu du module.
 	 */
 	public function assign($var=NULL)
 	{	
-	    if ($var == NULL)
-	    {
-	        $var = $this->config->tpl->module;
-	    }
-	    $controller = strtolower($this->route->get_controller());
-	    $module = strtolower($this->route->get_module());
-	    $action = strtolower($this->route->get_action());
-	    $root = $this->config->path->root_dir.$this->config->path->tpl;
-	    
-	    $tpl_file = $root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl';
-	    if ($this->config->tpl->enable === FALSE)
-	    {
-	    	if (file_get_contents($tpl_file) == FALSE)
-	    	{
-	    		$this->route->set_controller('Default');
-	    		$this->route->set_module('Erreur');
-	    		$this->route->set_action('404');
-	    		$controller = strtolower($this->route->get_controller());
-	    		$module = strtolower($this->route->get_module());
-	    		$action = strtolower($this->route->get_action());
-	    		return file_get_contents($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	}
-	    	else 
-	    	{
-				return file_get_contents($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	}
-	    }
-	    else 
-	    {
-			try 
+		try 
+		{
+			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()).'::tpl')) === FALSE)
 			{
-	    		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+				$this->route->set_controller('Default');
+				$this->route->set_module('Erreur');
+				$this->route->set_action('404');
+				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()).'::tpl'));
 			}
-			catch (Exception $e)
-			{
-				$html = NULL;
-			}
-	    	if ($html === NULL)
-	    	{
-	    		$this->route->set_controller('Default');
-	    		$this->route->set_module('Erreur');
-	    		$this->route->set_action('404');
-	    		$controller = strtolower($this->route->get_controller());
-	    		$module = strtolower($this->route->get_module());
-	    		$action = strtolower($this->route->get_action());
-	    		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	}
-	    	
-	    	// Gestionnaire de feuilles de style.
-	    	$this->get_css();
-	    	
-	    	// Gestionnaire de scripts.
-	    	$this->get_js();
-	    	
-	    	$this->tpl->assign($var, $html);
-	    	$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
-	    }
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
+		
+		// Gestionnaire de feuilles de style.
+		$this->get_css();
+		
+		// Gestionnaire de scripts.
+		$this->get_js();
+		
+		// Envoie des messages.
+		$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
+
+		// Event pour lancer les actions du Hook.
+		try 
+		{
+			$this->hook->notify(new Event('Core::assign'));
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
 	}
 	
 	/**

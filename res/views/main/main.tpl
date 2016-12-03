@@ -33,6 +33,8 @@
 			{if isset($bloc_javascript)}
 				{$bloc_javascript} 
 			{/if}
+
+			{$debugbar}
 		</body>
 	</html>
 {else}
