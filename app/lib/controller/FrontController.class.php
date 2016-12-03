@@ -98,7 +98,7 @@ class FrontController
 	
 	/**
 	 * Configure les scripts JS pour l'envoie au template.
-	 * @return string Contenu HTML.
+	 * @return string Contenu HTML. 
 	 */
 	public function get_js()
 	{
@@ -160,9 +160,6 @@ class FrontController
 
         // Exécution des commandes spécifiques avant le chargements du modules.
 	    $this->before_execute();
-	    
-		$module = $this->route->get_module(); 
-		$action = $this->route->get_action();
 		
 		// Initialisation des packages de ressources par défaut pour le module.
 		if ($this->config->tpl->enable)
@@ -178,13 +175,13 @@ class FrontController
 		try 
 		{
 			// Event pour lancer le module.
-			if ($this->hook->notify(new Event($module.'::'.$action)) === FALSE)
+			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()))) === FALSE)
 			{
 				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
 				$this->route->set_controller('Default');
-				$this->route->set_module('Error');
+				$this->route->set_module('Erreur');
 				$this->route->set_action('404');
-				$this->hook->notify(new Event('Error::404'));
+				$this->hook->notify(new Event('Erreur::404'));
 			}
 		}
 		catch (Exception $e)
@@ -195,10 +192,10 @@ class FrontController
 
 			// On fait appel au module d'erreur.
 			$this->route->set_controller('Default');
-			$this->route->set_module('Error');
-			$this->route->set_action('index');
+			$this->route->set_module('Erreur');
+			$this->route->set_action('500');
 			$this->tpl->assign('error_msg', $e->getMessage());
-			$this->hook->notify(new Event('Error::index'));
+			$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module())));
 		}
 
 		// Event pour lancer les actions du Hook.
@@ -223,63 +220,29 @@ class FrontController
 	 */
 	public function assign($var=NULL)
 	{	
-	    if ($var == NULL)
-	    {
-	        $var = $this->config->tpl->module;
-	    }
-	    $controller = strtolower($this->route->get_controller());
-	    $module = strtolower($this->route->get_module());
-	    $action = strtolower($this->route->get_action());
-	    $root = $this->config->path->root_dir.$this->config->path->tpl;
-	    
-	    $tpl_file = $root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl';
-	    if ($this->config->tpl->enable === FALSE)
-	    {
-	    	if (file_get_contents($tpl_file) == FALSE)
-	    	{
-	    		$this->route->set_controller('Default');
-	    		$this->route->set_module('Error');
-	    		$this->route->set_action('404');
-	    		$controller = strtolower($this->route->get_controller());
-	    		$module = strtolower($this->route->get_module());
-	    		$action = strtolower($this->route->get_action());
-	    		return file_get_contents($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	}
-	    	else 
-	    	{
-				return file_get_contents($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	}
-	    }
-	    else 
-	    {
-			try 
+		try 
+		{
+			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()).'::tpl')) === FALSE)
 			{
-	    		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
+				$this->route->set_controller('Default');
+				$this->route->set_module('Erreur');
+				$this->route->set_action('404');
+				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()).'::tpl'));
 			}
-			catch (Exception $e)
-			{
-				$html = NULL;
-			}
-	    	if ($html === NULL)
-	    	{
-	    		$this->route->set_controller('Default');
-	    		$this->route->set_module('Error');
-	    		$this->route->set_action('404');
-	    		$controller = strtolower($this->route->get_controller());
-	    		$module = strtolower($this->route->get_module());
-	    		$action = strtolower($this->route->get_action());
-	    		$html = $this->tpl->fetch($root.$controller.'/'.$module.'/'.$module.'-'.$action.'.tpl');
-	    	}
-	    	
-	    	// Gestionnaire de feuilles de style.
-	    	$this->get_css();
-	    	
-	    	// Gestionnaire de scripts.
-	    	$this->get_js();
-	    	
-	    	$this->tpl->assign($var, $html);
-	    	$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
-	    }
+		}
+		catch (Exception $e)
+		{
+			$this->error->handle_exception($e);
+		}
+		
+		// Gestionnaire de feuilles de style.
+		$this->get_css();
+		
+		// Gestionnaire de scripts.
+		$this->get_js();
+		
+		// Envoie des messages.
+		$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
 
 		// Event pour lancer les actions du Hook.
 		try 

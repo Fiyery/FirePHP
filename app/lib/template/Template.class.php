@@ -133,6 +133,16 @@ class Template
 	}
 
 	/**
+	 * Retourne la valeur de la variable.
+	 * @param string $name Nom de la variable.
+	 * @return mixed Valeur de la variable ou FALSE si elle n'est pas définie.
+	 */
+	public function get($name)
+	{
+		return ($this->_assigns[$name]) ?? (FALSE);
+	}
+
+	/**
 	 * Affiche le template.
 	 * @param string $template Chemin du template.
 	 */

@@ -1,7 +1,7 @@
 <?php
-class Error extends Module
+class Erreur extends Module
 {
-    public function action_index()
+    public function action_500()
     {
         if (isset($this->req->error_msg))
         {

@@ -33,6 +33,12 @@ abstract class Module implements Observer
 	private $_events = [];
 
 	/**
+	 * Dossier du module.
+	 * @var string
+	 */
+	private $_dir = NULL;
+
+	/**
 	 * Event qui a déclenché le module.
 	 */
 	private $_event = NULL;
@@ -50,10 +56,10 @@ abstract class Module implements Observer
 		$this->_name = strtolower(get_called_class());
 
 		// Chargement des paramètres du module.
-		$dirname = dirname((new ReflectionClass($this))->getFileName());
-		if (file_exists($dirname.'/config.json'))
+		$this->_dir = dirname((new ReflectionClass($this))->getFileName());
+		if (file_exists($this->_dir.'/config.json'))
 		{
-			$this->_params = new Config($dirname.'/config.json');
+			$this->_params = new Config($this->_dir.'/config.json');
 			if (is_array($this->params()->load_on_event))
 			{
 				$this->_events = $this->params()->load_on_event;
@@ -68,8 +74,7 @@ abstract class Module implements Observer
 	protected function init(Event $event)
 	{
 		// Récupération du dossier model pour l'import des classes privées.
-		$dirname = dirname((new ReflectionClass($this))->getFileName());
-	    $this->loader->add_dir($dirname.'/model/');	
+	    $this->loader->add_dir($this->_dir.'/model/');	
 
 		// Récupération de l'événement déclencheur.
 		$this->_event = $event;
@@ -122,19 +127,33 @@ abstract class Module implements Observer
 	 */
 	public function notify(Event $event) : bool
 	{
+		// Si le nom de l'Event est le même que celui du module, on l'analyse.
 		if (substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
 		{
-			$method = $this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2);
-			if (method_exists($this, $method))
+			// Evenement de type génération du tpl du module pour une action donnée.
+			if (substr($event->name(), -5) === '::tpl')
 			{
-				$this->init($event)->$method();
-				return TRUE;
+				$method = substr($event->name(), strlen($this->_name) + 2, -5);
+				$filename = $this->_dir.'/view/'.$method.'.tpl';
+				if (file_exists($filename))
+				{
+					$this->tpl->assign($this->_services->get('config')->tpl->module, $this->tpl->fetch($filename));
+				}
 			}
-			return FALSE;
+			else // Evenement de type exécution de la logique du module.
+			{
+				$method = $this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2);
+				if (method_exists($this, $method))
+				{
+					$this->init($event, $method)->$method();
+					return TRUE;
+				}
+				return FALSE;
+			}
 		}
 		elseif (in_array($event->name(), $this->_events))
 		{
-			$this->init($event)->run();
+			$this->init($event, 'run')->run();
 			return TRUE;
 		}
 		return FALSE;

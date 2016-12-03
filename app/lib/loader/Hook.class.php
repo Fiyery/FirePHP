@@ -14,6 +14,12 @@ class Hook implements Observer
     protected $_modules = [];
 
     /**
+     * Dernier module déclenché.
+     * @var Module
+     */
+    protected $_last_loaded = NULL;
+
+    /**
      * Constructeur.
      */
     public function __construct()
@@ -40,9 +46,22 @@ class Hook implements Observer
         $return = FALSE;
         foreach ($this->_modules as $m)
         {
-            $return = $return || $m->notify($e);
+            if ($m->notify($e))
+            {
+                $this->_last_loaded = $m;
+                $return = TRUE;
+            }
         }
         return $return;
+    }
+
+    /**
+     * Retourne le dernier module lancé.
+     * @return Module
+     */
+    public function last_loaded() : Module
+    {
+        return $this->_last_loaded;
     }
 
     /**
