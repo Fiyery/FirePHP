@@ -14,10 +14,11 @@ class Config
 	
 	/**
 	 * Constructeur.
+	 * @param string $filename Chemin du fichier JSON de config.
 	 */ 
-	public function __construct($file)
+	public function __construct(string $filename)
 	{
-		$content = file_get_contents($file);
+		$content = file_get_contents($filename);
 		$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
 		$this->_params = json_decode($content);
 		if (is_object($this->_params))
