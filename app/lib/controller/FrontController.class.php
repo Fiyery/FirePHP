@@ -175,7 +175,7 @@ class FrontController
 		try 
 		{
 			// Event pour lancer le module.
-			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()))) === FALSE)
+			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()))) === FALSE)
 			{
 				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
 				$this->route->set_controller('Default');
@@ -195,7 +195,7 @@ class FrontController
 			$this->route->set_module('Erreur');
 			$this->route->set_action('500');
 			$this->tpl->assign('error_msg', $e->getMessage());
-			$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module())));
+			$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action())));
 		}
 
 		// Event pour lancer les actions du Hook.
@@ -222,12 +222,12 @@ class FrontController
 	{	
 		try 
 		{
-			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()).'::tpl')) === FALSE)
+			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()).'::tpl')) === FALSE)
 			{
 				$this->route->set_controller('Default');
 				$this->route->set_module('Erreur');
 				$this->route->set_action('404');
-				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_module()).'::tpl'));
+				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()).'::tpl'));
 			}
 		}
 		catch (Exception $e)
