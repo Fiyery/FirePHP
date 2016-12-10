@@ -334,7 +334,7 @@ class Core
     private function _init_access()
     {
         $this->_services->set('access', function() {
-            $service = Access::get_instance();
+            $service = new Access();
             if ($this->_services->get('config')->feature->access)
             {
                 $service->enable();
