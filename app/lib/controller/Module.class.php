@@ -128,27 +128,27 @@ abstract class Module implements Observer
 	public function notify(Event $event) : bool
 	{
 		// Si le nom de l'Event est le même que celui du module, on l'analyse.
-		if (substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
+		if ($this->params()->http_allow !== FALSE && substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
 		{
 			// Evenement de type génération du tpl du module pour une action donnée.
 			if (substr($event->name(), -5) === '::tpl')
 			{
-				$method = substr($event->name(), strlen($this->_name) + 2, -5);
+				$method = strtolower(substr($event->name(), strlen($this->_name) + 2, -5));
 				$filename = $this->_dir.'/view/'.$method.'.tpl';
 				if (file_exists($filename))
 				{
 					$this->tpl->assign($this->_services->get('config')->tpl->module, $this->tpl->fetch($filename));
+					return TRUE;
 				}
 			}
 			else // Evenement de type exécution de la logique du module.
 			{
-				$method = $this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2);
+				$method = strtolower($this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2));
 				if (method_exists($this, $method))
 				{
 					$this->init($event, $method)->$method();
 					return TRUE;
 				}
-				return FALSE;
 			}
 		}
 		elseif (in_array($event->name(), $this->_events))
