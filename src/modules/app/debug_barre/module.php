@@ -13,7 +13,7 @@ class Debug_Barre extends Module
         $tpl->assign('errors', $errors);
 
         // Affichages parasites.
-        $echos = $this->event()->context()->echo();
+        $echos = ob_get_contents();
         $tpl->assign('echos', $echos);
 
         // Requête SQL.
