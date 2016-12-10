@@ -145,7 +145,7 @@ class Debug_Barre extends Module
         $vars['var_image'] = 'data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/res/img/var.png'));
         $tpl->assign($vars);
 
-        $this->tpl->assign('debugbar', $tpl->fetch(__DIR__.'/view/default.tpl'));
+        $this->tpl->assign('debug_barre', $tpl->fetch(__DIR__.'/view/default.tpl'));
     }
 }
 ?>
