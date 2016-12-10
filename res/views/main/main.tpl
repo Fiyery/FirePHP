@@ -34,7 +34,7 @@
 				{$bloc_javascript} 
 			{/if}
 
-			{$debugbar}
+			{$debug_barre}
 		</body>
 	</html>
 {else}
