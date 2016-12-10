@@ -146,14 +146,14 @@ abstract class Module implements Observer
 				$method = strtolower($this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2));
 				if (method_exists($this, $method))
 				{
-					$this->init($event, $method)->$method();
+					$this->init($event)->$method();
 					return TRUE;
 				}
 			}
 		}
 		elseif (in_array($event->name(), $this->_events))
 		{
-			$this->init($event, 'run')->run();
+			$this->init($event)->run();
 			return TRUE;
 		}
 		return FALSE;
