@@ -17,7 +17,7 @@ abstract class Dao
      * Constructeur
      * @param array $data Liste des couples nom-valeur des attributs de l'instance.
      */
-    public function __construct($data=array())
+    public function __construct($data=[])
     {
     	foreach($data as $name => $value)
     	{
@@ -27,13 +27,13 @@ abstract class Dao
     
     /**
      * Retourne un attribut.
-     * @param mixed $name Valeur de l'attribut.
-     * @throws FireException
+     * @param string $name Valeur de l'attribut.
+     * @throws DaoException
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $caller = get_called_class();
-    	if (property_exists($caller, $name) == FALSE)
+    	if (property_exists($caller, $name) === FALSE)
     	{
     	    throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
     	}
@@ -43,20 +43,43 @@ abstract class Dao
     /**
      * Définie un attribut.
      * @param string $name Nom de l'attribut.
-     * @param mixed $valeur Valeur de l'attribut.
+     * @param string $value Valeur de l'attribut.
      */
-    public function __set($name, $value)
+    public function __set(string $name, string $value)
     {
-    	$set = 'set_'.$name;
-    	if (method_exists($this, $set))
+    	if (method_exists($this, $name))
     	{
-    		return $this->$set($value);
+    		return $this->$name($value);
     	}
-    	else 
+		return $this->$name = $value;
+    }
+
+	/**
+     * Définie un attribut.
+     * @param string $name Nom de l'attribut.
+     * @param array $value Valeur de l'attribut.
+     */
+    public function __call(string $name, array $values)
+    {
+    	if (method_exists($this, $name))
     	{
-			$this->$name = $value;
-			return TRUE;
+			return call_user_func_array([$this, $name], $values);
     	}
+		$count = count($values);
+		if ($count === 1 && is_scalar($values[0]))
+		{
+			return $this->$name = $values[0];
+		}
+		if ($count === 0)
+		{
+			$caller = get_called_class();
+			if (property_exists($caller, $name) === FALSE)
+			{
+				throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
+			}
+			return $this->$name;
+		}
+		return FALSE;
     }
     
     /**
