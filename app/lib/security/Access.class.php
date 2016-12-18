@@ -42,15 +42,6 @@ class Access
 	}
 	
 	/**
-	 * Définie les règles.
-	 * @param array $list Liste des règles sous format [id] => ["domaine1/module1/action1, ...], ...
-	 */
-	public function set_rule(array $list)
-	{
-		$this->_rules = $list;
-	}
-	
-	/**
 	 * Supprime toutes les règles.
 	 */
 	public function reset_rules()
