@@ -81,7 +81,6 @@ body
 	width: 100%;
 	box-sizing: border-box;
 	position: absolute;
-	box-shadow: 0 -1px 5px #ceb594;
 }
 
 #debug_tool .bloc_info .bloc_content 
@@ -255,4 +254,10 @@ body
 	font-weight: bold;
 	font-size: 120%;
 	text-align: left;
+}
+
+#debug_tool #debug_barre #app_call
+{
+	padding: 0px 4px;
+	line-height: 30px;
 }

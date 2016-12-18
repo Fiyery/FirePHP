@@ -185,5 +185,8 @@
 				</div>
 			</div>
 		</div>
+		<div class='bloc' id='app_call'>
+			{$app_controller}/{$app_module}/{$app_action}
+		</div>
 	</div>
 </div>
