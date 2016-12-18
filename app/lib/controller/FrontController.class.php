@@ -30,9 +30,9 @@ class FrontController
 		{
 			$this->hook->notify(new Event('Core::init'));
 		}
-		catch (Exception $e)
+		catch (Throwable $t)
 		{
-			$this->error->handle_exception($e);
+			$this->error->handle_throwable($t);
 		}
 	}
 	
@@ -152,9 +152,9 @@ class FrontController
 		{
 			$this->hook->notify(new Event('Core::execute_before'));
 		}
-		catch (Exception $e)
+		catch (Throwable $t)
 		{
-			$this->error->handle_exception($e);
+			$this->error->handle_throwable($t);
 		}
 		
 
@@ -184,11 +184,11 @@ class FrontController
 				$this->hook->notify(new Event('Erreur::404'));
 			}
 		}
-		catch (Exception $e)
+		catch (Throwable $t)
 		{
 			// En cas d'Exception
 			// On log l'erreur.
-			$this->error->handle_exception($e);
+			$this->error->handle_throwable($t);
 
 			// On fait appel au module d'erreur.
 			$this->route->set_controller('Default');
@@ -203,9 +203,9 @@ class FrontController
 		{
 			$this->hook->notify(new Event('Core::execute_after'));
 		}
-		catch (Exception $e)
+		catch (Throwable $t)
 		{
-			$this->error->handle_exception($e);
+			$this->error->handle_throwable($t);
 		}
 		
 		// Exécution des commandes spécifiques après le chargements du modules.
@@ -230,9 +230,9 @@ class FrontController
 				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()).'::tpl'));
 			}
 		}
-		catch (Exception $e)
+		catch (Throwable $t)
 		{
-			$this->error->handle_exception($e);
+			$this->error->handle_throwable($t);
 		}
 		
 		// Gestionnaire de feuilles de style.
@@ -249,9 +249,9 @@ class FrontController
 		{
 			$this->hook->notify(new Event('Core::assign'));
 		}
-		catch (Exception $e)
+		catch (Throwable $t)
 		{
-			$this->error->handle_exception($e);
+			$this->error->handle_throwable($t);
 		}
 	}
 	
