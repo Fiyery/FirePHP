@@ -54,6 +54,9 @@ abstract class Module implements Observer
 
 		// Nom du module.
 		$this->_name = strtolower(get_called_class());
+		$prefix = $this->_services->get('config')->system->prefix_module_class;
+		$suffix = $this->_services->get('config')->system->suffix_module_class;
+		$this->_name = substr($this->_name, strlen($prefix), - strlen($suffix));
 
 		// Chargement des paramètres du module.
 		$this->_dir = dirname((new ReflectionClass($this))->getFileName());

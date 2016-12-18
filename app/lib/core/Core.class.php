@@ -446,7 +446,8 @@ class Core
         foreach ($module_files as $file)
         {
             require($file);
-            $class = basename(dirname($file));
+            $class = preg_replace('#[^[a-zA-Z0-9]]*#', '', basename(dirname($file)));
+            $class = $this->_services->get('config')->system->prefix_module_class.$class.$this->_services->get('config')->system->suffix_module_class;
             $this->_services->get('hook')->add(new $class($this->_services));
         }
     }  

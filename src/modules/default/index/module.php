@@ -1,5 +1,5 @@
 <?php
-class Index extends Module
+class IndexModule extends Module
 {
 	public function action_index()
 	{

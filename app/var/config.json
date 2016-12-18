@@ -123,6 +123,8 @@
 		"css_class_form" : 			"form_style", 
 		"name_file_module" :		"module.php",
 		"prefix_action_function" : 	"action_",
+		"prefix_module_class" : 	"",
+		"suffix_module_class" : 	"Module",
 		"service_alias" :			"{$path.var}service.json"
 	},
 	
