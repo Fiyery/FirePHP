@@ -132,7 +132,7 @@ class Base
 	public function query($sql, $value=NULL)
 	{
 		$this->_check_connection();
-		$history = ['sql'=>$sql];	
+		$history = $this->_format_query_history($sql, $value);
 		$cache = $this->_read_cache($sql);
 		if (is_array($cache))
 		{
@@ -179,6 +179,33 @@ class Base
 		    $this->_cache_time = 0;
 		    return $result;
 		}
+	}
+
+	/**
+	 * Format la requête SQL avec les valeurs.
+	 * @param string $sql Requete SQL.
+	 * @param string[] $values Liste des valeurs.
+	 * @return string
+	 */
+	private function _format_query_history($sql, $values)
+	{
+		if (is_array($values))
+		{
+			while (($pos = strpos($sql, '?')) !== FALSE && count($values) > 0)
+			{
+				$v = str_replace("'", "''", array_shift($values));
+				if (is_string($v) && substr($sql, $pos - 1, 3) === ' ? ')
+				{
+					$v = "'".$v."'";
+					$sql = substr($sql, 0, $pos - 1).' '.$v.' '.substr($sql, $pos + 2);
+				}
+				else
+				{
+					$sql = substr($sql, 0, $pos ).$v.substr($sql, $pos + 1);
+				}
+			}
+		}
+		return ['sql' => $sql];
 	}
 	
 	/**
