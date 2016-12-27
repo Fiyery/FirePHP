@@ -179,7 +179,7 @@ class FrontController
 			{
 				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
 				$this->route->set_controller('Default');
-				$this->route->set_module('Erreur');
+				$this->route->set_module('Error');
 				$this->route->set_action('404');
 				$this->hook->notify(new Event('Erreur::404'));
 			}
@@ -192,9 +192,9 @@ class FrontController
 
 			// On fait appel au module d'erreur.
 			$this->route->set_controller('Default');
-			$this->route->set_module('Erreur');
+			$this->route->set_module('Error');
 			$this->route->set_action('500');
-			$this->tpl->assign('error_msg', $e->getMessage());
+			$this->tpl->assign('error_msg', $t->getMessage());
 			$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action())));
 		}
 
@@ -225,7 +225,7 @@ class FrontController
 			if ($this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()).'::tpl')) === FALSE)
 			{
 				$this->route->set_controller('Default');
-				$this->route->set_module('Erreur');
+				$this->route->set_module('Error');
 				$this->route->set_action('404');
 				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()).'::tpl'));
 			}

@@ -86,19 +86,19 @@ class Core
         $this->_init_config();
         $this->_init_log();
         $this->_init_session();
-        $this->_init_base();
+        $this->_init_route();
         $this->_init_tpl();
         $this->_init_request();
         $this->_init_site();
-        $this->_init_route();
-        $this->_init_error_manager();
         $this->_init_access();
+        $this->_init_error_manager();
         $this->_init_cache();
         $this->_init_res();
         $this->_init_crypt();
         $this->_init_upload();
         $this->_init_browser();
         $this->_init_hook();
+        $this->_init_base();
     }
 
     /**
@@ -215,13 +215,20 @@ class Core
     {
         $this->_services->set('base', function() {
             $service = new Base();
-            $service->connect(
-                $this->_services->get('config')->db->host, 
-                $this->_services->get('config')->db->name, 
-                $this->_services->get('config')->db->user, 
-                $this->_services->get('config')->db->pass, 
-                $this->_services->get('config')->db->charset
-            );
+            try 
+            {
+                $service->connect(
+                    $this->_services->get('config')->db->host, 
+                    $this->_services->get('config')->db->name, 
+                    $this->_services->get('config')->db->user, 
+                    $this->_services->get('config')->db->pass, 
+                    $this->_services->get('config')->db->charset
+                );
+            }
+            catch (Throwable $t)
+            {
+                $this->_services->get('error')->handle_throwable($t);
+            }
             if ($this->_services->get('config')->feature->cache && $this->_services->get('config')->db->cache)
             {
                 $service->set_cache(TRUE, $this->_services->get('config')->path->sql_cache, $this->_services->get('config')->db->cache_time);
