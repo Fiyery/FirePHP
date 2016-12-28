@@ -58,8 +58,10 @@ abstract class Module implements Observer
 		$suffix = $this->_services->get('config')->system->suffix_module_class;
 		$this->_name = substr($this->_name, strlen($prefix), - strlen($suffix));
 
-		// Chargement des paramètres du module.
+		// Récupération du dossier du module.
 		$this->_dir = dirname((new ReflectionClass($this))->getFileName());
+		
+		// Chargement des paramètres du module.
 		if (file_exists($this->_dir.'/config.json'))
 		{
 			$this->_params = new Config($this->_dir.'/config.json');
@@ -78,6 +80,7 @@ abstract class Module implements Observer
 	{
 		// Récupération du dossier model pour l'import des classes privées.
 	    $this->loader->add_dir($this->_dir.'/model/');	
+		$this->loader->add_dir($this->_dir.'/lib/');
 
 		// Récupération de l'événement déclencheur.
 		$this->_event = $event;
