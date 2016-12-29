@@ -1,8 +1,0 @@
-// Config du module.
-{
-    // Si le module peut être appelé par une requête HTTP.
-    "http_allow" : true,
-
-    // Défini les événements qui déclenche le module.
-    "load_on_event" : []
-}
