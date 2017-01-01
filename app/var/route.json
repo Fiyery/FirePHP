@@ -23,16 +23,6 @@
 		"method" : "GET"
     }, 
     {
-		"url" : "/ajax/*",
-		"names" : [
-			"file"
-		],
-		"method" : "*",
-        "controller" : "AjaxController",
-        "module" : "",
-        "action" : ""
-    }, 
-    {
 		"url" : "/",
 		"method" : "GET",
         "controller" : "Default",
@@ -66,5 +56,24 @@
         "controller" : "Default",
         "module" : "?module",
         "action" : "?action"
+   	},    
+	{
+	    "url" : "/rest/*/",
+    	"names" : [
+    		"__ressource"
+    	],
+        "controller" : "Default",
+        "module" : "Rest",
+        "action" : "index"
+   	},
+	{
+	    "url" : "/rest/*/*/",
+    	"names" : [
+    		"__ressource",
+			"id"
+    	],
+        "controller" : "Default",
+        "module" : "Rest",
+        "action" : "index"
    	}
 ]
