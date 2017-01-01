@@ -121,8 +121,8 @@ class Route extends Singleton
         {
         	$this->_error("Invalid syntaxe for route table");
         }
-        $request_url = $this->_request->get_path($this->_root_dir);
-        $request_method = $this->_request->get_method();
+        $request_url = $this->_request->path($this->_root_dir);
+        $request_method = $this->_request->method();
         $current = NULL;
         $current_match = NULL;
         foreach ($file as $route)
