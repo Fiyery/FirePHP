@@ -389,7 +389,7 @@ class Base
 	
 	/**
 	 * Retourne le dernier identifiant inséré.
-	 * @return int.
+	 * @return int
 	 * @throws BaseException
 	 */
 	public function last_id()

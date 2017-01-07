@@ -5,7 +5,7 @@ class RestModule extends Module
     {
         try
         {
-            $rest = new RestManager($this->base, $this->req);
+            $rest = new RestManager($this->base, $this->req, $this->site);
             echo $rest->handle();
         }
         catch (Exception $e)
