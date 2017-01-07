@@ -54,9 +54,14 @@ abstract class Module implements Observer
 
 		// Nom du module.
 		$this->_name = strtolower(get_called_class());
+		$prefix = $this->_services->get('config')->system->prefix_module_class;
+		$suffix = $this->_services->get('config')->system->suffix_module_class;
+		$this->_name = substr($this->_name, strlen($prefix), - strlen($suffix));
 
-		// Chargement des paramètres du module.
+		// Récupération du dossier du module.
 		$this->_dir = dirname((new ReflectionClass($this))->getFileName());
+		
+		// Chargement des paramètres du module.
 		if (file_exists($this->_dir.'/config.json'))
 		{
 			$this->_params = new Config($this->_dir.'/config.json');
@@ -75,6 +80,7 @@ abstract class Module implements Observer
 	{
 		// Récupération du dossier model pour l'import des classes privées.
 	    $this->loader->add_dir($this->_dir.'/model/');	
+		$this->loader->add_dir($this->_dir.'/lib/');
 
 		// Récupération de l'événement déclencheur.
 		$this->_event = $event;
@@ -128,32 +134,32 @@ abstract class Module implements Observer
 	public function notify(Event $event) : bool
 	{
 		// Si le nom de l'Event est le même que celui du module, on l'analyse.
-		if (substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
+		if (($this->params() === NULL || $this->params()->http_allow !== FALSE) && substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
 		{
 			// Evenement de type génération du tpl du module pour une action donnée.
 			if (substr($event->name(), -5) === '::tpl')
 			{
-				$method = substr($event->name(), strlen($this->_name) + 2, -5);
+				$method = strtolower(substr($event->name(), strlen($this->_name) + 2, -5));
 				$filename = $this->_dir.'/view/'.$method.'.tpl';
 				if (file_exists($filename))
 				{
 					$this->tpl->assign($this->_services->get('config')->tpl->module, $this->tpl->fetch($filename));
+					return TRUE;
 				}
 			}
 			else // Evenement de type exécution de la logique du module.
 			{
-				$method = $this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2);
+				$method = strtolower($this->_services->get('config')->system->prefix_action_function.substr($event->name(), strlen($this->_name) + 2));
 				if (method_exists($this, $method))
 				{
-					$this->init($event, $method)->$method();
+					$this->init($event)->$method();
 					return TRUE;
 				}
-				return FALSE;
 			}
 		}
 		elseif (in_array($event->name(), $this->_events))
 		{
-			$this->init($event, 'run')->run();
+			$this->init($event)->run();
 			return TRUE;
 		}
 		return FALSE;

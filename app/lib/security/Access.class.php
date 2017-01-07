@@ -2,16 +2,9 @@
 /**
  * Access gère les accès des utilisateurs aux pages du site. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses SingletonSession
  */
-class Access extends Singleton
+class Access 
 {
-	/**
-	 * Instance de Singleton.
-	 * @var Access
-	 */
-	protected static $_instance = NULL;
-	
 	/**
 	 * Liste des droits d'accès en fonction d'un identifiant.
 	 * @var array
@@ -27,14 +20,14 @@ class Access extends Singleton
 	/**
 	 * Constructeur.
 	 */ 
-	protected function __construct()
+	public function __construct()
 	{
-		$this->_rules = array();	
+		$this->_rules = [];	
 	}
 	
 	/**
 	 * Ajoute une règle.
-	 * @param string $id Identifiant de l'accès.
+	 * @param string $id Identifiant du groupe d'accès.
 	 * @param string $module Nom du module ou * pour tous les modules.
 	 * @param string $action Nom de l'action ou * pour toutes les actions.
 	 */
@@ -43,18 +36,9 @@ class Access extends Singleton
 		$perm = ($action != NULL) ? ($module.'/'.$action) : ($module);
 		if (isset($this->_rules[$id]) == FALSE)
 		{
-			$this->_rules[$id] = array();
+			$this->_rules[$id] = [];
 		}
 		$this->_rules[$id][] = $perm;
-	}
-	
-	/**
-	 * Définie les règles.
-	 * @param array $list Liste des règles sous format [id] => array("domaine1/module1/action1, ...), ...
-	 */
-	public function set_rule(array $list)
-	{
-		$this->_rules = $list;
 	}
 	
 	/**
@@ -62,7 +46,7 @@ class Access extends Singleton
 	 */
 	public function reset_rules()
 	{
-		$this->_rules = array();
+		$this->_rules = [];
 	}
 	
 	/**
@@ -76,10 +60,10 @@ class Access extends Singleton
 
 	/**
 	 * Vérifie si l'utilisateur a les droits d'accès pour le module et l'action courrante.
-	 * @param array<int> $id Identifiant du type d'accès.
+	 * @param int[] $id Identifiant du type d'accès.
 	 * @param string $module Nom du module courant.
 	 * @param string $action Nom de l'action courante.
-	 * $param boolean $strict 
+	 * @param boolean $strict 
 	 * 	Si TRUE, la permission avec plusieurs ids renvera TRUE si tous les ids renvoient TRUE. 
 	 * 	Si FALSE, la fonction renvera TRUE si au moins un id a la permission
 	 * @return boolean
@@ -107,7 +91,7 @@ class Access extends Singleton
 		        else 
 		        {
 		            $rules = $this->_rules[$i];
-		            $perms = array();
+		            $perms = [];
 		            if ($action != NULL)
 		            {
 		            	$perms[] = $module.'/'.$action;
@@ -132,7 +116,7 @@ class Access extends Singleton
 		    	return FALSE;
 		    }
 		    $rules = $this->_rules[$id];
-		    $perms = array();
+		    $perms = [];
 		    if ($action != NULL)
 		    {
 		    	$perms[] = $module.'/'.$action;

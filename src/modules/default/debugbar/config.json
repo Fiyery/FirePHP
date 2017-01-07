@@ -1,6 +1,0 @@
-// Config du module.
-{
-    "load_on_event" : [
-        "Core::assign"
-    ]
-}

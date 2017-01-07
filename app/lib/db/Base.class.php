@@ -26,7 +26,7 @@ class Base
 	
 	/**
 	 * Liste des tables et de leurs liaisons.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_tables = NULL;
 	
@@ -132,7 +132,7 @@ class Base
 	public function query($sql, $value=NULL)
 	{
 		$this->_check_connection();
-		$history = ['sql'=>$sql];	
+		$history = $this->_format_query_history($sql, $value);
 		$cache = $this->_read_cache($sql);
 		if (is_array($cache))
 		{
@@ -179,6 +179,33 @@ class Base
 		    $this->_cache_time = 0;
 		    return $result;
 		}
+	}
+
+	/**
+	 * Format la requête SQL avec les valeurs.
+	 * @param string $sql Requete SQL.
+	 * @param string[] $values Liste des valeurs.
+	 * @return string
+	 */
+	private function _format_query_history($sql, $values)
+	{
+		if (is_array($values))
+		{
+			while (($pos = strpos($sql, '?')) !== FALSE && count($values) > 0)
+			{
+				$v = str_replace("'", "''", array_shift($values));
+				if (is_string($v) && substr($sql, $pos - 1, 3) === ' ? ')
+				{
+					$v = "'".$v."'";
+					$sql = substr($sql, 0, $pos - 1).' '.$v.' '.substr($sql, $pos + 2);
+				}
+				else
+				{
+					$sql = substr($sql, 0, $pos ).$v.substr($sql, $pos + 1);
+				}
+			}
+		}
+		return ['sql' => $sql];
 	}
 	
 	/**
@@ -254,7 +281,7 @@ class Base
 
 	/**
 	 * Retourne la liste les tables de la base de données.
-	 * @return array<string> Liste des tables.
+	 * @return string[] Liste des tables.
 	 * @throws BaseException
 	 */
 	public function tables()
@@ -296,22 +323,22 @@ class Base
 	}
 	
 	/**
-	 * Retourne l'ensemble des tables ayant une clé étrangère sur la table passée en paramètre.
+	 * Retourne l'ensemble des clés étrangère de la table passée en paramètre.
 	 * @param string $table Nom de la table.
-	 * @return array La liste des clés étrangères et de leurs table.
+	 * @return array La liste des clés étrangères et de leur table.
 	 * @throws BaseException
 	 */
-	public function foreign_key($table)
+	public function foreign_keys($table)
 	{
 		$this->_check_connection();
 		$constraintes = $this->query("
 			SELECT
 				-- k.CONSTRAINT_SCHEMA,
 				-- k.CONSTRAINT_NAME,
-				k.TABLE_NAME,
+				-- k.TABLE_NAME,
 				k.COLUMN_NAME,
 				-- k.REFERENCED_TABLE_SCHEMA,
-				-- k.REFERENCED_TABLE_NAME,
+				k.REFERENCED_TABLE_NAME,
 				k.REFERENCED_COLUMN_NAME
 			FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS k
 			INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS c ON k.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA
@@ -319,7 +346,7 @@ class Base
 			WHERE
 				c.CONSTRAINT_TYPE = 'FOREIGN KEY'
 				AND k.REFERENCED_TABLE_SCHEMA = '".$this->_name."'
-				AND k.REFERENCED_TABLE_NAME = '".$table."'
+				AND k.TABLE_NAME = '".$table."'
 		");
 		return (is_array($constraintes)) ? ($constraintes) : ([]);
 	}
@@ -362,7 +389,7 @@ class Base
 	
 	/**
 	 * Retourne le dernier identifiant inséré.
-	 * @return int.
+	 * @return int
 	 * @throws BaseException
 	 */
 	public function last_id()

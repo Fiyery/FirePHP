@@ -268,7 +268,7 @@ class Request extends Singleton
 	 * Retourne la source de la requête
 	 * @return string
 	 */
-	public function get_source()
+	public function source()
 	{
 		if ($this->_source == NULL)
 		{
@@ -281,7 +281,7 @@ class Request extends Singleton
 	 * Retourne la méthode de la requête
 	 * @return string
 	 */
-	public function get_method()
+	public function method()
 	{
 		if ($this->_method == NULL)
 		{
@@ -295,7 +295,7 @@ class Request extends Singleton
 	 * @param string $root Dossier racine du projet.
 	 * @return string
 	 */
-	public function get_path($root=NULL)
+	public function path($root=NULL)
 	{
 	    if ($this->_path == NULL)
 		{

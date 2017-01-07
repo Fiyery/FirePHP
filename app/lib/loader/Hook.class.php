@@ -44,14 +44,30 @@ class Hook implements Observer
     public function notify(Event $e) : bool
     {
         $return = FALSE;
+        $throwables = [];
         foreach ($this->_modules as $m)
         {
-            if ($m->notify($e))
+            // On entoure la notification d'un try catch pour permettre l'execution des autres modules en cas d'arrêt.
+            try
             {
-                $this->_last_loaded = $m;
-                $return = TRUE;
+                if ($m->notify($e))
+                {
+                    $this->_last_loaded = $m;
+                    $return = TRUE;
+                }
+            }
+            catch (Throwable $t)
+            {
+                $throwables[] = $t;
             }
         }
+        
+        // Lance les Throwable à la fin de la notification de tous les modules.
+        if (count($throwables) > 0)
+        {
+            throw $throwables[0];
+        }
+        
         return $return;
     }
 
