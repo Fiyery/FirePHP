@@ -106,11 +106,7 @@ class Core
      */
     private function _init_header()
     {
-        // Entête de la requête de retour.
-        header('Content-type:text/html; charset=utf-8');
-
-        // Protection contre l'iframe.
-        header('X-Frame-Options: DENY');
+        
     }
 
     /**
@@ -156,7 +152,8 @@ class Core
             $service = new Config($this->_dir.'var/config.json');
             $service->path->root_dir = str_replace('\\', '/', realpath($this->_dir.'/../')).'/';
             $root = (substr($_SERVER['DOCUMENT_ROOT'], -1) == '/') ? (substr($_SERVER['DOCUMENT_ROOT'], 0, -1)) : ($_SERVER['DOCUMENT_ROOT']);
-            $root = str_replace($root, 'http://' . $_SERVER['SERVER_NAME'], $service->path->root_dir);
+            $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? ('https') : ('http');
+            $root = str_replace($root, $http.'://' . $_SERVER['SERVER_NAME'], $service->path->root_dir);
             $service->path->root_url = (substr($root, - 1) != '/') ? ($root . '/') : ($root);
             return $service;
         });
@@ -237,7 +234,8 @@ class Core
         });
 
         // Définition de la liaison de la base de données à la classe Model.
-        Dao::set_base($this->_services->get('base'));
+        Dao::base($this->_services->get('base'));
+        Dao::table_prefix($this->_services->get('config')->db->table_prefix);
     }
 
     /**

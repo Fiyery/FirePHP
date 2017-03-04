@@ -19,7 +19,7 @@ class RestException extends FireException
      * More information about exception.
      * @var string
      */
-     private $_msg;
+     private $_msg = NULL;
 
 
     /**
@@ -30,6 +30,15 @@ class RestException extends FireException
     public function __construct ($rest_code = RestException::UNKNOWN)
     {
         parent::__construct($rest_code);
+    }
+
+    /**
+     * Return the detail message.
+     * @return string More information about exception.
+     */
+    public function detail()
+    {
+        return $this->_msg;
     }
 }
 ?>

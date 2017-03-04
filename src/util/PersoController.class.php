@@ -28,7 +28,7 @@ class PersoController extends FrontController
         	$this->tpl->assign($this->config->tpl->author_site, $this->config->site->author);
         	$this->tpl->assign($this->config->tpl->keyword_site, $this->config->site->keywords);
         	$this->tpl->assign($this->config->tpl->root, $this->config->path->root_url);
-        	$this->tpl->assign($this->config->tpl->root_image, $this->config->path->root_dir.$this->config->path->image);
+        	$this->tpl->assign($this->config->tpl->root_image, $this->config->path->root_url.$this->config->path->image);
         }
     }
 }

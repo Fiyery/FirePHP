@@ -11,7 +11,7 @@ class DebugBarreModule extends Module
         $errors = array_merge($this->error->get_all_exceptions(), $this->error->get_all_errors());
         $tpl = new Template($this->config->path->tpl_cache);
         $tpl->assign('errors', $errors);
-
+        
         // Affichages parasites.
         $echos = ob_get_contents();
         $tpl->assign('echos', $echos);

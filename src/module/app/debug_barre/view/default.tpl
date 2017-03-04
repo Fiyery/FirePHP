@@ -131,7 +131,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {foreach $queries as $s}
+                            {foreach $session as $s}
                                 <tr>
                                     <td>{$s.name}</td>
                                     <td>{$s.value}</td>
