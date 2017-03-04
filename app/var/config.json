@@ -4,13 +4,13 @@
 {
 	"db" : {
 		"host" : 		"localhost",
-		"name" : 		"pokemon",
-		"charset" : 	"utf-8",
+		"name" : 		"",
+		"charset" : 	"utf8mb4",
 		"user" : 		"root",
 		"pass" : 		"root",
 		"cache" :		true,
 		"cache_time" :	60, // En secondes.
-		"table_prefix" : "v2_"
+		"table_prefix" : ""
 	},
 
 	"path" : {

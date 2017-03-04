@@ -25,14 +25,14 @@ class IndexModule extends Module
 		// Debug::show($q->table('user')->join('user_group')->order('name', 'DESC')->sql());
 		
 		// POUR L'AJAX, RETOURNER FALSE POUR NE PAS APPELER LE TEMPLATE DU MODULE 
-		// mais seulement le principale qui retournera la réponse.
+		// mais seulement le principale qui retournera la rï¿½ponse.
  		// $this->tpl->assign('ajax', 'test');
 		// return FALSE;
 
 		// GESTIONNAIRE DE LOG
 		// $l = new FileLogger();
 		// $l->path('./app/var/log')->granularity(FileLogger::TIME_MONTH);
-		// $e = new Event("User", "Début de la récupération des utilisateurs", "error", ['args'=>  func_get_args(), 'test'=>['1',2,3]]);
+		// $e = new Event("User", "Dï¿½but de la rï¿½cupï¿½ration des utilisateurs", "error", ['args'=>  func_get_args(), 'test'=>['1',2,3]]);
 		// $e->fire();
 		// $l->notify($e);
 		// $l->log();

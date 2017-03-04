@@ -46,7 +46,7 @@ class Base
 	 * Encodage de la base de données.
 	 * @var string
 	 */
-	private $_charset = 'utf-8';
+	private $_charset = 'utf8mb4';
 	
 	/**
 	 * Adresse du serveur de la base de données.
@@ -102,22 +102,21 @@ class Base
 	 * @param string $charset Encodage de la base.
 	 * @param string $engine Nom du système de base de données.
 	 */
-	public function connect($host, $name, $user, $pass, $charset='utf-8', $engine='mysql')
+	public function connect($host, $name, $user, $pass, $charset='utf8mb4', $engine='mysql')
 	{
 		if ($name == '')
 		{
 			return FALSE;
 		}
-		$this->_connection = new PDO($engine.":host=".$host.";dbname=".$name, $user, $pass);
 		$this->_charset = strtolower($charset);
 		$this->_tables = [];
 		$this->_host = $host;
 		$this->_name = $name;
 		$this->_engine = $engine;	
-		if ($charset === 'utf-8')
+		$this->_connection = new PDO($this->_engine.":host=".$this->_host.";dbname=".$this->_name, $this->_user, $this->_pass);
+		if ($this->_connection !== NULL)
 		{
-			$sql = "SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'";
-			$this->query($sql, $name);
+			$this->query("SET NAMES ".$this->_charset, $name);
 		}
 		return TRUE;
 	}
