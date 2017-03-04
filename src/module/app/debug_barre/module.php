@@ -53,7 +53,7 @@ class DebugBarreModule extends Module
                 ];
             }
         }
-        $tpl->assign('sesssion', $session);
+        $tpl->assign('session', $session);
 
         // Variable de GET.
         $get = [];
