@@ -113,7 +113,7 @@ class Base
 		$this->_host = $host;
 		$this->_name = $name;
 		$this->_engine = $engine;	
-		$this->_connection = new PDO($this->_engine.":host=".$this->_host.";dbname=".$this->_name, $this->_user, $this->_pass);
+		$this->_connection = new PDO($this->_engine.":host=".$this->_host.";dbname=".$this->_name, $user, $pass);
 		if ($this->_connection !== NULL)
 		{
 			$this->query("SET NAMES ".$this->_charset, $name);
