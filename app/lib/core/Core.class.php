@@ -404,9 +404,9 @@ class Core
     {
         // Définition de la clé de cryptage par défaut.
         $this->_services->set('crypt', function() {
-            Crypt::set_default_key($this->_services->get('config')->security->key_crypt);
-            Crypt::set_salts($this->_services->get('config')->security->prefix_salt, $this->_services->get('config')->security->suffix_salt);
             $service = new Crypt();
+            $service->key($this->_services->get('config')->security->key_crypt);
+            $service->salts($this->_services->get('config')->security->prefix_salt, $this->_services->get('config')->security->suffix_salt);
             return $service;
         });
     }
