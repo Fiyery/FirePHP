@@ -181,6 +181,7 @@ class FrontController
 				$this->route->set_controller('Default');
 				$this->route->set_module('Error');
 				$this->route->set_action('404');
+				$this->response->status_code(404);
 				$this->hook->notify(new Event('Erreur::404'));
 			}
 		}
@@ -194,6 +195,7 @@ class FrontController
 			$this->route->set_controller('Default');
 			$this->route->set_module('Error');
 			$this->route->set_action('500');
+			$this->response->status_code(500);
 			$this->tpl->assign('error_msg', $t->getMessage());
 			$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action())));
 		}
@@ -227,6 +229,7 @@ class FrontController
 				$this->route->set_controller('Default');
 				$this->route->set_module('Error');
 				$this->route->set_action('404');
+				$this->response->status_code(404);
 				$this->hook->notify(new Event(($this->route->get_module()).'::'.($this->route->get_action()).'::tpl'));
 			}
 		}
@@ -242,7 +245,7 @@ class FrontController
 		$this->get_js();
 		
 		// Envoie des messages.
-		$this->tpl->assign($this->config->tpl->message, $this->site->list_messages());
+		$this->tpl->assign($this->config->tpl->message, $this->response->get_alerts());
 
 		// Event pour lancer les actions du Hook.
 		try 

@@ -19,11 +19,11 @@
  * @uses Hook
  * @uses Javascript
  * @uses Request
+ * @uses Response
  * @uses Ressource
  * @uses Route
  * @uses ServiceContainer
  * @uses Session
- * @uses Site
  * @uses Templace
  * @uses Upload
  */
@@ -87,9 +87,9 @@ class Core
         $this->_init_log();
         $this->_init_session();
         $this->_init_route();
-        $this->_init_tpl();
         $this->_init_request();
-        $this->_init_site();
+        $this->_init_tpl();
+        $this->_init_response();
         $this->_init_access();
         $this->_init_error_manager();
         $this->_init_cache();
@@ -277,20 +277,12 @@ class Core
     }
 
     /**
-     * Initialise le Gestionnaire du site.
+     * Initialise le Gestionnaire de la réponse.
      */
-    private function _init_site()
+    private function _init_response()
     {
-        $this->_services->set('site', function() {
-            $service = Site::get_instance($this->_services->get('session'), $this->_services->get('tpl'), $this->_services->get('req'));
-            $config = $this->_services->get('config');
-            $service->set_default_module($config->system->default_module);
-            $service->set_default_action($config->system->default_action);
-            if ($this->_services->get('config')->tpl->enable)
-            {
-                $service->set_tpl_name_title($config->tpl->title_site);
-                $service->set_tpl_name_description($config->tpl->description_site);
-            }
+        $this->_services->set('response', function() {
+            $service = Response::get_instance($this->_services->get('session'), $this->_services->get('tpl'));
             return $service;
         });
     }

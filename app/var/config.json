@@ -111,7 +111,8 @@
 		"title" : 			"FirePHP - Le framework PHP modulable",
 		"description" : 	"",
 		"author" :			"Yoann Chaumin",
-		"keywords" :		""
+		"keywords" :		"",
+		"language" : 		"fr-FR"
 	},
 	
 	"system" : {
@@ -133,11 +134,11 @@
 		"css" :					"bloc_css",
 		"js" : 					"bloc_javascript",
 		"message" : 			"bloc_messages",
-		"title_site" :			"site_title",
-		"description_site" : 	"site_description",
-		"author_site" : 		"site_author",
-		"keyword_site" : 		"site_keyword",
-		"language" : 			"site_language",
+		"site_title" :			"site_title",
+		"site_description" : 	"site_description",
+		"site_author" : 		"site_author",
+		"site_keyword" : 		"site_keyword",
+		"site_language" : 		"site_language",
 		"root" : 				"root_www",
 		"root_image" : 			"root_image"
 	},

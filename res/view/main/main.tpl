@@ -19,10 +19,12 @@
 			<header>
 				<nav></nav>
 			</header>
-			
+
 			{if isset($bloc_messages)}	
 				<div id='zonemessage'>
-					{$bloc_messages}
+					{foreach $bloc_messages as $m}
+						<div class='{$m.type}'>{$m.message}</div>
+					{/foreach}
 				</div>
 			{/if}
 	
