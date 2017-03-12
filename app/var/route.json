@@ -29,15 +29,6 @@
         "module" : "Index",
         "action" : "index"
     }, 
-    {
-	    "url" : "/",
-    	"vars" : [
-    		"module"
-    	],
-        "controller" : "Default",
-        "module" : "?module",
-        "action" : "index"
-   	},
    	{
 	    "url" : "/*/",
     	"names" : [
@@ -48,8 +39,8 @@
         "action" : "index"
    	},
 	{
-	    "url" : "/",
-    	"vars" : [
+	    "url" : "/*/*/",
+    	"names" : [
     		"module",
     		"action"
     	],
