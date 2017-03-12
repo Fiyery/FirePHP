@@ -80,7 +80,7 @@ class Crypt
 	}
 	
 	/**
-	 * Hash une chaine de caractère en MD5 puis SHA1.
+	 * Hash une chaine de caractère en BCRYPT.
 	 * @param string $string Chaine de caractère à hasher.
 	 * @return string
 	 */
@@ -91,6 +91,21 @@ class Crypt
 		  	return password_hash($this->_prefix_salt.$string.$this->_suffix_salt, PASSWORD_BCRYPT);
 	    }
 	    return NULL;
+	}
+
+	/**
+	 * Vérifie une chaine à haser par rapport à un Hash existant.
+	 * @param string $string Chaine à valider.
+	 * @param string $hash Chaine de caractère déjà hashé.
+	 * @return bool
+	 */
+	public function verify_hash(string $string, string $hash) : bool
+	{
+	    if (is_scalar($string) && is_scalar($hash))
+	    {
+		  	return password_verify($this->_prefix_salt.$string.$this->_suffix_salt, $hash);
+	    }
+	    return FALSE;
 	}
 	
 	/**
