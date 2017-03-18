@@ -1,5 +1,5 @@
 <?php
-require(__DIR__.'\lib\core\Core.class.php');
+require(__DIR__.'/lib/core/Core.class.php');
 $core = new Core();
 
 // Chargement des paramètres et classes outils et récupération du controller.
