@@ -448,5 +448,22 @@ class Core
             $this->_services->get('hook')->add(new $class($this->_services));
         }
     }  
+
+    /**
+     * Initialise le gestionnaire de mail.
+     */
+    private function _init_mail()
+    {
+        // Gestion des informations sur le navigateur du client.
+        $this->_services->set('mail', function() {
+            $service = new Mail();
+            if ($this->_services->get('config')->mail->enable === FALSE)
+            {
+                $service->disable();
+            }
+            $service->sender($this->_services->get('config')->mail->sender_mail, $this->_services->get('config')->mail->sender_name);
+            return $service;
+        });
+    }
 }
 ?>

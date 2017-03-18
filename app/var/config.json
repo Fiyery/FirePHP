@@ -81,7 +81,8 @@
 		"sender_name" : "admin@localhost.fr",
 		"sender_mail" :	"admin@localhost.fr",
 		"host" :		"localhost",
-		"port" :		"25"
+		"port" :		"25",
+		"enable" :		true
 	},
 	
 	"msg" : {

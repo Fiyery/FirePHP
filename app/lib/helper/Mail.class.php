@@ -2,39 +2,32 @@
 /**
  * Mail gère l'envoie de mail.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses Singleton
  */
-class Mail extends Singleton
+class Mail 
 {
 	/**
-	 * Instance de singleton.
-	 * @var Mail
-	 */
-    protected static $_instance = NULL;
-	
-	/**
 	 * Liste des adresses mail des destinataires.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_receivers;
+	private $_receivers = [];
 	
 	/**
 	 * Adresse mail de l'émetteur.
 	 * @var string
 	 */
-	private $_sender_mail;
+	private $_sender_mail = NULL;
 	
 	/**
 	 * Nom affiché de l'émetteur.
 	 * @var string
 	 */
-	private $_sender_name;
+	private $_sender_name = NULL;
 	
 	/**
 	 * Sujet du mail
 	 * @var string
 	 */
-	private $_subject;
+	private $_subject = NULL;
 	
 	/**
 	 * Entête du mail.
@@ -83,28 +76,24 @@ class Mail extends Singleton
 	/**
 	 * Ajoute un destinataire au mail.
 	 * @param string $mail Adresse mail du destinataire à ajouter.
-	 * @return array<string>|boolean Retourne l'ensemble des destinataires du mail si l'ajout réussi sinon FALSE.
+	 * @return string[] Retourne l'ensemble des destinataires du mail.
 	 */
-	public function add_receiver($mail)
+	public function add_receiver(string $mail) : array
 	{
 		if (is_string($mail))
 		{
 			$this->_receivers[] = $mail;
 			return $this->_receivers;
 		}
-		else
-		{
-			return FALSE;
-		}
-			
+		return $this->_receivers;	
 	}
 
 	/**
 	 * Supprime un destinataire au mail.
 	 * @param string $mail Adresse mail du destinataire à supprimer.
-	 * @return array<string>|boolean Retourne l'ensemble des destinataires du mail si la suppression réussie sinon FALSE.
+	 * @return string[] Retourne l'ensemble des destinataires du mail.
 	 */
-	public function drop_receiver($mail)
+	public function drop_receiver(string $mail) : array
 	{
 		if (is_string($mail))
 		{
@@ -119,153 +108,115 @@ class Mail extends Singleton
 					
 			}
 			$this->_receivers = $tmp;
-			return $this->_receivers;
 		}
-		else
-		{
-			return FALSE;
-		}
-			
+		return $this->_receivers;	
 	}
 	
 	/**
-	 * Retourne le corps du message.
-	 * @return string Contenu du corps du mail.
+	 * Définie et retourne le corps du message.
+	 * @param $value string ontenu du corps du message.
+	 * @return string
 	 */
-	public function get_body()
+	public function body(string $value = NULL)
 	{
+		if ($value !== NULL)
+		{
+			$this->_body = $value;
+		}
 		return $this->_body;
 	}
 	
 	/**
-	 * Retourne l'entête du message.
-	 * @return string Contenu de l'entête du mail.
+	 * Définie et retourne l'entête du message.
+	 * @param $value string Contenu de l'entête du message.
+	 * @return string
 	 */
-	public function get_head()
+	public function head(string $value = NULL)
 	{
+		if ($value !== NULL)
+		{
+			$this->_head = $value;
+		}
 		return $this->_head;
 	}
 	
 	/**
-	 * Retourne le pied du message.
-	 * @return string Contenu du pied du mail.
+	 * Définie et retourne le pied du message.
+	 * @param $value string Contenu du pied du message.
+	 * @return string
 	 */
-	public function get_foot()
+	public function foot(string $value = NULL)
 	{
+		if ($value !== NULL)
+		{
+			$this->_foot = $value;
+		}
 		return $this->_foot;
 	}
 	
 	/**
-	 * Retourne l'expédidteur du mail.
-	 * @return string Adresse mail de l'expéditeur du mail.
+	 * Définie et retourne l'adresse de l'expéditeur du message.
+	 * @param $mail string Adresse mail de l'expéditeur du message.
+	 * @param $name string Désignation de l'expéditeur du message.
+	 * @return string
 	 */
-	public function get_sender()
+	public function sender(string $mail = NULL, string $name = NULL)
 	{
-		return $this->_sender;
+		if ($mail !== NULL)
+		{
+			$this->_sender_name = $name;
+			$this->_sender_mail = $mail;
+		}
+		return $this->_sender_mail;
 	}
 	
 	/**
-	 * Retourne l'encodage du mail.
-	 * @return string Encodage du mail.
+	 * Définie et retourne l'adresse de copie cachée du message.
+	 * @param $value Adresse de copie caché du mail.
+	 * @return string
 	 */
-	public function get_charset()
+	public function bcc(string $value = NULL)
 	{
+		if ($value !== NULL)
+		{
+			$this->_bcc = $value;
+		}
+		return $this->_bcc;
+	}
+	
+	/**
+	 * Définie et retourne l'encodage du mail.
+	 * @param $value string Encodage du message.
+	 * @return string
+	 */
+	public function charset(string $value = NULL)
+	{
+		if ($value !== NULL)
+		{
+			$this->_charset = $value;
+		}
 		return $this->_charset;
 	}
 	
 	/**
-	 * Retourne le sujet du message.
-	 * @return string Sujet du message.
+	 * Définie et retourne le sujet du message.
+	 * @param $value string Sujet du message.
+	 * @return string
 	 */
-	public function get_subject()
+	public function subject(string $value = NULL)
 	{
-		return $this->_subject;
-	}
-	
-	/**
-	 * Définie le corps du message.
-	 * @param $text string ontenu du corps du message.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_body($text)
-	{
-		$this->_body = $text;
-		return $this;
-	}
-	
-	/**
-	 * Définie l'entête du message.
-	 * @param $text string Contenu de l'entête du message.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_head($text)
-	{
-		$this->_head = $text;
-		return $this;
-	}
-	
-	/**
-	 * Définie le pied du message.
-	 * @param $text string Contenu du pied du message.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_foot($text)
-	{
-		$this->_foot = $text;
-		return $this;
-	}
-	
-	/**
-	 * Définie l'adresse de l'expéditeur du message.
-	 * @param $name string Désignation de l'expéditeur du message.
-	 * @param $mail string Adresse mail de l'expéditeur du message.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_sender($name,$mail)
-	{
-		$this->_sender_name = $name;
-		$this->_sender_mail = $mail;
-		return $this;
-	}
-	
-	/**
-	 * Définie l'adresse de copie cachée du message.
-	 * @param $mail Adresse de copie caché du mail.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_hide_copy($mail)
-	{
-		$this->_bbc = $mail;
-		return $this;
-	}
-	
-	/**
-	 * Définie l'encodage du mail.
-	 * @param $charset string Encodage du message.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_charset($charset)
-	{
-		$this->_charset = $charset;
-		return $this;
-	}
-	
-	/**
-	 * Définie le sujet du message.
-	 * @param $text string Sujet du message.
-	 * @return Mail Instance du mail.
-	 */
-	public function set_subject($text)
-	{
-		$this->_subject = $text;
-		return $this;
+		if ($value !== NULL)
+		{
+			$this->_suject = $value;
+		}
+		return $this->_suject;
 	}
 	
 	/**
 	 * Génère le contenu du message.
 	 * @return string Contenu du message.
 	 */
-	public function generate()
+	public function generate() : string
 	{
 		$content = '';
 		if (empty($this->_head) == FALSE);
@@ -285,15 +236,15 @@ class Mail extends Singleton
 	
 	/**
 	 * Envoie le mail.
-	 * @return boolean TRUE si tous les mails ont bien été envoyés ou que la classe est inactive sinon FALSE.
+	 * @return bool TRUE si tous les mails ont bien été envoyés ou que la classe est inactive sinon FALSE.
 	 */
-	public function send()
+	public function send() : bool
 	{
-		if ($this->is_enabled() == FALSE)
+		if ($this->is_enabled() === FALSE)
 		{
 		    return TRUE;
 		}
-	    if (!is_array($this->_receivers) || count($this->_receivers) == 0)
+	    if (count($this->_receivers) === 0)
         {
         	return FALSE;
         }
@@ -342,7 +293,7 @@ class Mail extends Singleton
 	 * Vérifie si la classe est active.
 	 * @return boolean
 	 */
-	public function is_enabled()
+	public function is_enabled() : bool
 	{
 		return $this->_enable;
 	}
@@ -357,9 +308,7 @@ class Mail extends Singleton
 		$this->_body = '';
 		$this->_foot = '';
 		$this->_charset = 'UTF-8';
-		$this->_receivers = array();
-		$this->_sender_mail = '';
-		$this->_sender_name = '';
+		$this->_receivers = [];
 	}
 }
 ?>
