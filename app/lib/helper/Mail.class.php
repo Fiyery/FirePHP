@@ -68,7 +68,7 @@ class Mail
 	/**
 	 * Constructeur de la classe.
 	 */
-	protected function __construct()
+	public function __construct()
 	{
 		$this->reset();
 	}
