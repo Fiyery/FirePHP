@@ -47,9 +47,7 @@ class Request extends Singleton
 	 */
 	protected function __construct()
 	{
-		$this->_tags = array('script','style','iframe','object','frameset','frame','img','embed');
-		$this->_values = $_REQUEST;		
-		$this->clean_magic_quote();
+		$this->_values = $_REQUEST;	
 	}
 	
 	/**
@@ -73,7 +71,7 @@ class Request extends Singleton
 	}
 
 	/**
-	 * Récupère un paramètre de la classe request ($_REQUEST ou perso).
+	 * Récupère un paramètre de la classe Request protégé des injections.
 	 * @param string $name Nom du paramètre.
 	 * @return string Valeur du paramètre ou NULL.
 	 */
@@ -101,167 +99,28 @@ class Request extends Singleton
 	{
 	    return isset($this->_values[$name]);
 	}
-	
-	/**
-	 * Supprime les caractères "\" ajouter par magic_quote si cette dernière est activée.
-	 * @param string $methode Méthode à purger parmi get, post et request. Par défaut, toutes les méthodes seront purgées.
-	 * @param string $name Nom du paramètre à nettoyer. Par défaut, tous les paramètres seront nettoyés.
-	 * @return boolean
-	 */
-	public function clean_magic_quote($methode=NULL,$name=NULL)
-	{
-		if (get_magic_quotes_gpc())
-		{
-			if ($name != NULL && $methode != NULL)
-			{
-				switch (strolower($methode))
-				{
-					case 'get' :
-						{
-							$_GET[$name] = array_map('Request::clean_quote',$_GET[$name]);
-							break;
-						}
-					case 'post' :
-						{
-							$_POST[$name] = array_map('Request::clean_quote',$_POST[$name]);
-							break;
-						}
-					case 'request' :
-						{
-							$_REQUEST[$name] = array_map('Request::clean_quote', $_REQUEST[$name]);
-							break;
-						}
-				}
-			}
-			elseif ($methode != NULL)
-			{
-				switch (strolower($methode))
-				{
-					case 'get' :
-						{
-							$_GET = array_map('Request::clean_quote',$_GET);
-							break;
-						}
-					case 'post' :
-						{
-							$_POST = array_map('Request::clean_quote', $_POST);
-							break;
-						}
-					case 'request' :
-						{
-							$_REQUEST = array_map('Request::clean_quote', $_REQUEST);
-							break;
-						}
-				}
-			}
-			else
-			{
-				$_GET = array_map('Request::clean_quote',$_GET);
-				$_POST = array_map('Request::clean_quote',$_POST);
-				$_REQUEST = array_map('Request::clean_quote',$_REQUEST);
-			}
-			return TRUE;
-		}
-		return FALSE;
-	}
 
 	/**
-	 * Supprime les balises HTML dangereuses du texte.
-	 * @param string $text Texte à nettoyer.
-	 * @return string Texte filtré.
+	 * Protège une valeur contre les injections de code (Faille XSS).
+	 * @param string $name 
+	 * @return string
 	 */
-	public function suppr_html_dangerous($text)
+	public function secure(string $name) : string
 	{
-		$continue = FALSE;
-		foreach ($this->_tags as $t)
-		{
-			if (preg_match('/<\/?(\s)*'.$t.'(\s)*(.*=(\'|").*(\'|"))*\/?>/',$text))
-			{
-				$text = preg_replace('/<\/?(\s)*'.$t.'(\s)*(.*=(\'|").*(\'|"))*\/?>/','',$text);
-				$continue = TRUE;
-			}
-		}
-		if ($continue)
-		{
-			$text = $this->suppr_html_dangerous($text);
-		}
-		return $text;
+		return htmlentities($this->_values[$name]);
 	}
 
 	/**
 	 * Protège contre les injections de code (Faille XSS).
-	 * @param boolean $all TRUE pour supprimer toutes les balises HTML ou FALSE pour supprimer seulement les dangereuses.
+	 * @return Request
 	 */
-	public function secure_html($all=FALSE)
+	public function secure_values() : Request
 	{
-		if ($all)
+		foreach ($this->_values as $name => $v)
 		{
-			foreach ($_POST as $n=>$p)
-			{
-				$_POST[$n] = htmlspecialchars($p,ENT_QUOTES);
-			}
-			foreach ($_GET as $n=>$p)
-			{
-				$_GET[$n] = htmlspecialchars($p,ENT_QUOTES);
-			}
-			foreach ($_REQUEST as $n=>$p)
-			{
-				$_REQUEST[$n] = htmlspecialchars($p,ENT_QUOTES);
-			}
+			$this->$name = $this->secure($name);
 		}
-		else
-		{
-			foreach ($_POST as $n=>$p)
-			{
-				$_POST[$n] = $this->suppr_html_dangerous($p);
-			}
-			foreach ($_GET as $n=>$p)
-			{
-				$_GET[$n] = $this->suppr_html_dangerous($p);
-			}
-			foreach ($_REQUEST as $n=>$p)
-			{
-				$_REQUEST[$n] = $this->suppr_html_dangerous($p);
-			}
-		}
-	}
-
-
-	/**
-	 * Initialise la protection contre l'insertion de HTML dans la requête.
-	 */
-	public function check_html()
-	{
-		return $this->secure_html();
-	}
-
-	/**
-	 * Vérifie si la requête à déjà été envoyé.
-	 * @return boolean
-	 */
-	public function check_multipost()
-	{	
-		$array = &$_REQUEST;
-		if (isset($_SESSION['__request']) && $_SESSION['__request'] == $array)
-		{
-			$array = array();
-			return TRUE;
-		}
-		else
-		{
-			$_SESSION['__request'] = $array;
-			return FALSE;
-		}
-	}
-	
-	/**
-	 * Supprime les quotes d'une chaine ou d'un tableau.
-	 * @param array|string $value Tableau ou chaîne à purger.
-	 * @return array|string Tableau ou chaine purgée.
-	 */
-	public static function clean_quote($value)
-	{
-		return (is_array($value)) ? (array_map('Request::clean_quote', $value)) : (stripslashes($value));
+		return $this;
 	}
 	
 	/**
@@ -289,7 +148,7 @@ class Request extends Singleton
 		}
 		return $this->_method;
 	}
-	
+
 	/**
 	 * Retourne le chemin demandé de la requête
 	 * @param string $root Dossier racine du projet.
