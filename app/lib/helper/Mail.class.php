@@ -250,7 +250,7 @@ class Mail
         }
 		$entete  = 'MIME-Version: 1.0' . "\n"; // Version MIME.
         $entete .= 'Content-type: text/html; charset='.$this->_charset.'\''."\n";
-        $entete .= 'Reply-To: '.$this->_sender."\n"; // Mail de reponse.
+        $entete .= 'Reply-To: '.$this->_sender_mail."\n"; // Mail de reponse.
         $entete .= 'From: "'.$this->_sender_name.'" <'.$this->_sender_mail.'>'."\n"; // Expediteur.        
         
         $entete .= 'Bcc: '.$this->_bcc."\n"; // Copie cachée Bcc.
