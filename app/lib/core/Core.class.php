@@ -99,6 +99,7 @@ class Core
         $this->_init_browser();
         $this->_init_hook();
         $this->_init_base();
+        $this->_init_mail();
     }
 
     /**
