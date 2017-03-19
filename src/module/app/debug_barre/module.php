@@ -7,6 +7,10 @@ class DebugBarreModule extends Module
      */
     public function run()
     {
+        if ($this->config->feature->debug === FALSE)
+        {
+            return TRUE;
+        }
         // Affichage des erreurs.
         $errors = array_merge($this->error->get_all_exceptions(), $this->error->get_all_errors());
         $tpl = new Template($this->config->path->tpl_cache);
