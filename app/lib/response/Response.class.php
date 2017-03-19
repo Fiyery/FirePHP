@@ -19,7 +19,7 @@ class Response extends Singleton
 	 * Constant qui définie le format d'un message.
 	 * @var string
 	 */
-	const ALERT_OK = 'alert_success';
+	const ALERT_SUCCESS = 'alert_success';
 	
 	/**
 	 * Constant qui définie le format d'un message.
