@@ -27,7 +27,7 @@ class Template
 	 * Syntaxe d'interprétation du moteur de template.
 	 * @var int
 	 */
-	private $_syntaxe = self::SMARTY;
+	private $_syntaxe = self::SMARTY_STRICT;
 	
 	/**
 	 * Dossier temporaire pour les templates.

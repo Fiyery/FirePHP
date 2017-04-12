@@ -23,12 +23,6 @@ interface Observable
     public function notify(Event $event);
     
     /**
-     * Définit et retourne l'état de l'objet.
-     * @param string $state
-     */
-    public function state($state=NULL);
-    
-    /**
      * Retourne tous les observateurs de l'objet.
      * @return Observer[]
      */

@@ -207,9 +207,9 @@ class Mail
 	{
 		if ($value !== NULL)
 		{
-			$this->_suject = $value;
+			$this->_subject = $value;
 		}
-		return $this->_suject;
+		return $this->_subject;
 	}
 	
 	/**

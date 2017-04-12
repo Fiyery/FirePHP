@@ -2,9 +2,11 @@
 /**
  * ServiceContainer permet de charger des services et de gérer les injections de dépendance.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @use Singleton
+ * @uses Singleton
+ * @uses ServiceFactory
+ * @uses Event
  */
-class ServiceContainer extends Singleton
+class ServiceContainer extends Singleton implements Observable
 {
     /**
      * Instance de singleton
@@ -16,34 +18,92 @@ class ServiceContainer extends Singleton
 	 * Liste des closures de service.
 	 * @var array
 	 */
-	private $_callables;
+	private $_call = [];
 	/**
 	 * Liste des services intanciés.
 	 * @var array
 	 */
-	private $_instances;
+	private $_instances = [];
 	
 	/**
 	 * Liste des factories de service.
 	 * @var array
 	 */
-	private $_factories;
-	
+	private $_factories = [];
+
 	/**
-	 * Liste des alias.
-	 * @var Array
+	 * Liste des observeurs.
+	 * @var array
 	 */
-	private $_alias;
+	private $_observers = [];
 	
 	/**
 	 * Constructeur.
 	 */
 	protected function __construct()
 	{
-		$this->_callables = [];
-		$this->_instances = [];
-		$this->_factories = [];
-		$this->_alias = [];
+
+	}
+
+	/**
+	 * Charge les services.
+	 * @param string $filename Fichier JSON qui contient les services.
+	 */
+	public function init(string $filename)
+	{
+		$this->_filename = $filename;
+		$services = json_decode(file_get_contents($this->_filename));
+        foreach ($services as $name => $params)
+        {
+            $factory = new ServiceFactory($this, $name, $params);
+			$this->_call[$name] = $factory->get();
+        }
+	}
+
+	/**
+	 * Retourne la liste des services.
+	 * @return string[] 
+	 */
+	public function list_all() : array	
+	{
+		return array_merge(array_keys($this->_instances), array_keys($this->_call), array_keys($this->_factories));
+	}
+
+	/**
+	 * Retourne la liste des services intanciés.
+	 * @return string[] 
+	 */
+	public function list_instances() : array	
+	{
+		return array_keys($this->_instances);
+	}
+
+	/**
+	 * Retourne la liste des services à instanciés.
+	 * @return string[] 
+	 */
+	public function list_call() : array	
+	{
+		return array_keys($this->_call);
+	}
+
+	/**
+	 * Retourne la liste des services liés à une factory.
+	 * @return string[] 
+	 */
+	public function list_factories() : array	
+	{
+		return array_merge(array_keys($this->_instances), array_keys($this->_call), array_keys($this->_factories));
+	}
+
+	/**
+	 * Retourne la liste des services.
+	 * @param string $name Nom du service.
+	 * @return bool
+	 */
+	public function has($name) : bool
+	{
+		return in_array($name, $this->list_all());
 	}
 	
 	/**
@@ -51,10 +111,10 @@ class ServiceContainer extends Singleton
 	 * @param string $name Nom du service.
 	 * @param callable $call Closure d'intialisation du service.
 	 */
-	public function set($name, Callable $call)
+	public function set(string $name, Callable $call)
 	{
 		$name = strtolower($name);
-		if (isset($this->_call[$name]) == FALSE)
+		if (isset($this->_call[$name]) === FALSE)
 		{
 			$this->_call[$name] = $call;
 		}
@@ -64,12 +124,12 @@ class ServiceContainer extends Singleton
 	 * Initialise un service d'instance unique.
 	 * @param object $name Nom du service.
 	 */
-	public function set_instance($instance)
+	public function set_instance(string $name = NULL, $instance)
 	{
 		if ($instance != NULL && is_object($instance))
 		{
-			$name = strtolower((new \ReflectionClass($instance))->getName());
-			if (isset($this->_instances[$name]) == FALSE)
+			$name = ($name !== NULL) ? ($name) : (strtolower((new \ReflectionClass($instance))->getName()));
+			if (isset($this->_instances[$name]) === FALSE)
 			{
 				$this->_instances[$name] = $instance;
 			}
@@ -81,10 +141,10 @@ class ServiceContainer extends Singleton
 	 * @param string $name Nom du service.
 	 * @param callable $call Closure d'intialisation du service.
 	 */
-	public function set_factory($name, Callable $call)
+	public function set_factory(string $name, Callable $call)
 	{
 		$name = strtolower($name);
-		if (isset($this->_factories[$name]) == FALSE)
+		if (isset($this->_factories[$name]) === FALSE)
 		{
 			$this->_factories[$name] = $call;
 		}
@@ -97,22 +157,27 @@ class ServiceContainer extends Singleton
 	 */
 	public function get($name)
 	{
-		$name = $this->_parse_alias($name);
-	    $origin_name = $name;
-		$name = strtolower($name);
 		if (isset($this->_factories[$name]))
 		{
 			return $this->_factories[$name]();
 		}		
 		if (isset($this->_instances[$name]) || isset($this->_call[$name]))
 		{
-			if (isset($this->_instances[$name]) == FALSE && isset($this->_call[$name]))
+			if (isset($this->_instances[$name]) === FALSE && isset($this->_call[$name]))
 			{
 				$this->_instances[$name] = $this->_call[$name]();
+				$this->notify(new Event('Service::config_'.$name));
 			}
 			return $this->_instances[$name];
 		}
-		$reflected_class = new ReflectionClass($origin_name);
+		try 
+		{
+			$reflected_class = new ReflectionClass($name);
+		}
+		catch (Exception $e)
+		{
+			throw new FireException('Unable to solve service "'.$name.'"', 1);
+		}
 		if ($reflected_class->isInstantiable())
 		{
 			$contructor = $reflected_class->getConstructor();
@@ -134,8 +199,7 @@ class ServiceContainer extends Singleton
 						}
 					    catch (Exception $e)
 					    {
-					        $d = debug_backtrace();
-					        throw new FireException('Unable to solve service "'.$name.'" : undefined default parameter for "'.$param->getName().'"', $d[1]['file'], $d[1]['line']);
+					        throw new FireException('Unable to solve service "'.$name.'" : undefined default parameter for "'.$param->getName().'"', 1);
 					    }
 					}
 				}
@@ -147,44 +211,46 @@ class ServiceContainer extends Singleton
 			}
 			return $this->_instances[$name];
 		}
-		$d = debug_backtrace();
-		throw new FireException('Unable to solve service "'.$name.'"', $d[1]['file'], $d[1]['line']); 	   
+		throw new FireException('Unable to solve service "'.$name.'"', 1); 	   
 	}
 
 	/**
-	 * Charge les alias
-	 * @param string $filename Chemin du fichier.
-	 */
-	public function load_alias($filename)
+     * Ajoute un observateur à l'objet.
+     * @param Observer $observer
+     */
+    public function attach(Observer $observer)
 	{
-	    if (file_exists($filename))
-	    {
-            $alias = json_decode(file_get_contents($filename));
-            if ($alias != NULL) 
-            {
-                $this->_alias = array_merge($this->_alias, get_object_vars($alias));
-            }
-	    }
-	}
-	
-	/**
-	 * Ajoute un nouvel alias pour le service.
-	 * @param string $alias Nom de l'alias.
-	 * @param string $target Nom du service.
-	 */
-	public function add_alias($alias, $target)
-	{
-	    $this->_alias[$alias] = $target;
+		$this->_observers[] = $observer;
 	}
 
 	/**
-	 * Remplace le nom par l'alias s'il existe.
-	 * @param string $name Nom du service appelé.
-	 * @return string
-	 */
-    private function _parse_alias($name)
-    {
-        return (isset($this->_alias[$name])) ? ($this->_alias[$name]) : ($name);
-    }
+     * Supprime un observateur de l'objet.
+     * @param Observer $observer
+     */
+    public function detach(Observer $observer)
+	{
+		unset($this->_observers[array_search($observer, $this->_observers)]);
+	}
+
+	/**
+     * Génère un événement.
+     * @param Event $event
+     */
+    public function notify(Event $event)
+	{
+		foreach ($this->get_observers() as $observer)
+		{
+			$observer->notify($event);
+		}
+	}
+    
+    /**
+     * Retourne tous les observateurs de l'objet.
+     * @return Observer[]
+     */
+    public function get_observers() : array
+	{
+		return $this->_observers;
+	}
 }
 ?>

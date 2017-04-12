@@ -2,16 +2,9 @@
 /**
  * ExceptionManager est la classe de gestion des erreurs et exceptions PHP personnalisée ou standard.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses Singleton
  */
-class ExceptionManager extends Singleton
+class ExceptionManager 
 {	
-	/**
-	 * Instance de singleton.
-	 * @var Error
-	 */
-	protected static $_instance = NULL;
-	
 	/**
 	 * Définie si les erreurs devront être affichées.
 	 * @var bool
@@ -57,7 +50,7 @@ class ExceptionManager extends Singleton
 	/**
 	 * Constructeur.
 	 */
-	protected function __construct()
+	public function __construct()
 	{
 		$this->_errors = [];
 		$this->_exceptions = [];

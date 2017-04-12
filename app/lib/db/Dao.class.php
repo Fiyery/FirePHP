@@ -2,14 +2,14 @@
 /**
  * Dao est la classe générale et mère de toutes les Dao spécifiques d'accès au table de la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses Base
+ * @uses DataBase
  * @uses DaoException
  */
 abstract class Dao
 {
     /**
      * Classe de la base de données.
-     * @var Base
+     * @var DataBase
      */
     private static $_base = NULL;
 
@@ -163,10 +163,10 @@ abstract class Dao
     
     /**
      * Définie la connexion avec la base de données.
-     * @param Base $base Instance de connexion et de requêtage à la base de données.
-     * @return Base 
+     * @param DataBase $base Instance de connexion et de requêtage à la base de données.
+     * @return DataBase 
      */
-    public static function base(Base $base=NULL)
+    public static function base(DataBase $base=NULL)
     {
 		if ($base !== NULL)
 		{
@@ -277,7 +277,7 @@ abstract class Dao
      * @param int $begin Position du premier enregistrement.
      * @param int $end Position du dernier enregistrement.
      * @param array $order Tableau associatif avec en clée les noms des champs et en valeur l'ordre.
-     * @return array<object> Liste des objets trouvés ou un tableau vide.
+     * @return object[] Liste des objets trouvés ou un tableau vide.
      */
     public static function search($fields=[], $begin=NULL, $end=NULL, $order=[])
     {

@@ -2,9 +2,8 @@
 /**
  * Cache est le système de mise en cache du traitement des variables du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses Singleton
  */
-class Cache extends Singleton
+class Cache 
 {	
 	/**
 	 * Nombre de seconde par minute.
@@ -43,12 +42,6 @@ class Cache extends Singleton
 	const YEAR = 31557600;
 	
 	/**
-	 * Instance de singleton.
-	 * var Cache
-	 */
-	protected static $_instance = NULL;
-	
-	/**
 	 * Nom du fichier de cache.
 	 * @var string
 	 */
@@ -74,14 +67,15 @@ class Cache extends Singleton
 
 	/**
 	 * Constructeur.
+	 * @param string $dirname Dossier contenant le cache.
 	 */
-	protected function __construct($dir)
+	public function __construct(string $dirname)
 	{
-	    if (file_exists($dir) == FALSE)
+	    if (file_exists($dirname) == FALSE)
 	    {
-	    	mkdir($dir, 0755, TRUE);
+	    	mkdir($dirname, 0755, TRUE);
 	    }
-	    $this->_dir = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
+	    $this->_dir = (substr($dirname,-1) != '/') ? ($dirname.'/') : ($dirname);
 		if (file_exists($this->_dir) == FALSE)
 		{
 			mkdir($this->_dir, 0755, TRUE);
@@ -246,16 +240,6 @@ class Cache extends Singleton
 	public function is_enabled()
 	{
 	    return $this->_enable;
-	}
-	
-	/**
-	 * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Cache
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
 	}
 }
 ?>

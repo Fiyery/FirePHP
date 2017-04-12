@@ -2,8 +2,6 @@
 /**
 * Upload manage le traitement du téléchargement de fichiers.
 * @author Yoann Chaumin <yoann.chaumin@gmail.com>
-* @copyright 2011-2015 Yoann Chaumin
-* @uses Singleton
 * @uses File
 * @uses FireException
 */
@@ -23,12 +21,6 @@ class Upload extends Singleton
     const ERR_DIR_INVALID = 8;
     const ERR_MOVE_FILE = 9;
     const ERR_FILE_NOT_IMAGE = 10;
-    
-	/**
-	 * Variable de singleton.
-	 * @var Upload
-	 */
-	protected static $_instance = NULL;
 
 	/**
 	 * Chemin de la base de données.
@@ -38,9 +30,9 @@ class Upload extends Singleton
 	
 	/**
 	 * Liste des types mimes et leurs extensions.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_db = array();
+	private $_db = [];
 	
 	/**
 	 * Instance du fichier courant
@@ -50,9 +42,9 @@ class Upload extends Singleton
 	
 	/**
 	 * Informations contenues dans $_FILES sur le fichier chargé.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_file_data = array();
+	private $_file_data = [];
 	
 	/**
 	 * Taille maximale du fichier à télécharger en octet.
@@ -68,9 +60,9 @@ class Upload extends Singleton
 	
 	/**
 	 * Liste des extensions autorisées pour le fichier.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_authorised_exts = array();
+	private $_authorised_exts = [];
 	
 	/**
 	 * Taille maximale en pixel de la largeur du fichier image.
@@ -98,9 +90,9 @@ class Upload extends Singleton
 	
 	/**
 	 * Dernière erreur générée.
-	 * @var array<string>
+	 * @var string[]
 	 */
-	private $_error = array();
+	private $_error = [];
 	
 	/**
 	 * Liste des erreurs récupérables lors du téléchargzement d'un fichier.
@@ -124,7 +116,7 @@ class Upload extends Singleton
 	 * @param string $filename Chemin du fichier de base de données des types mimes et des extensions.
 	 * @throws FireException
 	 */
-	protected function __construct($filename)
+	public function __construct($filename)
 	{
         if (is_file($filename) == FALSE || is_readable($filename) == FALSE)
         {
@@ -172,7 +164,7 @@ class Upload extends Singleton
 	public function unload()
 	{
 		$this->_file = NULL;
-		$this->_file_data = array();
+		$this->_file_data = [];
 		return TRUE;
 	}
 	
@@ -204,9 +196,9 @@ class Upload extends Singleton
 
 	/**
 	 * Définie les extensions de fichiers acceptées.
-	 * @param array<string> $exts Liste des extensions acceptées.
+	 * @param string[] $exts Liste des extensions acceptées.
 	 */
-	public function set_exts($exts=array())
+	public function set_exts($exts=[])
 	{
 		if (is_array($exts))
 		{
@@ -427,15 +419,5 @@ class Upload extends Singleton
 	{
 	    return $this->_file;
 	}
-	
-    /**
-	 * Retourne une instance de Base avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Upload
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
-	} 
 }
 ?>

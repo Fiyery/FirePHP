@@ -3,11 +3,9 @@
  * Site est la class qui gère les actions primaires du site telles que l'affichage de messages, la modification du titre de la page ou les redirections.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Session
- * @uses Template
- * @uses Singleton
  * @uses Request
  */
-class Response extends Singleton
+class Response 
 {
 	/**
 	 * Constant qui définie le format d'un message.
@@ -60,7 +58,7 @@ class Response extends Singleton
 	/**
 	 * Constructeur.
 	 */
-	protected function __construct(Session $session, Template $request)
+	public function __construct(Session $session, Template $request)
 	{
 	    $this->_session = $session;
 	    $this->_request = $request;
@@ -177,16 +175,6 @@ class Response extends Singleton
 			$this->_status_code = $code;
 		}
 		return $this->_status_code;
-	}
-	
-	/**
-	 * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Singleton
-	 */
-	protected static function __create($args) 
-	{
-	    return new self($args[0], $args[1]);
 	}
 }
 ?>

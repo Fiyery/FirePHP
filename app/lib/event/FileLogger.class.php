@@ -29,7 +29,7 @@ class FileLogger extends Logger
     /**
      * Constructeur.
      */
-    public function __contruct($path = '.', $granularity = self::TIME_MONTH)
+    public function __construct($path = '.', $granularity = self::TIME_MONTH)
     {
         parent::__contruct();
         $this->_granularity = $granularity;
@@ -116,9 +116,9 @@ class FileLogger extends Logger
 
     /**
      * Ajout des événéments à écouter.
-     * @param array $name Nom des événements.
+     * @param string $name Nom des événements.
      */
-    public function listen(array $name)
+    public function listen(string $name)
     {
 
     }

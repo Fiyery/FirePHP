@@ -2,16 +2,9 @@
 /**
  * Request est un moyen de gestion des requêtes simplifié en plus d'avoir quelques fonctions utiles.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses Singleton
  */
-class Request extends Singleton
+class Request 
 {
-	/**
-	 * Instance de singleton.
-	 * @var Request
-	 */
-	protected static $_instance = NULL;
-	
 	/**
 	 * Liste des balises HTML dangereuses.
 	 * @var string[]
@@ -45,7 +38,7 @@ class Request extends Singleton
 	/**
 	 * Constructeur.
 	 */
-	protected function __construct()
+	public function __construct()
 	{
 		$this->_values = $_REQUEST;	
 	}

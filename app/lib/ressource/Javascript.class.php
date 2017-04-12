@@ -5,13 +5,7 @@
  * @uses Ressource
  */
 class Javascript extends Ressource
-{
-	/**
-	 * Variable d'instance de singleton.
-	 * @var JS
-	 */
-	protected static $_instance = NULL;
-	
+{	
 	/**
 	 * Nom du dossier JS.
 	 * @var string
@@ -36,7 +30,7 @@ class Javascript extends Ressource
 	 * @param string $module Nom du module.
 	 * @param string $action Nom de l'action.
 	 */
-	protected function __construct($dirname)
+	public function __construct($dirname)
 	{
 		parent::__construct('text/javascript', 'js', $dirname);
 	}
@@ -45,7 +39,7 @@ class Javascript extends Ressource
 	 * Définie un nouveau package à partir d'un dossier.
 	 * @param string $name Nom du package associé.
 	 * @param string $dir Chemin du dossier.
-	 * @param array<string> Liste des extensions à importer si renseigné. Par défaut, c'est ".js".
+	 * @param string[] Liste des extensions à importer si renseigné. Par défaut, c'est ".js".
 	 * @return boolean
 	 */
 	public function add_package($name, $dir, $exts=NULL)
@@ -78,16 +72,6 @@ class Javascript extends Ressource
 			$html .= "<script type='text/javascript' src='".$l."'></script>\n";
 		}
 		return $html;
-	}
-
-	/**
-	 * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Javacript
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
 	}
 }
 ?>
