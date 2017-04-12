@@ -41,6 +41,7 @@ class Request
 	public function __construct()
 	{
 		$this->_values = $_REQUEST;	
+		// $_SESSION['__last_request'] = 
 	}
 	
 	/**
@@ -88,7 +89,7 @@ class Request
      * @param string $name Nom de la variable.
      * @return boolean
      */
-	public function __isset($name)
+	public function __isset($name) : bool
 	{
 	    return isset($this->_values[$name]);
 	}
@@ -120,7 +121,7 @@ class Request
 	 * Retourne la source de la requête
 	 * @return string
 	 */
-	public function source()
+	public function source() 
 	{
 		if ($this->_source == NULL)
 		{
@@ -133,7 +134,7 @@ class Request
 	 * Retourne la méthode de la requête
 	 * @return string
 	 */
-	public function method()
+	public function method() 
 	{
 		if ($this->_method == NULL)
 		{
@@ -147,7 +148,7 @@ class Request
 	 * @param string $root Dossier racine du projet.
 	 * @return string
 	 */
-	public function path($root=NULL)
+	public function path($root=NULL) 
 	{
 	    if ($this->_path == NULL)
 		{
