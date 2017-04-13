@@ -125,7 +125,13 @@ class Debug
 	 */
 	public static function show($var, $hide=FALSE)
 	{
-		$chaine = '<p><pre>';
+		$d = debug_backtrace();
+		$chaine = "\n<p style='color:#5DBBE3; font-size:85%; margin-bottom:0'>".$d[0]['file'].":".$d[0]['line']." : ";
+		if (isset($d[1]))
+		{
+			$chaine .= "<span style='color:#4086A4'>".((isset($d[1]['class'])) ? ($d[1]['class'].'::') : (''))."".$d[1]['function']."()</span> :</p>";
+		}
+		$chaine .= "<pre style='margin-top:0;'><p style='margin-top:3px;'>";
 		if (is_array($var) || is_object($var))
 		{
 			$chaine .= print_r($var,TRUE);
@@ -155,7 +161,7 @@ class Debug
 			$var = htmlentities($var);
 			$chaine .= $var;
 		}
-		$chaine .= '</pre></p>';
+		$chaine .= "</p></pre>\n";
 		if ($hide == FALSE)
 		{
 			echo $chaine;

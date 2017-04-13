@@ -1,13 +1,13 @@
 <?php
 /**
- * Route permet la liaison entre l'url et le traitement spécfique du serveur.
+ * Router permet la liaison entre l'url et le traitement spécfique du serveur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Request
  * @uses Singleton
  * @uses FireException
  * @uses File
  */
-class Route extends Singleton
+class Router extends Singleton
 {
     /**
      * Constant qui définie le format de retoure de la racine comme adresse url.
@@ -88,30 +88,24 @@ class Route extends Singleton
     );
     
     /**
-     * Instance de singleton.
-     * @var Route
-     */
-    protected static $_instance = NULL;
-    
-    /**
      * Constructeur.
      * @param Request $req Instance de l'objet Request.
-     * @param string $root_www Adresse URL de la racine.
-     * @param string $root_dir Chemin de la racine du site.
      */
-    protected function __construct(Request $req, $root_www, $root_dir)
+    public function __construct(Request $req)
     {   
         $this->_request = $req;
-        $this->_root_www = $root_www;
-        $this->_root_dir = $root_dir;
     }
     
     /**
      * Initialise le routage.
      * @param string $table Chemin de fichier JSON contenant la table de routage.
+     * @param string $root_www Adresse URL de la racine.
+     * @param string $root_dir Chemin de la racine du site.
      */
-    public function init($table)
+    public function init(string $table, string $root_www, string $root_dir)
     {
+        $this->_root_www = $root_www;
+        $this->_root_dir = $root_dir;
         if (file_exists($table) == FALSE)
         {
             $this->_error("Invalid file for route table");
@@ -399,16 +393,6 @@ class Route extends Singleton
             }
             exit();
         }
-    }
-    
-    /**
-     * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-     * @param array $args Tableau d'arguments du constructeur.
-     * @return Route
-     */
-    protected static function __create($args)
-    {
-    	return new self($args[0], $args[1], $args[2]);
     }
 }
 ?>

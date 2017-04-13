@@ -3,14 +3,8 @@
  * Session est l'interface de gestion des la session.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class Session extends Singleton
-{
-	/**
-	 * Variable d'instance de singleton.
-	 * @var Base
-	 */
-	protected static $_instance = NULL;
-	
+class Session 
+{	
 	/**
 	 * Temps maximal en secondes d'une session. 
 	 * @var int
@@ -32,7 +26,7 @@ class Session extends Singleton
 	/**
 	 * Constructeur.
 	 */
-	protected function __construct()
+	public function __construct()
 	{
 	    $this->start();
 		if ($this->is_open())

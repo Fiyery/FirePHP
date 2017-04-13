@@ -10,7 +10,9 @@ class RestModule extends Module
         }
         catch (Exception $e)
         {
-            Debug::show($e);
+            echo json_encode([
+                'error' => ($e->detail() !== NULL) ? ($e->getMessage().' : '.$e->detail()) : ($e->getMessage())
+            ]);
         }
         exit();
     }

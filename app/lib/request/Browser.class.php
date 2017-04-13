@@ -3,9 +3,8 @@
  * Browser renseigne toute sorte d'informations sur le navigateur du client.
  * Attention les informations ne sont données qu'à titre indicatif et peuvent tout à faire être fausse. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses SingletonSession
  */
-class Browser extends SingletonSession
+class Browser 
 {
     /**
      * Nom du navigateur.
@@ -36,18 +35,12 @@ class Browser extends SingletonSession
 	 * @var array
 	 */
 	private $_data = array();
-	
-	/**
-	 * Instance de singleton de Browser.
-	 * @var Browser
-	 */
-    protected static $_instance = NULL;
 
     /**
      * Constructeur.
      * @param string $file Chemin du fichier de browscap.
      */
-	protected function __construct($file=NULL)
+	public function __construct($file=NULL)
 	{
 		if (get_cfg_var('browscap'))
 		{
@@ -478,16 +471,6 @@ class Browser extends SingletonSession
 	public function accept_java()
 	{
 		return (isset($this->_data['javaapplets'])) ? ($this->_data['javaapplets']) : (NULL);
-	}
-	
-	/**
-	 * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Browser
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
 	}
 }
 ?>

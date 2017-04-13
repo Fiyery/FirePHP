@@ -2,7 +2,6 @@
 /**
  * Config est la classe qui contient l'ensemmble des paramètres du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @use Singleton
  */
 class Config 
 {

@@ -3,16 +3,9 @@
  * Ressource gère le traitement des fichiers externes à une page web tels que les fichiers CSS, JavaScript, ...
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Minifier
- * @uses Singleton
  */
-class Ressource extends Singleton
+class Ressource 
 {
-	/**
-	 * Variable d'instance de singleton.
-	 * @var Ressource
-	 */
-	protected static $_instance = NULL;
-	
 	/**
 	 * Dossier des ressources par défaut.
 	 * @var string
@@ -45,7 +38,7 @@ class Ressource extends Singleton
 	
 	/**
 	 * Liste des ressources.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_list = NULL;
 	
@@ -57,7 +50,7 @@ class Ressource extends Singleton
 	
 	/**
 	 * Liste des liens des packages de ressources.
-	 * @var array<string>
+	 * @var string[]
 	 */
 	private $_links = NULL;
 	
@@ -73,10 +66,10 @@ class Ressource extends Singleton
 	 * @param string $ext Extension du fichier.
 	 * @param string $dirname Chemin du dossier de sauvegarde.
 	 */
-	protected function __construct($content_type, $ext, $dirname)
+	public function __construct($content_type, $ext, $dirname)
 	{
-		$this->_list = array();
-		$this->_links = array();
+		$this->_list = [];
+		$this->_links = [];
 		$this->_content_type = $content_type;
 		$this->_ext = $ext;
 		if (file_exists($dirname) == FALSE)
@@ -98,7 +91,7 @@ class Ressource extends Singleton
 		if (is_string($name) && preg_match("#^[a-zA-Z0-9._-]+$#", $name))
 		{
 			$this->_file = $name;
-			$this->_list[$this->_file] = array();
+			$this->_list[$this->_file] = [];
 		}
 	}
 	
@@ -137,7 +130,7 @@ class Ressource extends Singleton
 	 * Définie un nouveau package à partir d'un dossier.
 	 * @param string $name Nom du package associé.
 	 * @param string $dir Chemin du dossier.
-	 * @param array<string> $exts Liste des extensions à importer si renseigné.
+	 * @param string[] $exts Liste des extensions à importer si renseigné.
 	 * @return boolean
 	 */
 	public function add_package($name, $dir, $exts=NULL)
@@ -190,7 +183,7 @@ class Ressource extends Singleton
 	public function clean()
 	{
 		$this->check();
-		$this->_list[$this->_file] = array();
+		$this->_list[$this->_file] = [];
 	}
 	
 	/**
@@ -198,12 +191,12 @@ class Ressource extends Singleton
 	 */
 	public function clean_all()
 	{
-		$this->_list = array();
+		$this->_list = [];
 	}
 	
 	/**
 	 * Retourne les ressources du package courant.
-	 * @return array<string> Liste des ressources du package courant.
+	 * @return string[] Liste des ressources du package courant.
 	 */
 	public function get_list()
 	{
@@ -212,7 +205,7 @@ class Ressource extends Singleton
 	
 	/**
 	 * Retourne les liens des packages.
-	 * @return array<string> Liste des liens des packages.
+	 * @return string[] Liste des liens des packages.
 	 */
 	public function get_link_packages()
 	{
@@ -281,7 +274,7 @@ class Ressource extends Singleton
 	    $current = $this->_list[$name];
 	    unset($this->_list[$name]);
 	    $tmp = $this->_list;  
-	    $this->_list = array();
+	    $this->_list = [];
 	    $i = 0;
         while ((list($n, $v) = each($tmp)))
 	    {
@@ -319,7 +312,7 @@ class Ressource extends Singleton
 		$current = $this->_list[$name];
 		unset($this->_list[$name]);
 		$tmp = $this->_list;
-		$this->_list = array();
+		$this->_list = [];
 		$i = 0;
 		while ((list($n, $v) = each($tmp)))
 		{
@@ -366,16 +359,6 @@ class Ressource extends Singleton
 	public function enable_minification($bool)
 	{
 		$this->_minify = $bool;
-	}
-	
-	/**
-	 * Retourne une instance de Base avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Ressource
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0], $args[1]);
 	}
 }
 ?>

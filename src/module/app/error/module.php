@@ -8,9 +8,9 @@ class ErrorModule extends Module
 
     public function action_500()
     {
-        if (isset($this->req->error_msg))
+        if (isset($this->request->error_msg))
         {
-            $this->tpl->assign('error_msg', $this->req->error_msg);
+            $this->tpl->assign('error_msg', $this->request->error_msg);
         }
     }
 }

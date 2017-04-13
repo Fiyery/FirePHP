@@ -5,13 +5,7 @@
  * @uses Ressource
  */
 class Css extends Ressource
-{
-	/**
-	 * Variable d'instance de singleton.
-	 * @var Css
-	 */
-	protected static $_instance = NULL;
-	
+{	
 	/**
 	 * Nom du dossier CSS.
 	 * @var string
@@ -36,7 +30,7 @@ class Css extends Ressource
 	 * @param string $module Nom du module.
 	 * @param string $action Nom de l'action.
 	 */
-	protected function __construct($dirname)
+	public function __construct($dirname)
 	{
 		parent::__construct('text/css', 'css', $dirname);
 	}
@@ -45,7 +39,7 @@ class Css extends Ressource
 	 * Définie un nouveau package à partir d'un dossier.
 	 * @param string $name Nom du package associé.
 	 * @param string $dir Chemin du dossier.
-	 * @param array<string> Liste des extensions à importer si renseigné. Par défaut, c'est ".css".
+	 * @param string[] Liste des extensions à importer si renseigné. Par défaut, c'est ".css".
 	 * @return boolean
 	 */
 	public function add_package($name, $dir, $exts=NULL)
@@ -78,16 +72,6 @@ class Css extends Ressource
 	        $html .= "<link rel='stylesheet' type='text/css' href='".$l."'/>\n";
 	    }
 	    return $html;
-	}
-
-	/**
-	 * Retourne une instance de la classe avec les arguments correctement ordonnés selon le constructeur de la classe.
-	 * @param array $args Tableau d'arguments du constructeur.
-	 * @return Css
-	 */
-	protected static function __create($args)
-	{
-		return new self($args[0]);
 	}
 }
 ?>

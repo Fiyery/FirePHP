@@ -9,23 +9,17 @@ class Crypt
 	 * Salt ajouté au début du hashage.
 	 * @var string
 	 */
-	private static $_prefix_salt = '';
+	private $_prefix_salt = '';
 	
 	/**
 	 * Salt ajouté à la fin du hashage.
 	 * @var string
 	 */
-	private static $_suffix_salt = '';
-	
-    /**
-     * Clé d'encryptage par défaut.
-     * @var string
-     */
-    private static $_default_key = NULL;
+	private $_suffix_salt = '';
     
     /**
      * Tableau de concordance de caractères spéciaux.
-     * @var array<string>
+     * @var string[]
      */
 	private $_table;
 	
@@ -39,13 +33,9 @@ class Crypt
 	 * Constructeur.
 	 * @param string $key Clé d'encryptage.
 	 */
-	public function __construct($key=NULL)
+	public function __construct(string $key = NULL)
 	{
-		if (empty($key))
-		{
-			$this->_key = self::$_default_key;
-		}
-		$this->_key = md5($this->_key);
+		$this->_key = sha1($key);
 		$this->_table = array();
 		$this->_table['+'] = 'PL01';
 		$this->_table['/'] = 'SL02';
@@ -57,7 +47,7 @@ class Crypt
 	 * @param string $string Chaîne à encrypter.
 	 * @return mixed
 	 */
-	public function encrypt($string)
+	public function encrypt(string $string) : string
 	{
 	    if (is_string($string))
 	    {
@@ -75,7 +65,7 @@ class Crypt
 	 * @param string $string Chaînée à décrypter.
 	 * @return string 
 	 */
-	public function decrypt($string)
+	public function decrypt(string $string) : string
 	{
 	    if (is_string($string))
 	    {
@@ -90,32 +80,46 @@ class Crypt
 	}
 	
 	/**
-	 * Hash une chaine de caractère en MD5 puis SHA1.
+	 * Hash une chaine de caractère en BCRYPT.
 	 * @param string $string Chaine de caractère à hasher.
 	 * @return string
 	 */
-	public static function hash($string)
+	public function hash(string $string) : string
 	{
 	    if (is_scalar($string))
 	    {
-		  return sha1(md5(self::$_prefix_salt.$string.self::$_suffix_salt));
+		  	return password_hash($this->_prefix_salt.$string.$this->_suffix_salt, PASSWORD_BCRYPT);
 	    }
 	    return NULL;
+	}
+
+	/**
+	 * Vérifie une chaine à haser par rapport à un Hash existant.
+	 * @param string $string Chaine à valider.
+	 * @param string $hash Chaine de caractère déjà hashé.
+	 * @return bool
+	 */
+	public function verify_hash(string $string, string $hash) : bool
+	{
+	    if (is_scalar($string) && is_scalar($hash))
+	    {
+		  	return password_verify($this->_prefix_salt.$string.$this->_suffix_salt, $hash);
+	    }
+	    return FALSE;
 	}
 	
 	/**
 	 * Définie la clé par défaut.
 	 * @param string $key Valeur de la clé.
-	 * @return boolean
+	 * @return string
 	 */
-	public static function set_default_key($key)
+	public function key(string $key) : string
 	{
 	    if (is_scalar($key))
 	    {
-	        self::$_default_key = $key;
-	        return TRUE;
+	        $this->_key = sha1($key);
 	    }
-	    return FALSE;
+	    return $this->_key;
 	}
 	
 	/**
@@ -123,12 +127,12 @@ class Crypt
 	 * @param string $key Valeur de la clé.
 	 * @return boolean
 	 */
-	public static function set_salts($prefix, $suffix)
+	public function salts(string $prefix, string $suffix) : bool
 	{
 		if (is_scalar($prefix) && is_scalar($suffix))
 		{
-			self::$_prefix_salt = $prefix;
-			self::$_suffix_salt = $suffix;
+			$this->_prefix_salt = $prefix;
+			$this->_suffix_salt = $suffix;
 			return TRUE;
 		}
 		return FALSE;

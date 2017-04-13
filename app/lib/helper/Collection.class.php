@@ -3,22 +3,22 @@
  * Helper pour l'utilisation des Tableaux.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class Table implements ArrayAccess, IteratorAggregate, Countable
+class Collection implements ArrayAccess, IteratorAggregate, Countable
 {
 	/**
-	 * Identifiant CSS du tableau si gÃ©nÃ©ration HTML.
+	 * Identifiant CSS du tableau si génération HTML.
 	 * @var string
 	 */
     private $_id = '';
     
     /**
-     * Classes CSS du tableau si gÃ©nÃ©ration HTML.
+     * Classes CSS du tableau si génération HTML.
      * @var string
      */
     private $_class = '';
     
     /**
-     * Liste des entÃªtes du tableau si gÃ©nÃ©ration HTML.
+     * Liste des entêtes du tableau si génération HTML.
      * @var array
      */
     private $_header = [];
@@ -30,29 +30,35 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     private $_array;
     
     /**
-     * Tableau parent afin de permettre la modification des sous-Ã©lÃ©ments d'un tableau.
-     * @var Table
+     * Tableau parent afin de permettre la modification des sous-éléments d'un tableau.
+     * @var Collection
      */
     private $_parent = NULL;
     
     /**	
-     * Tableaux enfant afin de permettre la modification des sous-Ã©lÃ©ments d'un tableau.
-     * @var unknown
+     * Tableaux enfant afin de permettre la modification des sous-éléments d'un tableau.
+     * @var array
      */
     private $_childs = [];
+
+    /**
+     * Sauvegarde du dernier index pour une insertion dichotomique afin de concerver l'ordre croissant. 
+     * @var int
+     */
+    private $_dichotomous_index = [];
 
     /**
      * Contructeur.
      * @param array $array
      */
-    public function __construct(array $array = array())
+    public function __construct(array $array = [])
     {
         $this->_array = $array;
     }
 
     /**
-     * Retourne une valeur selon la clÃ©.
-     * @param string $index NULL pour rÃ©cupÃ©rer tout le tableau.
+     * Retourne une valeur selon la clé.
+     * @param string $index NULL pour récupérer tout le tableau.
      * @return mixed
      */
     public function get($index=NULL)
@@ -83,15 +89,18 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * DÃ©finie une valeur dans le tableau.
+     * Définie une valeur dans le tableau.
      * @param string $index
      * @param string $value
      * @return string
      */
     public function set($index, $value)
     {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
+    
         $this->_array[$index] = $value;
-        // Mise Ã  jour du parent.
+        // Mise à jour du parent.
         if ($this->_parent !== NULL)
         {
             $this->_parent->set(array_search($this, $this->_parent->_childs), $this->_array);
@@ -99,8 +108,8 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * VÃ©rifie l'existence d'un index.
-     * @param string $index ClÃ© Ã  rechercher.
+     * Vérifie l'existence d'un index.
+     * @param string $index Clé à rechercher.
      * @param boolean
      */
     public function has($index)
@@ -109,8 +118,8 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Recherche la clÃ© d'un Ã©lÃ©ment du tableau.
-     * @param string $value Valeur Ã  rechercher.
+     * Recherche la clé d'un élément du tableau.
+     * @param string $value Valeur à rechercher.
      * @return string
      */
     public function search($value)
@@ -120,12 +129,15 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Trie le tableau.
-     * @param bool $asc DÃ©fini si l'ordre est croissant ou non.
+     * @param bool $asc Défini si l'ordre est croissant ou non.
      * @param string
      * @return array
      */
     public function sort($asc=TRUE, $column=NULL)
     {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
+
         uasort($this->_array, function($a, $b) use ($column, $asc) {
             return $this->_compare($a, $b, $asc, $column);
         });
@@ -133,13 +145,16 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Trie le tableau selon l'algorithme du trie Ã  bulle.
-     * @param bool $asc DÃ©fini si l'ordre est croissant ou non.
+     * Trie le tableau selon l'algorithme du trie à bulle.
+     * @param bool $asc Défini si l'ordre est croissant ou non.
      * @param string
      * @return array
      */
     public function sort_linear($asc=TRUE, $column=NULL)
     {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
+
         $max = $this->count();
         for($j=1; $j < $max; $j++)
         {
@@ -157,11 +172,11 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Compare deux Ã©lÃ©ments
-     * @param mixed $a Premier Ã©lÃ©ment Ã  comparer.
-     * @param mixed $b DeuxiÃ¨me Ã©lÃ©ment Ã  comparer.
-     * @param bool $asc Trie croissant ou dÃ©croissant.
-     * @param string $column Nom de la colonne des sous-Ã©lÃ©ments si besoin.
+     * Compare deux éléments
+     * @param mixed $a Premier élément à comparer.
+     * @param mixed $b Deuxième élément à comparer.
+     * @param bool $asc Trie croissant ou décroissant.
+     * @param string $column Nom de la colonne des sous-éléments si besoin.
      * @return int
      */
     private function _compare($a, $b, $asc=TRUE, $column=NULL)
@@ -198,12 +213,16 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * ExÃ©cute une fonction sur tout le table ou une colonne des sous-Ã©lÃ©ments.
-     * @param callback $callback Fonction a exÃ©cuter.
-     * @param string $column Colonne sur laquelle exÃ©cuter la fonction pour les sous-Ã©lÃ©ments.
+     * Exécute une fonction sur tout le table ou une colonne des sous-éléments.
+     * @param callback $callback Fonction a exécuter.
+     * @param string $column Colonne sur laquelle exécuter la fonction pour les sous-éléments.
+     * @return Collection
      */
     public function call($callback, $column = NULL)
     {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
+
         if ($column === NULL)
         {
             array_walk($this->_array, $callback);
@@ -220,19 +239,38 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Supprime un Ã©lÃ©ment du tableau.
+     * Efface et remplace une portion de tableau.
+     * @param int $offset Position dans le tableau.
+     * @param int $length Taille à supprimer.
+     * @param mixed $replacement Element qui remplacement la sélection supprimée.
+     * @return Collection
+     */
+    public function splice($offset, $length, $replacement)
+    {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
+
+        array_splice($this->_array, $offset, $length, $replacement);
+        return $this;
+    }
+
+    /**
+     * Supprime un élément du tableau.
      * @param string $index.
-     * @return Table
+     * @return Collection
      */
     public function remove($index)
     {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
+
         unset($this->_array[$index]);
         return $this;
     }
 
     /**
-     * Extrait l'ensemble des clÃ©s.
-     * @return Table
+     * Extrait l'ensemble des clés.
+     * @return Collection
      */
     public function keys()
     {
@@ -240,9 +278,9 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Extrait sous forme de liste l'ensemble des valeurs selon la clÃ© des sous tableaux.
-     * @param string $key ClÃ© des sous tableaux Ã  extraire.
-     * @return Table
+     * Extrait sous forme de liste l'ensemble des valeurs selon la clé des sous tableaux.
+     * @param string $key Clé des sous tableaux à extraire.
+     * @return Collection
      */
     public function extract($key)
     {
@@ -259,12 +297,14 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Transforme le tableau ou une partie du tableau en chaine.
-     * @param string $glue CaractÃ¨re de liaison.
+     * @param string $glue Caractère de liaison.
      * @param string $index Facultatif.
      * @return string
      */
     public function join($glue, $index = FALSE)
     {
+        // Reset les indexs sauvegardés.
+        $this->_dichotomous_index = [];
 
         if ($index !== FALSE)
         {
@@ -311,9 +351,9 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * DÃ©finie la ou les classes CSS.
+     * Définie la ou les classes CSS.
      * @param string $class
-     * @return Table
+     * @return Collection
      */
     public function classe($class)
     {
@@ -322,9 +362,9 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * DÃ©finie l'identifiant du tableau.
+     * Définie l'identifiant du tableau.
      * @param string $id
-     * @return Table
+     * @return Collection
      */
     public function id($id)
     {
@@ -391,6 +431,58 @@ class Table implements ArrayAccess, IteratorAggregate, Countable
         }
         $s .= '</tbody></table>';
         return $s;
+    }
+
+    /**
+     * Recherche dichotomique d'une valeur dans un tableau numérique trié par ordre croissant.
+     * @param int $val 
+     * @return int Index de la valeur trouvée ou -1.
+     */
+    public function search_dichotomous($val)
+    {
+        $min = 0;
+        $max = $this->count() - 1;
+        if ($val === $this[$min])
+        {
+            return $min;
+        }
+        if ($val === $this[$max])
+        {
+            return $max;
+        }
+        $find = FALSE;  
+        while ($find === FALSE && ($max - $min) > 1)
+        {
+            $mid = floor(($max + $min) / 2);
+            $find = ($val === $this[$mid]);
+            if ($val < $this[$mid])
+            {
+                $max = $mid;
+            }
+            else 
+            {
+                $min = $mid;
+            }
+        }
+        $this->_last_dichotomous_index[$val] = $mid;
+        return ($find) ? ($mid) : (-1);
+    }
+
+    public function insert_dichotomous($val)
+    {
+        if ($val >= $this[$this->count() -1])
+        {
+            return $this->splice($this->count(), 0, $val);
+        }
+        if ($val <= $this[0])
+        {
+            return $this->splice(0, 0, $val);
+        }
+        if (isset($this->_last_dichotomous_index[$val]) === FALSE)
+        {
+            $this->search_dichotomous($val);
+        }
+        return $this->splice($this->_last_dichotomous_index[$val], 0, $val);
     }
 
     /**

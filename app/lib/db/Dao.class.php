@@ -2,16 +2,22 @@
 /**
  * Dao est la classe générale et mère de toutes les Dao spécifiques d'accès au table de la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses Base
+ * @uses DataBase
  * @uses DaoException
  */
 abstract class Dao
 {
     /**
      * Classe de la base de données.
-     * @var Base
+     * @var DataBase
      */
     private static $_base = NULL;
+
+	/**
+     * Classe de la base de données.
+     * @var string
+     */
+    private static $_table_prefix = NULL;
     
     /**
      * Constructeur
@@ -45,7 +51,7 @@ abstract class Dao
      * @param string $name Nom de l'attribut.
      * @param string $value Valeur de l'attribut.
      */
-    public function __set(string $name, string $value)
+    public function __set(string $name, string $value=NULL)
     {
     	if (method_exists($this, $name))
     	{
@@ -88,7 +94,7 @@ abstract class Dao
      */
     public function save()
     {
-    	$table = $this->_to_table_name();
+    	$table = self::table_name();
     	$fields = $this->fields();
     	$sql = "INSERT INTO `".$table."` VALUES (".implode(',', array_fill(0, count($fields), '?')).") ON DUPLICATE KEY UPDATE";
     	$value_sql = array();
@@ -157,12 +163,40 @@ abstract class Dao
     
     /**
      * Définie la connexion avec la base de données.
-     * @param Base $b Instance de connexion et de requêtage à la base de données.
+     * @param DataBase $base Instance de connexion et de requêtage à la base de données.
+     * @return DataBase 
      */
-    public static function set_base(Base $b)
+    public static function base(DataBase $base=NULL)
     {
-    	self::$_base = $b;
+		if ($base !== NULL)
+		{
+    		self::$_base = $base;
+		}
+		return self::$_base;
     }
+
+	/**
+     * Définie la connexion avec la base de données.
+     * @param string $prefix Préfixe utilisé pour les tables.
+     * @return string
+     */
+    public static function table_prefix(string $prefix)
+    {
+    	if ($prefix !== NULL)
+		{
+    		self::$_table_prefix = $prefix;
+		}
+		return self::$_table_prefix;
+    }
+
+	/**
+     * Retourne le nom de la table correspondant au Dao.
+     * @return string 
+     */
+	public static function table_name()
+	{
+		return strtolower(self::$_table_prefix.get_called_class());
+	}
     
     /**
      * Retourne une instance de Query qui permet d'effectuer des requêtes spécifiques.
@@ -170,7 +204,7 @@ abstract class Dao
      */
     public static function query()
     {
-    	return (new Query(self::$_base, get_called_class(), self::_to_table_name()));
+    	return (new Query(self::base(), get_called_class(), self::table_name()));
     }
     
     /**
@@ -179,7 +213,7 @@ abstract class Dao
      */
     public static function fields()
     {
-    	$fields_details = self::$_base->fields(self::_to_table_name());
+    	$fields_details = self::$_base->fields(self::table_name());
     	$names = [];
     	if (is_array($fields_details))
     	{
@@ -197,7 +231,7 @@ abstract class Dao
      */
     public static function keys()
     {
-    	$fields_details = self::$_base->fields(self::_to_table_name());
+    	$fields_details = self::$_base->fields(self::table_name());
     	$names = [];
     	if (is_array($fields_details))
     	{
@@ -243,7 +277,7 @@ abstract class Dao
      * @param int $begin Position du premier enregistrement.
      * @param int $end Position du dernier enregistrement.
      * @param array $order Tableau associatif avec en clée les noms des champs et en valeur l'ordre.
-     * @return array<object> Liste des objets trouvés ou un tableau vide.
+     * @return object[] Liste des objets trouvés ou un tableau vide.
      */
     public static function search($fields=[], $begin=NULL, $end=NULL, $order=[])
     {
@@ -267,16 +301,6 @@ abstract class Dao
     public static function count(Array $fields=[])
     {
     	return self::query()->count()->where($fields)->run();
-    }
-    
-    /**
-     * Transforme le nom de la classe en celui de la table.
-     * @return string
-     */
-    protected static function _to_table_name()
-    {
-    	return strtolower(get_called_class());
-    }
-    
+    }   
 }
 ?>

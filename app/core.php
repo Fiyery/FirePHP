@@ -1,24 +1,17 @@
 <?php
-require(__DIR__.'\lib\core\Core.class.php');
+require(__DIR__.'/lib/core/Core.class.php');
 $core = new Core();
 
 // Chargement des paramètres et classes outils et récupération du controller.
 $controller = $core->get_controller();
 
 // On impose à la fin du script le lancement de la barre de debug.
-if ($controller->config->feature->debug && $controller->req->disable_debug_tool == NULL)
+if ($controller->config->feature->debug && $controller->request->disable_debug_tool == NULL)
 {
 	register_shutdown_function(function() use ($controller)
 	{
 		$controller->hook->notify(new Event('Core::end_script'));
 	});
-}
-
-// Chargement du Controller du site.
-$redirect = ($controller->config->feature->access_redirection === TRUE) ? (TRUE) : (FALSE);
-if ($controller->config->feature->access)
-{
-	$controller->get_access($redirect);
 }
 
 try
@@ -30,9 +23,9 @@ try
 		$controller->assign();
 	}
 }
-catch (Exception $e) 
+catch (Throwable $e) 
 {
-	$controller->error->handle_exception($e);
+	$controller->error->handle_throwable($e);
 }
 
 // Récupération les affichages "parasites" (echo, print, var_dump...).

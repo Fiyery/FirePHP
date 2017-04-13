@@ -2,9 +2,9 @@
 /**
  * Base est l'interface de connexion et de requetage à la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses BaseException
+ * @uses DataBaseException
  */
-class Base 
+class DataBase 
 {	
 	/**
 	 * Temps par défaut en seconde pour la sauvegarde du cache.
@@ -89,9 +89,8 @@ class Base
 	 */
 	public function __construct()
 	{
-        
 	}
-	
+
 	/**
 	 * Connecte une base de données.
 	 * @throws PDOException
@@ -104,11 +103,7 @@ class Base
 	 */
 	public function connect($host, $name, $user, $pass, $charset='utf8mb4', $engine='mysql')
 	{
-		if ($name == '')
-		{
-			return FALSE;
-		}
-		$this->_charset = strtolower($charset);
+        $this->_charset = strtolower($charset);
 		$this->_tables = [];
 		$this->_host = $host;
 		$this->_name = $name;
@@ -118,7 +113,6 @@ class Base
 		{
 			$this->query("SET NAMES ".$this->_charset, $name);
 		}
-		return TRUE;
 	}
 
 	/**
@@ -126,7 +120,7 @@ class Base
 	 * @param string $sql Requête sql à exécuté.
 	 * @param array $value Tableau contenant les valeurs "?" vérifier par PDO.
 	 * @return boolean|array Retourne le résultat de la requête, TRUE si cette dernière ne retourne rien, ou FALSE s'il y a une erreur. 
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function query($sql, $value=NULL)
 	{
@@ -144,7 +138,7 @@ class Base
 			// Vérification du nombre de paramètres.
 			if (substr_count($sql, '?') > count($value))
 			{
-				throw new BaseException("Il manque des paramètres pour la requête préparée");
+				throw new DataBaseException("Il manque des paramètres pour la requête préparée");
 			}
 		    $time = microtime(TRUE);
 		    $bd = $this->_connection;
@@ -212,7 +206,7 @@ class Base
 	 * @param string $filename Chemin de l'exécutable MySQLDump.
 	 * @param array $excludes Liste des tables à exclure de la sauvegarde.
 	 * @return string Contenu de la sauvegarde de la base de données.
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function save($filename=NULL, $excludes=NULL)
 	{
@@ -281,7 +275,7 @@ class Base
 	/**
 	 * Retourne la liste les tables de la base de données.
 	 * @return string[] Liste des tables.
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function tables()
 	{
@@ -307,7 +301,7 @@ class Base
 	 * Retourne la liste des champs d'une table.
 	 * @param string $name Nom de la table.
 	 * @return array Information sur les colonnes.
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function fields($name)
 	{
@@ -325,7 +319,7 @@ class Base
 	 * Retourne l'ensemble des clés étrangère de la table passée en paramètre.
 	 * @param string $table Nom de la table.
 	 * @return array La liste des clés étrangères et de leur table.
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function foreign_keys($table)
 	{
@@ -389,7 +383,7 @@ class Base
 	/**
 	 * Retourne le dernier identifiant inséré.
 	 * @return int
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function last_id()
 	{
@@ -400,7 +394,7 @@ class Base
 	/**
 	 * Retourne la version de la base de données.
 	 * @return string
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function version()
 	{
@@ -415,7 +409,7 @@ class Base
 	 * Vérifie si la table passée en paramètre existe.
 	 * @param string $name Nom de la table.
 	 * @return boolean
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	public function table_exists($name)
 	{
@@ -468,7 +462,7 @@ class Base
 	/**
 	 * Définie le temps de sauvegarde du cache.
 	 * @param int $seconds Nombre de secondes.
-	 * @return Base
+	 * @return DataBase
 	 */
 	public function cache($seconds=self::DEFAUT_TIME_CACHE)
 	{
@@ -543,13 +537,13 @@ class Base
 	
 	/**
 	 * Vérifie si la base est connectées à au moins une base de donnée.
-	 * @throws BaseException
+	 * @throws DataBaseException
 	 */
 	private function _check_connection()
 	{
 		if ($this->_connection === NULL)
 		{
-			throw new BaseException('Aucune base de donnée trouvée', 2);
+			throw new DataBaseException('Aucune base de donnée trouvée', 2);
 		}
 	}
 }

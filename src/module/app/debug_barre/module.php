@@ -7,11 +7,15 @@ class DebugBarreModule extends Module
      */
     public function run()
     {
+        if ($this->config->feature->debug === FALSE)
+        {
+            return TRUE;
+        }
         // Affichage des erreurs.
         $errors = array_merge($this->error->get_all_exceptions(), $this->error->get_all_errors());
         $tpl = new Template($this->config->path->tpl_cache);
         $tpl->assign('errors', $errors);
-
+        
         // Affichages parasites.
         $echos = ob_get_contents();
         $tpl->assign('echos', $echos);
@@ -53,7 +57,7 @@ class DebugBarreModule extends Module
                 ];
             }
         }
-        $tpl->assign('sesssion', $session);
+        $tpl->assign('session', $session);
 
         // Variable de GET.
         $get = [];
@@ -135,9 +139,9 @@ class DebugBarreModule extends Module
         $vars['ip_server'] = $_SERVER['SERVER_ADDR'];
         $vars['name_server'] = $_SERVER['SERVER_NAME'];    
         $vars['cache_active'] = ($this->config->feature->cache) ? ('On') : ('Off');
-        $vars['app_controller'] = $this->route->get_controller();
-        $vars['app_module'] = $this->route->get_module();
-        $vars['app_action'] = $this->route->get_action();
+        $vars['app_controller'] = $this->router->get_controller();
+        $vars['app_module'] = $this->router->get_module();
+        $vars['app_action'] = $this->router->get_action();
 
         // Images
         $vars['time_image'] = 'data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/res/img/time.png'));
