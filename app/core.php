@@ -1,4 +1,7 @@
 <?php
+// Début de la capture du tampon de sortie.
+// ob_start();
+
 require(__DIR__.'/lib/core/Core.class.php');
 $core = new Core();
 
