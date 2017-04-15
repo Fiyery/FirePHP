@@ -8,7 +8,7 @@
     }, 
 	{
 		"url" : "/css/*",
-		"dir" : "/app/tmp/css/",
+		"dir" : "/tmp/css/",
 		"names" : [
 			"file"
 		],
@@ -16,7 +16,7 @@
     },
     {
 		"url" : "/js/*",
-		"dir" : "/app/tmp/js/",
+		"dir" : "/tmp/js/",
 		"names" : [
 			"file"
 		],
