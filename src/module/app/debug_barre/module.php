@@ -11,6 +11,7 @@ class DebugBarreModule extends Module
         {
             return TRUE;
         }
+
         // Affichage des erreurs.
         $errors = array_merge($this->error->get_all_exceptions(), $this->error->get_all_errors());
         $tpl = new Template($this->config->path->tpl_cache);
