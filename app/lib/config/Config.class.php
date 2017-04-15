@@ -1,15 +1,16 @@
 <?php
 /**
- * Config est la classe qui contient l'ensemmble des paramètres du site.
+ * Config est la classe qui contient l'ensemble des paramètres du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
+ * @uses ConfigValue
  */
 class Config 
 {
 	/**
 	 * Object contenant l'ensemble des paramètres du site.
-	 * @var stdClass
+	 * @var ConfigValue
 	 */
-	private $_params;
+	private $_values;
 	
 	/**
 	 * Constructeur.
@@ -19,49 +20,46 @@ class Config
 	{
 		$content = file_get_contents($filename);
 		$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
-		$this->_params = json_decode($content);
-		if (is_object($this->_params))
-		{
-			$this->_parse($this->_params);
-		}
+		$this->_values = new ConfigValue('config', json_decode($content));
+		$this->_parse($this->_values);
 	}
 	
 	/**
 	 * Remplace les variables du fichier de configuration par leur valeur.
 	 * @param stdClass $var Objet des paramètres.
 	 */
-	private function _parse(&$var)
+	private function _parse($values)
 	{
-		foreach ($var as &$v)
+		$keys = $values->keys();
+		foreach ($keys as $key)
 		{
-			if (is_string($v) && empty($v) === FALSE)
+			if (is_object($values->$key))
 			{
-				if (preg_match('#{\$([\w\.]*)}#', $v, $m))
+				$this->_parse($values->$key);
+			} 
+			else
+			{
+				if (preg_match('#{\$([\w\.]*)}#', $values->$key, $m))
 				{
 					$name = $m[1];
 					$m = explode('.', $name);
 					$i = 0;
 					$max = count($m);
-					$value = $this->_params;
-					while($i < $max && property_exists($value, $m[$i]))
+					$val = $this->_values;
+					while(isset($m[$i]) && ($attr = $m[$i]) && isset($val->$attr))
 					{
-						$attr = $m[$i];
-						$value = $value->$attr;
+						$val = $val->$attr;
 						$i++;
 					}
-					if ($i == $max && is_scalar($value))
+					if ($i == $max && is_scalar($val))
 					{
-						$v = str_replace('{$'.$name.'}', $value, $v);
+						$values->$key = str_replace('{$'.$name.'}', $val, $values->$key);
 					}
 					else
 					{
-						trigger_error('Propriété non définie "'.$name.'" dans le fichier de configuration');
+						trigger_error('Undefined var "'.$name.'" in the configuration file');
 					}
 				}
-			}
-			elseif (is_object($v) || is_array($v))
-			{
-				$this->_parse($v);
 			}
 		}
 	}
@@ -73,14 +71,7 @@ class Config
 	 */
 	public function __get($name)
 	{
-		if (property_exists($this->_params, $name))
-		{
-			return $this->_params->$name;
-		}
-		else
-		{
-			return NULL;
-		}
+		return $this->_values->$name;
 	}
 	
 	/**
@@ -88,9 +79,9 @@ class Config
 	 * @param string $name Nom du paramètre.
 	 * @param string $value Valeur du paramètre.
 	 */
-	public function __set($name, $value)
+	public function __set(string $name, $value)
 	{
-		$this->_params->$name = $value;
+		$this->_values->$name = $value;
 	}
 	
 	/**
@@ -98,20 +89,20 @@ class Config
 	 * @param string $name Nom du paramètre
 	 * @return boolean
 	 */
-	public function __isset($name)
+	public function __isset(string $name) : bool
 	{
-		return (property_exists($this->_params, $name));
+		return (isset($this->_values, $name));
 	}
 	
 	/**
 	 * Supprime un paramètre.
 	 * @param string $name Nom du paramètre
 	 */
-	public function __unset($name)
+	public function __unset(string $name)
 	{
 		if (isset($this->$name))
 		{
-			unset($this->_params[$name]);
+			unset($this->_values[$name]);
 		}
 	}
 }

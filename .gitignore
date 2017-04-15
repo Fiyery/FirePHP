@@ -5,6 +5,7 @@
 .vscode
 var/*
 app/tmp/*
+tmp/*
 app/var/log/*
 todo/
 res/docs

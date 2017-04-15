@@ -33,7 +33,7 @@
 		"model" : 			"{$path.sources}model/",
 		"module" : 			"{$path.sources}module/",
 		"util" : 			"{$path.sources}util/",
-		"tmp" :				"{$path.app}tmp/",
+		"tmp" :				"tmp/",
 		"cache" : 			"{$path.tmp}cache/",
 		"sql_cache" :		"{$path.tmp}sql/",
 		"tpl_cache" : 		"{$path.tmp}tpl/",

@@ -24,9 +24,6 @@ class Core
      */
     public function __construct()
     {
-        // Début de la capture du tampon de sortie.
-        ob_start();
-
         // Dossier applicatif pour le paramétrage.
         $this->_dir = str_replace('\\', '/', realpath(__DIR__.'/../../')).'/';
 

@@ -17,7 +17,7 @@ class ServiceModule extends Module
         foreach ($this->config->class_dirs as $dir)
         {
             $this->loader->add_dir($this->config->path->root_dir.$dir);
-        }  
+        }
         
         // Fuseau horaire français.
         date_default_timezone_set($this->config->system->timezone); 
