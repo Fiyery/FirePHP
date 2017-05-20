@@ -82,7 +82,7 @@ class DataBase
 	 * Nom du système de gestion de base de données.
 	 * @var string
 	 */
-	private $_cache_dir = FALSE;
+	private $_cache_dir = NULL;
 	
 	/**
 	 * Constructeur.
@@ -216,7 +216,7 @@ class DataBase
 	    {
         	$pdo = $this->_connection;
         	$bd_save = '-- SAUVEGARDE de '.$this->_name.' le '.date('d/m/Y à H:G:s')."\n";
-        	$tables = $this->get_tables();
+        	$tables = $this->tables();
         	$res = $pdo->prepare( "SHOW CREATE DATABASE `".$this->_name."`;");
         	$res->execute();
         	$create_database = $res->fetchAll(PDO::FETCH_NUM);
@@ -294,7 +294,7 @@ class DataBase
 				$this->_tables = $tab;
 			}
 		}
-		return $this->_tables;
+		return array_keys($this->_tables);
 	}
 
 	/**
@@ -414,7 +414,7 @@ class DataBase
 	public function table_exists($name)
 	{
 		$this->_check_connection();
-		return (is_string($name) && in_array($name, $this->get_tables()));
+		return (is_string($name) && in_array($name, $this->tables()));
 	}
 	
 	/**
@@ -479,7 +479,7 @@ class DataBase
 	public function reset_cache()
 	{
 		$this->_tables = [];
-		if ($this->_cache_dir !== NULL)
+		if ($this->_cache_dir !== NULL && file_exists($this->_cache_dir))
 		{
 		    $caches = array_diff(scandir($this->_cache_dir), ['..', '.']);
 		    foreach ($caches as $c)
