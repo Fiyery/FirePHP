@@ -9,4 +9,4 @@ tmp/*
 app/var/log/*
 todo/
 res/docs
-
+app/var/config_user.json

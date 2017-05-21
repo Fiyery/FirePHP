@@ -43,7 +43,7 @@ class ClassLoader
 	 * @param string[] $excluded Nom de dossier 
 	 * @param int $depth Niveau des sous-dode sous dossier à ajouter
 	 */
-	public function add_dir_recursive($dir, $excluded, $depth=-1)
+	public function add_dir_recursive($dir, $excluded=[], $depth=-1)
 	{
 		if (is_string($dir) && file_exists($dir))
 		{

@@ -1,1 +1,5 @@
-<h1>Bienvenue sur FirePHP</h1>
+<h1>Dev</h1>
+
+{if isset($component)}
+    {$component}
+{/if}
