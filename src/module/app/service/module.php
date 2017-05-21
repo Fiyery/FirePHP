@@ -16,7 +16,7 @@ class ServiceModule extends Module
         // Ajoute des dossiers de classe pour le class loader.
         foreach ($this->config->class_dirs as $dir)
         {
-            $this->loader->add_dir($this->config->path->root_dir.$dir);
+            $this->loader->add_dir_recursive($this->config->path->root_dir.$dir);
         }
         
         // Fuseau horaire français.

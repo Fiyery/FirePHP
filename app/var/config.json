@@ -29,6 +29,7 @@
 		"js_plugin" :		"{$path.js}plugins/",
 		"image" :			"{$path.ressource}img/",
 		"sources" :			"src/",
+		"component" :		"{$path.sources}component/",
 		"controller" :		"{$path.sources}controller/",
 		"model" : 			"{$path.sources}model/",
 		"module" : 			"{$path.sources}module/",
@@ -48,6 +49,7 @@
 	},
 	
 	"class_dirs" : [
+		"{$path.component}",
 		"{$path.model}",
 		"{$path.util}"
 	],

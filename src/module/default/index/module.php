@@ -3,6 +3,23 @@ class IndexModule extends Module
 {
 	public function action_index()
 	{
+		// COMPONENT.
+		$c = new UlComponent();
+		$c->set('elements', ['Element 1', 'Element 2', 'Element 3']);
+		$this->tpl->assign('component', $c->fetch());
+		
+
+		// EXEMPLE DE THREAD
+		// $t = new Thread('.');
+		// $t->add($this->config->path->root_url.'index/thread1/');
+		// $t->add($this->config->path->root_url.'index/thread2/');
+		// $t->add($this->config->path->root_url.'index/thread3/');
+		// $this->session->open(User::load(1));
+		// $t->run();
+		// Debug::show($t->response(0));
+		// Debug::show($t->response(1));
+		// Debug::show($t->response(2));
+
 		// GESTION DES HOOKS
 		// $hook = new Hook();
 		// require(__DIR__.'/../debugbar/module.php');
@@ -42,6 +59,26 @@ class IndexModule extends Module
 		// $t->assign('onglet_buttons', ['Onglet 1', 'Onglet 2']);
 		// $t->set_syntaxe(Template::SMARTY_STRICT);
 		// $this->tpl->assign('var', $t->fetch('res/views/components/ul.tpl'));
+	}
+
+	public function action_thread1()
+	{
+		echo json_encode(["SESSION_ID"=>$this->session->user]);
+		exit();
+	}
+
+	public function action_thread2()
+	{
+		sleep(1);
+		echo json_encode(["SESSION_ID"=>$this->session->user]);
+		exit();
+	}
+
+	public function action_thread3()
+	{
+		sleep(1);
+		echo json_encode(["SESSION_ID"=>$this->session->user]);
+		exit();
 	}
 }
 ?>
