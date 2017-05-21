@@ -45,7 +45,7 @@ if ($controller->config->tpl->enable)
 {
 	try
 	{
-		$controller->tpl->display($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
+		$controller->tpl->display($controller->config->path->root_dir.$controller->config->path->tpl.'main.tpl');
 	}
 	catch (Exception $e)
 	{
@@ -54,7 +54,7 @@ if ($controller->config->tpl->enable)
 } 
 else 
 {
-	echo file_get_contents($controller->config->path->root_dir.$controller->config->path->tpl.'main/main.tpl');
+	echo file_get_contents($controller->config->path->root_dir.$controller->config->path->tpl.'main.tpl');
 }
 
 // On vide le buffer.
