@@ -3,11 +3,12 @@ class IndexModule extends Module
 {
 	public function action_index()
 	{
+		user::search();
+
 		// COMPONENT.
-		$c = new UlComponent();
-		$c->set('elements', ['Element 1', 'Element 2', 'Element 3']);
-		$this->tpl->assign('component', $c->fetch());
-		
+		// $c = new UlComponent();
+		// $c->set('elements', ['Element 1', 'Element 2', 'Element 3']);
+		// $this->tpl->assign('component', $c->fetch());
 
 		// EXEMPLE DE THREAD
 		// $t = new Thread('.');

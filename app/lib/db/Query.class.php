@@ -55,11 +55,11 @@ class Query
 	
 	/**
 	 * Constructeur.
-	 * @param Base $base Instance de la base de données.
+	 * @param Database $base Instance de la base de données.
 	 * @param string $class Nom de la classe de retour du resultat.
 	 * @param string $table Nom de la table à requêter.
 	 */
-	public function __construct(Base $base = NULL, $class = NULL, $table = NULL)
+	public function __construct(Database $base = NULL, $class = NULL, $table = NULL)
 	{
 		$this->_base = $base;
 		$this->_class = $class;

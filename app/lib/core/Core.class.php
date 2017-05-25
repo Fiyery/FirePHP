@@ -32,25 +32,6 @@ class Core
     }
 
     /**
-     * Retourne le Controller.
-     * @return Controller
-     */
-    public function get_controller() : Controller
-    {
-        // Chargement du Moteur du site.
-        $filename = $this->_services->get('config')->path->root_dir.$this->_services->get('config')->path->controller.$this->_services->get('router')->get_controller().'.class.php';
-        if (file_exists($filename) == FALSE)
-        {
-            throw new FireException('Controller introuvable', __FILE__, __LINE__);
-        }
-        require($filename);
-        
-        $controller = new Controller($this->_services);
-        $controller->init();  
-        return $controller;
-    }
-
-    /**
      * Initialise tous les services.
      */
     private function _init()
@@ -127,5 +108,24 @@ class Core
             $this->_services->get('hook')->notify(new Event('Service::config_'.$service));
         }
     }  
+
+    /**
+     * Retourne le Controller.
+     * @return Controller
+     */
+    public function get_controller() : Controller
+    {
+        // Chargement du Moteur du site.
+        $filename = $this->_services->get('config')->path->root_dir.$this->_services->get('config')->path->controller.$this->_services->get('router')->get_controller().'.class.php';
+        if (file_exists($filename) === FALSE)
+        {
+            throw new FireException('Controller introuvable', __FILE__, __LINE__);
+        }
+        require($filename);
+        
+        $controller = new Controller($this->_services);
+        $controller->init();  
+        return $controller;
+    }
 }
 ?>

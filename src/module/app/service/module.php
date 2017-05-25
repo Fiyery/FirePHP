@@ -192,5 +192,15 @@ class ServiceModule extends Module
         $this->mail->sender($this->config->mail->sender_mail, $this->config->mail->sender_name);
     }
 
+    /**
+     * Paramétrage du Service Hook.
+     */
+    public function action_config_hook()
+    {
+        // Défini l'observable du Dao pour lancer la config de la Database si un appel est lancé.
+        $initializer = new DaoInitializer($this->hook);
+        Dao::observable()->attach($initializer);
+    }
+
 }
 ?>

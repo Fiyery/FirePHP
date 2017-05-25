@@ -103,15 +103,18 @@ class DataBase
 	 */
 	public function connect($host, $name, $user, $pass, $charset='utf8mb4', $engine='mysql')
 	{
-        $this->_charset = strtolower($charset);
-		$this->_tables = [];
-		$this->_host = $host;
-		$this->_name = $name;
-		$this->_engine = $engine;	
-		$this->_connection = new PDO($this->_engine.":host=".$this->_host.";dbname=".$this->_name, $user, $pass);
-		if ($this->_connection !== NULL)
+		if ($this->_connection === NULL)
 		{
-			$this->query("SET NAMES ".$this->_charset, $name);
+			$this->_charset = strtolower($charset);
+			$this->_tables = [];
+			$this->_host = $host;
+			$this->_name = $name;
+			$this->_engine = $engine;	
+			$this->_connection = new PDO($this->_engine.":host=".$this->_host.";dbname=".$this->_name, $user, $pass);
+			if ($this->_connection !== NULL)
+			{
+				$this->query("SET NAMES ".$this->_charset, $name);
+			}
 		}
 	}
 
