@@ -22,7 +22,7 @@ class DebugBarreModule extends Module
         $tpl->assign('echos', $echos);
 
         // Requête SQL.
-        $sql = $this->base->history();
+        $sql = $this->database->history();
         $queries = [];
         foreach ($sql as $i => $s)
         {
@@ -82,7 +82,7 @@ class DebugBarreModule extends Module
                 'value' => (is_scalar($v)) ? ($v) : (str_replace([','], '<br/>', json_encode($v)))
             ];
         }
-        $tpl->assign('post', $post);
+        $tpl->assign('post', $post);        
 
         // Mémoire utilisée.
         $vars = [];
@@ -130,13 +130,13 @@ class DebugBarreModule extends Module
         }
         $vars['css'] = file_get_contents(__DIR__.'/res/css/default.css');
         $vars['time'] = number_format((microtime(TRUE) - ($_SERVER['REQUEST_TIME_FLOAT'])) * 1000); 
-        $vars['query_count'] = $this->base->count();
-        $vars['query_time'] = str_replace(',', ' ', number_format($this->base->time()*pow(10,3)));
+        $vars['query_count'] = $this->database->count();
+        $vars['query_time'] = str_replace(',', ' ', number_format($this->database->time()*pow(10,3)));
         $vars['memory_limit'] = $memory_limit;    
         $vars['memory_usage'] = File::format_size(memory_get_peak_usage());    
         $vars['php_version'] = phpversion();
         $vars['apache_version'] = $apache_version;
-        $vars['base_version'] = $this->base->engine().' '.$this->base->version();
+        $vars['base_version'] = $this->database->engine().' '.$this->database->version();
         $vars['ip_server'] = $_SERVER['SERVER_ADDR'];
         $vars['name_server'] = $_SERVER['SERVER_NAME'];    
         $vars['cache_active'] = ($this->config->feature->cache) ? ('On') : ('Off');

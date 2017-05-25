@@ -184,7 +184,7 @@ class Router extends Singleton
      */
     public function get_controller()
     {
-        if (empty($this->_controller))
+        if ($this->_controller === NULL)
         {
             if (substr($this->_current->controller, 0, 1) != '?')
             {
@@ -391,6 +391,7 @@ class Router extends Singleton
             {
                 header("HTTP/1.0 404 Not Found");
             }
+            exit();
         }
     }
 }

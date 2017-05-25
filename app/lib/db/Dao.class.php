@@ -4,8 +4,12 @@
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses DataBase
  * @uses DaoException
+ * @uses DaoObserver
+ * @uses Event
+ * @uses Observable
+ * @uses Observer
  */
-abstract class Dao
+abstract class Dao 
 {
     /**
      * Classe de la base de données.
@@ -18,6 +22,12 @@ abstract class Dao
      * @var string
      */
     private static $_table_prefix = NULL;
+		
+	/**
+	 * Observer pour notifier même les méthodes statiques.
+	 * @var Observer
+	 */
+	private static $_observable = NULL;
     
     /**
      * Constructeur
@@ -94,6 +104,9 @@ abstract class Dao
      */
     public function save()
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::save', self::observable()));
+
     	$table = self::table_name();
     	$fields = $this->fields();
     	$sql = "INSERT INTO `".$table."` VALUES (".implode(',', array_fill(0, count($fields), '?')).") ON DUPLICATE KEY UPDATE";
@@ -119,6 +132,9 @@ abstract class Dao
      */
     public function remove()
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::remove', self::observable()));
+
     	$keys = self::keys();
     	$last = end($keys);
     	$where = [];
@@ -135,6 +151,9 @@ abstract class Dao
      */
     public function dependances()
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::dependances', self::observable()));
+
     	$constraintes = self::$_base->foreign_key(self::_to_table_name());
     	$tables = array();
     	$done = array();
@@ -175,6 +194,19 @@ abstract class Dao
 		return self::$_base;
     }
 
+    /**
+     * Retourne l'observable.
+     * @return Observable
+     */
+    public static function observable() : DaoObservable
+    {
+		if (self::$_observable === NULL)
+		{
+    		self::$_observable = new DaoObservable();
+		}
+		return self::$_observable;
+    }
+
 	/**
      * Définie la connexion avec la base de données.
      * @param string $prefix Préfixe utilisé pour les tables.
@@ -204,6 +236,9 @@ abstract class Dao
      */
     public static function query()
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::query', self::observable()));
+
     	return (new Query(self::base(), get_called_class(), self::table_name()));
     }
     
@@ -213,6 +248,9 @@ abstract class Dao
      */
     public static function fields()
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::fields', self::observable()));
+
     	$fields_details = self::$_base->fields(self::table_name());
     	$names = [];
     	if (is_array($fields_details))
@@ -231,6 +269,9 @@ abstract class Dao
      */
     public static function keys()
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::keys', self::observable()));
+
     	$fields_details = self::$_base->fields(self::table_name());
     	$names = [];
     	if (is_array($fields_details))
@@ -253,6 +294,9 @@ abstract class Dao
      */
     public static function load($values)
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::load', self::observable()));
+
     	// Génération des bons paramètres.
     	$values = func_get_args();
     	
@@ -281,6 +325,9 @@ abstract class Dao
      */
     public static function search($fields=[], $begin=NULL, $end=NULL, $order=[])
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::search', self::observable()));
+
     	$query = self::query()->where($fields);
     	foreach ($order as $n => $o)
     	{
@@ -300,6 +347,9 @@ abstract class Dao
      */
     public static function count(Array $fields=[])
     {
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::count', self::observable()));
+
     	return self::query()->count()->where($fields)->run();
     }   
 }

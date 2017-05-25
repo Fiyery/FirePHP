@@ -13,6 +13,12 @@ class Event
     protected $_name;
 
     /**
+     * Classe qui a appeler l'événément.
+     * @var mixed
+     */
+    protected $_caller;
+
+    /**
      * Message de l'événement.
      * @var string
      */
@@ -33,12 +39,14 @@ class Event
     /** 
      * Contructeur d'un événement.
      * @param string $name Nom de l'événement.
+     * @param mixed $caller Instance appelant l'événement.
      * @param string $msg Message descriptif de l'événement.
      * @param string $type Type de l'événement.
      */ 
-    public function __construct(string $name, string $msg = NULL, string $type = NULL)
+    public function __construct(string $name, $caller=NULL, string $msg = NULL, string $type = NULL)
     {
         $this->_name = $name;
+        $this->_caller = $caller;
         $this->_msg = $msg;
         $this->_type = $type;
         $this->_context = new Context([], 1);
@@ -48,16 +56,25 @@ class Event
      * Retourne le nom de l'événement.
      * @return string
      */
-    public function name()
+    public function name() : string
     {
         return $this->_name;
+    }
+
+    /**
+     * Retourne l'instance ayant appeler l'événement.
+     * @return mixed
+     */
+    public function caller()
+    {
+        return $this->_caller;
     }
 
     /**
      * Retourne le message de l'événement.
      * @return string
      */
-    public function msg()
+    public function msg() : string
     {
         return $this->_msg;
     }
@@ -66,7 +83,7 @@ class Event
      * Retourne le type de l'événement.
      * @return string
      */
-    public function type()
+    public function type() : string
     {
         return $this->_type;
     }
@@ -75,7 +92,7 @@ class Event
      * Retourne le context de l'événement.
      * @return Context
      */
-    public function context()
+    public function context() : Context
     {
         return $this->_context;
     }
