@@ -16,12 +16,40 @@ class Config
 	 * Constructeur.
 	 * @param string $filename Chemin du fichier JSON de config.
 	 */ 
-	public function __construct(string $filename)
+	public function __construct(string ...$filenames)
 	{
-		$content = file_get_contents($filename);
-		$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
-		$this->_values = new ConfigValue('config', json_decode($content));
+		$values = [];
+		foreach ($filenames as $filename)
+		{
+			if (file_exists($filename))
+			{
+				$content = file_get_contents($filename);
+				$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
+				$values = $this->_merge_array($values, json_decode($content, TRUE));
+			}
+		}		
+		$this->_values = new ConfigValue('config', $values);
 		$this->_parse($this->_values);
+	}
+
+	/**
+	 * 
+	 * @param 
+	 */ 
+	private function _merge_array($array1, $array2)	
+	{
+		foreach ($array2 as $name => $value)
+		{
+			if (isset($array1[$name]) && is_array($array1[$name]) && is_array($array2[$name]))
+			{
+				$array1[$name] = $this->_merge_array($array1[$name], $array2[$name]);
+			}
+			else
+			{
+				$array1[$name] = $value;
+			}
+		}
+		return $array1;
 	}
 	
 	/**

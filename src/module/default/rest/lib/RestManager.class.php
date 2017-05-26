@@ -4,14 +4,14 @@
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses RestException
  * @uses Request
- * @uses Base
+ * @uses Database
  * @uses Site
  */
 class RestManager
 {
     /**
      * Classe de connexion à la base de données.
-     * @var Base
+     * @var Database
      */
     private $_base = NULL;
 
@@ -29,11 +29,11 @@ class RestManager
 
     /**
      * Constructeur.
-     * @param Base $base Classe de connexion à la base de données.
+     * @param Database $base Classe de connexion à la base de données.
      * @param Request $req Classe de gestion des informations de la requête.
      * @param Site $site Classe pour les codes retour HTTP.
      */
-    public function __construct(Base $base, Request $req, Site $site)
+    public function __construct(Database $base, Request $req, Site $site)
     {
         $this->_base = $base;
         $this->_req = $req;
