@@ -33,10 +33,11 @@ class Config
 	}
 
 	/**
-	 * 
-	 * @param 
+	 * Permet la surcharge des configurations.
+	 * @param array $array1 Configuration mère.
+	 * @param array $array2 Configuration fille.
 	 */ 
-	private function _merge_array($array1, $array2)	
+	private function _merge_array(array $array1, array $array2)	
 	{
 		foreach ($array2 as $name => $value)
 		{

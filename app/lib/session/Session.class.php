@@ -15,7 +15,7 @@ class Session
 	 * Utilisateur connecté avec ses informations.
 	 * @var Object
 	 */
-	public $user;
+	private $_user;
 	
 	/**
 	 * Statut de reprise de session.
@@ -135,8 +135,24 @@ class Session
 	{
 		if ($this->is_open())
 		{
-			$this->user = $_SESSION['__user'];
+			$this->_user = $_SESSION['__user'];
 		}
+	}
+
+	/**
+	 * Retourne la classe utilisateur.
+	 * @return object
+	 */
+	public function user()
+	{
+		if (get_class($this->_user) === '__PHP_Incomplete_Class')
+		{
+			$vars = get_object_vars($this->_user);
+			$class = $vars['__PHP_Incomplete_Class_Name'];
+			unset($vars['__PHP_Incomplete_Class_Name']);
+			$this->_user = new $class($vars);
+		}
+		return $this->_user;
 	}
 
 	/**
@@ -146,15 +162,19 @@ class Session
 	 */
 	public function __get($name)
 	{
+		if (strtolower($name) === 'user')
+		{
+			return $this->user();
+		}
 		return (isset($_SESSION['__vars'][$name])) ? ($_SESSION['__vars'][$name]) : (NULL);
 	}
 
 	/**
 	 * Définie une variable personnalisée de session.
 	 * @param string $name Nom de la variable.
-	 * @param string $value Valeur de la variable.
+	 * @param mixed $value Valeur de la variable.
 	 */
-	public function __set($name,$value)
+	public function __set(string $name, $value)
 	{
 		$_SESSION['__vars'][$name] = $value;
 	}
@@ -163,7 +183,7 @@ class Session
 	 * Supprime une variable personnalisée de session.
 	 * @param string $name Nom de la variable.
 	 */
-	public function __unset($name)
+	public function __unset(string $name)
 	{
 		unset($_SESSION['__vars'][$name]);
 	}
@@ -172,7 +192,7 @@ class Session
 	 * Vérifie l'existance d'une variable personnalisée de session.
 	 * @param string $name Nom de la variable.
 	 */
-	public function __isset($name)
+	public function __isset(string $name)
 	{
 		return (isset($_SESSION['__vars'][$name]));
 	}	
@@ -181,7 +201,7 @@ class Session
 	 * Récupère le moment de génération de la dernière page.
 	 * @return int Timestamp
 	 */
-	private function get_time()
+	private function get_time() : int
 	{
 		return (isset($_SESSION['__time'])) ? ($_SESSION['__time']) : (0);
 	}
@@ -207,7 +227,7 @@ class Session
 	 * Fournie un identifiant de session pour éviter la faille de fixation de session.
 	 * @return string Nouvel identifiant.
 	 */
-	private function set_id()
+	private function set_id() : string
 	{
 		$_SESSION['__id'] = md5($_SERVER['REMOTE_ADDR']);
 		return $_SESSION['__id'];
@@ -217,7 +237,7 @@ class Session
 	 * Retourne l'identifiant de la session courrante généré par php.
 	 * @return string
 	 */
-	public function get_session_id()
+	public function get_session_id() : string
 	{
 		return session_id();
 	}
