@@ -67,6 +67,12 @@ class ServiceModule extends Module
      */
     public function action_config_database()
     {
+        if ($this->request->_service_config_database !== NULL)
+        {
+            return TRUE;
+        }
+        $this->request->_service_config_database = time();
+
         // Connexion à la base de données.
         try 
         {

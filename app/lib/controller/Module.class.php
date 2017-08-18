@@ -140,7 +140,7 @@ abstract class Module implements Observer
 			if (substr($event->name(), -5) === '::tpl')
 			{
 				$method = strtolower(substr($event->name(), strlen($this->_name) + 2, -5));
-				$filename = $this->_dir.'/view/'.$method.'.tpl';
+				$filename = $this->_dir."/".$this->_services->get('config')->path->tpl.$method.'.tpl';
 				if (file_exists($filename))
 				{
 					$this->tpl->assign($this->_services->get('config')->tpl->module, $this->tpl->fetch($filename));
