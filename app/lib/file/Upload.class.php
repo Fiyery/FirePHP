@@ -3,333 +3,205 @@
 * Upload manage le traitement du téléchargement de fichiers.
 * @author Yoann Chaumin <yoann.chaumin@gmail.com>
 * @uses File
-* @uses FireException
+* @uses FireException	
 */
-class Upload extends Singleton
+class Upload
 {
     /**
-     * Liste des erreurs possibles d'un upload.
+     * Liste des formats possibles.
      * @var string
      */
-    const ERR_FILE_NOT_FOUND = 1;
-    const ERR_FILE_MAX_SIZE = 2;
-    const ERR_FILE_MIN_SIZE = 3;
-    const ERR_FILE_FORMAT = 4;
-    const ERR_FILE_WIDTH = 5;
-    const ERR_FILE_HEIGHT = 6;
-    const ERR_FILE_EXISTS = 7;
-    const ERR_DIR_INVALID = 8;
-    const ERR_MOVE_FILE = 9;
-    const ERR_FILE_NOT_IMAGE = 10;
-
-	/**
-	 * Chemin de la base de données.
-	 * @var string
-	 */
-	private $_db_name = NULL;
-	
-	/**
-	 * Liste des types mimes et leurs extensions.
-	 * @var string[]
-	 */
-	private $_db = [];
+    const FILE_TYPE_IMAGE = "image";
+    const FILE_TYPE_TEXT = "text";
+    const FILE_TYPE_AUDIO = "audio";
+    const FILE_TYPE_VIDEO = "video";
+    const FILE_TYPE_APPLICATION = "application";
 	
 	/**
 	 * Instance du fichier courant
 	 * @var File
 	 */
-	private $_file = NULL;
+	protected $_file = NULL;
 	
 	/**
 	 * Informations contenues dans $_FILES sur le fichier chargé.
 	 * @var string[]
 	 */
-	private $_file_data = [];
+	protected $_file_data = [];
+
+	/**
+	 * Format du fichier attendu.
+	 * @var string
+	 */
+	protected $_expected_file_type = NULL;
 	
 	/**
 	 * Taille maximale du fichier à télécharger en octet.
 	 * @var int
 	 */
-	private $_authorised_size_max = -1;
-	
-	/**
-	 * Taille minimale du fichier à télécharger en octet.
-	 * @var int
-	 */
-	private $_authorised_size_min = -1;
+	protected $_authorised_size_max = -1;
 	
 	/**
 	 * Liste des extensions autorisées pour le fichier.
 	 * @var string[]
 	 */
-	private $_authorised_exts = [];
+	protected $_authorised_exts = [];
 	
 	/**
 	 * Taille maximale en pixel de la largeur du fichier image.
 	 * @var int
 	 */
-	private $_authorised_x_max = -1;
+	protected $_authorised_x_max = -1;
 	
 	/**
 	 * Taille minimale en pixel de la largeur du fichier image.
 	 * @var int
 	 */
-	private $_authorised_x_min = -1;
+	protected $_authorised_x_min = -1;
 	
 	/**
 	 * Taille maximale en pixel de la hauteur du fichier image.
 	 * @var int
 	 */
-	private $_authorised_y_max = -1;
+	protected $_authorised_y_max = -1;
 	
 	/**
 	 * Taille minimale en pixel de la hauteur du fichier image.
 	 * @var int
 	 */
-	private $_authorised_y_min = -1;
-	
-	/**
-	 * Dernière erreur générée.
-	 * @var string[]
-	 */
-	private $_error = [];
-	
-	/**
-	 * Liste des erreurs récupérables lors du téléchargzement d'un fichier.
-	 * @var array
-	 */
-	private $_list_errors = array(
-		1 => 'Failed to load file',
-		2 => 'File is bigger than max limit size',
-		3 => 'File is smaller than min limit size',
-		4 => 'Type of file is invalide',
-		5 => 'Width of image is bigger or smaller than limit',
-		6 => 'height of image is bigger or smaller than limit',
-		7 => 'A file already exists',
-		8 => 'Dir is invalid or unexisted',
-		9 => 'File isn\'t move correctly',
-		10 => 'File isn\'t image or can\'t be resized'
-	);
-	
+	protected $_authorised_y_min = -1;
+
 	/**
 	 * Constructeur.
 	 * @param string $filename Chemin du fichier de base de données des types mimes et des extensions.
 	 * @throws FireException
 	 */
-	public function __construct($filename)
+	public function __construct()
 	{
-        if (is_file($filename) == FALSE || is_readable($filename) == FALSE)
-        {
-           $d = debug_backtrace();
-           $d = $d[1];
-           throw new FireException("Liste des types mime introuvable", $d['file'], $d['line']);
-        }
-        $this->_db_name = $filename;
-        $this->_db = json_decode(file_get_contents($this->_db_name));
-        if (empty($this->_db))
-        {
-            $d = debug_backtrace();
-            $d = $d[1];
-            throw new FireException("Liste des types mime invalide", $d['file'], $d['line']);
-        }
-        $this->_db = get_object_vars($this->_db);
+        
 	}
 
 	/**
 	 * Charge un fichier en effectuant les vérifications.
 	 * @param string $name Nom du fichier à charger.
-	 * @return boolean
+	 * @return Upload
 	 */
-	public function load($name)
+	public function load(string $name) : Upload
 	{
 		$this->unload();
-		$this->_error = NULL;
-		if (isset($_FILES[$name]) && file_exists($_FILES[$name]['tmp_name']))
-		{
-			$this->_file = new File($_FILES[$name]['tmp_name']);
-			$this->_file_data = $_FILES[$name];
-			return TRUE;
-		}
-		else
-		{
-			$this->set_error(self::ERR_FILE_NOT_FOUND);
-			return FALSE;
-		}
+		$this->_check($name);
+		return $this;
 	}
 
 	/**
 	 * Décharge le fichier courrant.
 	 * @return boolean
 	 */
-	public function unload()
+	public function unload() : bool
 	{
 		$this->_file = NULL;
 		$this->_file_data = [];
 		return TRUE;
 	}
-	
+
 	/**
-	 * Vérifie si un fichier est chargé.
-	 * @return boolean
+	 * Définie le type de fichier attendu.
+	 * @param string $file_type
+	 * @return Upload
 	 */
-	public function is_load()
+	public function expect(string $file_type=NULL) : Upload
 	{
-	    return (is_object($this->_file));
+		$this->_expected_file_type = $file_type;
+		return $this;
 	}
 	
 	/**
-	 * Définie la taille maximale et minimale pour l'upload en octet.
+	 * Définie la taille maximale pour l'upload en octet.
 	 * @param int $max Taille maximale en octet.
-	 * @param int $min Taille minimale en octet.
+	 * @return Upload
 	 */
-	public function set_size($max=-1, $min=-1)
+	public function size(int $value=-1) : Upload
 	{
-		if (is_numeric($max))
-		{
-			$this->_authorised_size_max = $max;
-		}
-		if (is_numeric($min))
-		{
-			$this->_authorised_size_min = $min;
-		}
+		$this->_authorised_size_max = $value;
+		return $this;
 	}
 
 	/**
 	 * Définie les extensions de fichiers acceptées.
 	 * @param string[] $exts Liste des extensions acceptées.
+	 * @return Upload
 	 */
-	public function set_exts($exts=[])
+	public function exts(array $exts=[]) : Upload
 	{
-		if (is_array($exts))
-		{
-			$this->_authorised_exts = $exts;
-		}
+		$this->_authorised_exts = array_map('strtolower', $exts);
+		return $this;
 	}
 	
 	/**
 	 * Définie la taille maximale et minimale en largeur du fichier image.
 	 * @param int $max Taille maximale en pixel.
 	 * @param int $min Taille minimal en pixel.
+	 * @return Upload
 	 */
-	public function set_width($max=-1, $min=-1)
+	public function width(int $max=-1, int $min=-1) : Upload
 	{
-		if (is_numeric($max))
-		{
-			$this->_authorised_x_max = $max;
-		}
-		if (is_numeric($min))
-		{
-			$this->_authorised_x_min = $min;
-		}
+		$this->_authorised_x_max = $max;
+		$this->_authorised_x_min = $min;
+		return $this;
 	}
 	
 	/**
 	 * Définie la taille maximale et minimale en hauteur du fichier image.
 	 * @param int $max Taille maximale en pixel.
 	 * @param int $min Taille minimal en pixel.
+	 * @return Upload
 	 */
-	public function set_height($max=-1, $min=-1)
+	public function height(int $max=-1, int $min=-1) : Upload
 	{
-		if (is_numeric($max))
-		{
-			$this->_authorised_y_max = $max;
-		}
-		if (is_numeric($min))
-		{
-			$this->_authorised_y_min = $min;
-		}
+		$this->_authorised_y_max = $max;
+		$this->_authorised_y_min = $min;
+		return $this;
 	}
 	
 	/**
 	 * Vérifie si le fichier courant respecte les exigences définies.
-	 * @return boolean
+	 * @param string $name Index du fichier dans $_FILES.
 	 */
-	public function check()
+	protected function _check(string $name)
 	{
-	    if ($this->is_load() == FALSE)
+		if (isset($_FILES[$name]) === FALSE)
 		{
-		    $this->set_error(self::ERR_FILE_NOT_FOUND);
-		    $path = $this->_file->get_path();
-            unset($path);
-			return FALSE;
+			throw new UploadFileNotFoundException("File index \"".$name."\" not found ");
 		}
-		
-		$size = $this->_file->get_size();
+
+		if (is_readable($_FILES[$name]["tmp_name"]) === FALSE)
+		{
+			throw new UploadFileNotFoundException("File \"".$_FILES[$name]["tmp_name"]."\" not found ");
+		}
+
+		$this->_file = new File($_FILES[$name]["tmp_name"]);
+		$this->_file_data = $_FILES[$name];
+
+		$size = $this->_file->size();
 		if ($this->_authorised_size_max > -1 && $size > $this->_authorised_size_max)
 		{
-			$this->set_error(self::ERR_FILE_MAX_SIZE);
-			$path = $this->_file->get_path();
-            unset($path);
-			return FALSE;
+			throw new UploadLimitSizeExceededException("File \"".$this->_file->path()."\" (".$size." octets) exceeds ".$this->_authorised_size_max." octets max size");
 		}
-		if ($this->_authorised_size_min > -1 && $size < $this->_authorised_size_min)
+
+		$name_tmp = strtolower($this->_file_data['name']);
+		$pos = strrpos($name_tmp, '.');
+		$ext = ($pos !== FALSE) ? (substr($name_tmp, $pos + 1)) : ($name_tmp);
+		if (count($this->_authorised_exts) > 0 && in_array($ext, $this->_authorised_exts) === FALSE)
 		{
-			$this->set_error(self::ERR_FILE_MIN_SIZE);
-			$path = $this->_file->get_path();
-            unset($path);
-			return FALSE;
+			throw new UploadBadFileFormatException("File \"".$this->_file->path()."\" has unsupported extension \"".$ext."\"");	
 		}
-		
-		$name = strtolower($this->_file_data['name']);
-		$pos = strrpos($name, '.');
-		$ext = ($pos !== FALSE) ? (substr($name, $pos + 1)) : ($name);
-		$type_mime = $this->_file->get_type_mime();
-		if (empty($type_mime) == FALSE)
+
+		$type = ($this->_file->type_mime()) ?: ($this->_file_data["type"]);
+		$type = substr($type, 0, strpos($type, "/"));
+		if ($this->_expected_file_type !== NULL && $this->_expected_file_type !== $type)
 		{
-		    $type_mime = $this->_file_data['type'];
+			throw new UploadBadFileFormatException("File type \"".$type."\" for \"".$this->_file->path()."\" is not supported");
 		}
-		
-		if (empty($this->_db_name) == FALSE)
-		{
-		    if (isset($this->_db[$type_mime]) == FALSE || in_array($ext, $this->_db[$type_mime]) == FALSE)
-		    {
-		        $this->set_error(self::ERR_FILE_FORMAT);
-		        $path = $this->_file->get_path();
-                unset($path);
-		        return FALSE;
-		    }
-		}
-		
-		if (count($this->_authorised_exts) > 0 && in_array($ext, $this->_authorised_exts) == FALSE)
-		{
-			$this->set_error(self::ERR_FILE_FORMAT);
-			$path = $this->_file->get_path();
-            unset($path);
-			return FALSE;
-		}
-		
-		if ($this->_file->is_image())
-		{
-			if ($this->_authorised_x_max > -1 && $this->_file->get_width() > $this->_authorised_x_max)
-			{
-				$this->set_error(self::ERR_FILE_WIDTH);
-				$path = $this->_file->get_path();
-                unset($path);
-				return FALSE;
-			}
-			if ($this->_authorised_x_min > -1 && $this->_file->get_width() < $this->_authorised_x_min)
-			{
-				$this->set_error(self::ERR_FILE_WIDTH);
-				$path = $this->_file->get_path();
-                unset($path);
-				return FALSE;
-			}
-			if ($this->_authorised_y_max > -1 && $this->_file->get_height() > $this->_authorised_y_max)
-			{
-				$this->set_error(self::ERR_FILE_HEIGHT);
-				$path = $this->_file->get_path();
-                unset($path);
-				return FALSE;
-			}
-			if ($this->_authorised_y_min > -1 && $this->_file->get_height() < $this->_authorised_y_min)
-			{
-				$this->set_error(self::ERR_FILE_HEIGHT);
-				$path = $this->_file->get_path();
-                unset($path);
-				return FALSE;
-			}
-		}
-		return TRUE;
 	}
 	
 	/**
@@ -337,85 +209,47 @@ class Upload extends Singleton
 	 * @param string $new_name Chemin de destination du nouveau fichier.
 	 * @param boolean $erase Si TRUE, si un fichier existe déjà avec le même nom, il sera écrasé.
 	 * @param boolean $force Si TRUE, si le chemin n'existe pas, il sera créé.
-	 * @return boolean
 	 */
-	public function move($new_name, $erase=FALSE, $force=FALSE)
+	public function move(string $new_name, bool $erase=FALSE, bool $force=FALSE) 
 	{
 		if (in_array(substr($new_name,-1), array('/','\\')) || empty($new_name))
 		{
 			$new_name .= $this->_file_data['name'];
 		}
-		if ($erase == FALSE && file_exists($new_name))
+		if ($erase === FALSE && file_exists($new_name))
 		{
-			$this->set_error(self::ERR_FILE_EXISTS);
-			return FALSE;
+			throw new UploadMoveFileException("File \"".$new_name."\" is already existed");
 		}
+
 		$dir = dirname($new_name);
-		if (is_dir($dir) == FALSE)
+		if (is_dir($dir) === FALSE)
 		{
-			if ($force == FALSE)
+			if ($force === FALSE)
 			{
-				$this->set_error(self::ERR_DIR_INVALID);
-				return FALSE;
+				throw new UploadMoveFileException("Dir \"".$dir."\" not found");
 			}
 			else
 			{
-				if (mkdir($dir, 0755, TRUE) == FALSE)
+				if (mkdir($dir, 0755, TRUE) === FALSE)
 				{
-					$this->set_error(self::ERR_DIR_INVALID);
-					return FALSE;
+					throw new UploadMoveFileException("Fail to create dir \"".$dir."\"");
 				}
 			}
 		}
-		if (move_uploaded_file($this->_file->get_path(), $new_name) && is_file($new_name))
+		if (move_uploaded_file($this->_file->path(), $new_name) === FALSE)
 		{
-			unset($this->_file);
-			$this->_file = new File($new_name);
-			return TRUE;
+			throw new UploadMoveFileException("Fail to move temporary file to \"".$new_name."\"");
 		}
-		else
-		{
-			$this->set_error(self::ERR_MOVE_FILE);
-			return FALSE;
-		}
-	}
-	
-	/**
-	 * Définie la dernière erreur.
-	 * @param int $code Code de l'erreur parmi les constantes.
-	 */
-	private function set_error($code)
-	{
-		$this->_error = array($code => $this->_list_errors[$code]);
-	}
-	
-	/**
-	 * Définie la dernière erreur.
-	 * @return array Tableau contenant le code de l'erreur et son message.
-	 */
-	public function get_error()
-	{
-		return $this->_error;
-	}
 
-	/**
-	 * Effectue un raccourcie appel de fonction pour le téléchargement de fichier.
-	 * @param string $index Identifiant de l'index dans la variable globale $_FILES.
-	 * @param string $new_name Nouveau chemin et non du fichier après le téléchargement
-	 * @param boolean $erase Si TRUE, un fichier porte le même nom, il sera écrasé.
-	 * @param boolean $force Si TRUE, le dossier sera créer s'il n'existe pas.
-	 * @return boolean
-	 */
-	public function import($index, $new_name, $erase=FALSE, $force=FALSE)
-	{
-		return ($this->load($index) && $this->check() && $this->move($new_name, $erase, $force));
+		unset($this->_file);
+		$this->_file = new File($new_name);
 	}
 	
 	/**
 	 * Retourne le fichier courant temporaire ou téléchargé.
 	 * @return File
 	 */
-	public function get_file()
+	public function file() : File
 	{
 	    return $this->_file;
 	}

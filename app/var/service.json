@@ -90,10 +90,7 @@
     },
 
     "upload" : {
-        "class" : "Upload",
-        "args" : [
-            "$config->upload->mime_types_file"
-        ]
+        "class" : "Upload"
     },
 
     "browser" : {
