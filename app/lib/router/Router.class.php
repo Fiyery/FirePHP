@@ -3,11 +3,10 @@
  * Router permet la liaison entre l'url et le traitement spécfique du serveur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Request
- * @uses Singleton
  * @uses FireException
  * @uses File
  */
-class Router extends Singleton
+class Router 
 {
     /**
      * Constant qui définie le format de retoure de la racine comme adresse url.
@@ -376,8 +375,8 @@ class Router extends Singleton
             if (file_exists($dir.$file))
             {
                 $f = new File($dir.$file);
-                $type = $f->get_type_mime();
-                header('Content-Type: '.$f->get_type_mime());
+                $type = $f->type_mime();
+                header('Content-Type: '.$f->type_mime());
                 if (substr($type, 0, 4) == 'text')
                 {
                     include($dir.$file);

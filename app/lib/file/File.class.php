@@ -2,7 +2,6 @@
 /**
  * File est une classe qui rassemble des fonctions utiles sur les fichiers et dossiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
- * @uses FireException
  */
 class File 
 {    
@@ -52,36 +51,50 @@ class File
      * Constructeur
      * @param string $filname Chemin du fichier.
      */
-    public function __construct($filename)
+    public function __construct(string $filename)
     {
-        if (file_exists($filename) == FALSE || is_dir($filename) || is_readable($filename) == FALSE)
-        {
-            self::set_error("Invalid filename : it isn't a file");            
-        }
-        $this->_file = realpath($filename);
+        $this->_file = (realpath($filename)) ?: ($filename);
+    }
+
+    /**
+     * Vérifie si le fichier exists.
+     * @return bool
+     */
+    public function is_exists() : bool
+    {
+        return file_exists($this->_file);
+    }
+
+    /**
+     * Vérifie si le fichier est lisible.
+     * @return bool
+     */
+    public function is_readable() : bool
+    {
+        return is_readable($this->_file);
     }
     
     /**
      * Retourne le type mime du fichier.
      * @return string 
      */
-    public function get_type_mime()
+    public function type_mime() : string
     {
-        if (empty($this->_type_mime))
+        if ($this->_type_mime === NULL)
         {
-            if (class_exists('finfo'))
+            if (class_exists("finfo"))
             {
             	$finfo = new finfo(FILEINFO_MIME_TYPE);
             	$type = $finfo->file($this->_file);
-            	$pos = strpos($type, ' ');
+            	$pos = strpos($type, " ");
             	$this->_type_mime = ($pos !== FALSE) ? (substr($type, 0, $pos)) : ($type);
             }
             else
             {
-            	exec('file -bi '.$this->_file, $out);
+            	exec("file -bi ".$this->_file, $out);
             	if (is_array($out) && isset($out[0]))
             	{
-            	    $pos = strpos($out[0], ';');
+            	    $pos = strpos($out[0], ";");
             	    $this->_type_mime = ($pos !== FALSE) ? (substr($out[0], 0, $pos)) : ($out[0]);
             	}
             	else
@@ -95,9 +108,9 @@ class File
     
     /**
      * Retourne la taille du fichier courant.
-     * @return number Nombre d'octets.
+     * @return int Nombre d'octets.
      */
-    public function get_size()
+    public function size() : int
     {
     	if ($this->_size < 0)
     	{
@@ -110,12 +123,12 @@ class File
      * Retourne l'extension du fichier.
      * @return string
      */
-    public function get_ext()
+    public function ext() : string
     {
     	if (empty($this->_ext))
     	{
     	    $name = strtolower(basename($this->_file));
-    	    $pos = strrpos($name, '.');
+    	    $pos = strrpos($name, ".");
     	    $this->_ext = ($pos !== FALSE) ? (substr($name, $pos + 1)) : ($name);
     	}
         return $this->_ext;
@@ -125,7 +138,7 @@ class File
      * Retourne la hauteur du fichier si ce dernier est une image.
      * @return int
      */
-    public function get_height()
+    public function height() : int
     {
     	if ($this->is_image())
     	{
@@ -144,7 +157,7 @@ class File
      * Retourne la largeur du fichier si ce dernier est une image.
      * @return int
      */
-    public function get_width()
+    public function width() : int
     {
     	if ($this->is_image())
     	{
@@ -163,13 +176,13 @@ class File
      * Récupère le type du fichier.
      * @return string
      */
-    public function get_type()
+    public function type() : string
     {
         if (empty($this->_type) == FALSE)
         {
         	return $this->_type;
         }
-    	$pos = strpos($this->get_type_mime(), '/');
+    	$pos = strpos($this->type_mime(), "/");
     	$this->_type = substr($this->_type_mime, 0, $pos);
     	return (empty($this->_type) == FALSE) ? ($this->_type) : (NULL);
     }
@@ -178,69 +191,74 @@ class File
      * Récupère le chemin du fichier.
      * @return string
      */
-    public function get_path()
+    public function path() : string
     {
     	return $this->_file;
     }
     
     /**
      * Vérifie si le fichier est une image.
-     * @return boolean
+     * @return bool
      */
-    public function is_image()
+    public function is_image() : bool
     {
-		return ($this->get_type() == 'image');		
+		return ($this->type() == "image");		
     }
     
     /**
      * Vérifie si le fichier est un texte.
-     * @return boolean
+     * @return bool
      */
     public function is_text()
     {
-		return ($this->get_type() == 'text');
+		return ($this->type() == "text");
     }
     
     /**
      * Vérifie si le fichier est un audio.
-     * @return boolean
+     * @return bool
      */
-    public function is_audio()
+    public function is_audio() : bool
     {
-    	return ($this->get_type() == 'audio');
+    	return ($this->type() == "audio");
     }
     
     /**
      * Vérifie si le fichier est une vidéo.
-     * @return boolean
+     * @return bool
      */
-    public function is_video()
+    public function is_video() : bool
     {
-    	return ($this->get_type() == 'video');
+    	return ($this->type() == "video");
     }
     
     /**
      * Vérifie si le fichier est une application.
-     * @return boolean
+     * @return bool
      */
-    public function is_application()
+    public function is_application() : bool
     {
-        return ($this->get_type() == 'application');
+        return ($this->type() == "application");
     }
     
-    public function copy($new_name=NULL)
+    /**
+     * Copie le fichier dans un autre emplacement.
+     * @param string $new_name 
+     * @return File
+     */
+    public function copy(string $new_name=NULL) : File
     {
         if (empty($new_name))
         {
-            $new_name = substr($this->_file, 0, (strlen($this->get_ext()) + 1)* -1 ).'_';
+            $new_name = substr($this->_file, 0, (strlen($this->ext()) + 1)* -1 )."_";
             $i = 0;
-            while (file_exists($new_name.$i.'.'.$this->_ext))
+            while (file_exists($new_name.$i.".".$this->_ext))
             {
                 $i++;
             }
-            $new_name = $new_name.$i.'.'.$this->_ext;
+            $new_name = $new_name.$i.".".$this->_ext;
         }
-        if (copy($this->_file, $new_name) == FALSE)
+        if (copy($this->_file, $new_name) === FALSE)
         {
             return NULL;
         }
@@ -259,16 +277,16 @@ class File
      */
     public function resize($x, $y, $deform=FALSE)
     {
-        if (is_numeric($x) == FALSE || is_numeric($y) == FALSE || is_bool($deform) == FALSE || $x <= 0 || $y <= 0)
+        if (is_numeric($x) === FALSE || is_numeric($y) === FALSE || is_bool($deform) === FALSE || $x <= 0 || $y <= 0)
         {
         	return FALSE;
         }
-        if ($this->is_image() == FALSE || in_array($this->get_ext(),array('jpg','jpeg','png','gif')) == FALSE)
+        if ($this->is_image() === FALSE || in_array($this->ext(),array("jpg","jpeg","png","gif")) === FALSE)
         {
         	return FALSE;
         }
-        $image_x = $this->get_width();
-        $image_y = $this->get_height();
+        $image_x = $this->width();
+        $image_y = $this->height();
         if ($deform == FALSE)
         {
         	if ($image_x > $x || $image_y > $y)
@@ -293,31 +311,31 @@ class File
         	}
         		
         }
-        $mime = $this->get_type_mime();
-        if ($mime == 'image/jpg' || $mime == 'image/jpeg')
+        $mime = $this->type_mime();
+        if ($mime === "image/jpg" || $mime === "image/jpeg")
         {
         	$image = imagecreatefromjpeg($this->_file);
-        	$miniature = imagecreatetruecolor($x,$y);
-        	imagecopyresampled($miniature,$image,0,0,0,0,$x,$y,$image_x,$image_y);
+        	$miniature = imagecreateTRUEcolor($x, $y);
+        	imagecopyresampled($miniature, $image, 0, 0, 0, 0, $x, $y, $image_x, $image_y);
         	imagejpeg($miniature, $this->_file);
         }
-        elseif ($mime == 'image/png')
+        elseif ($mime == "image/png")
         {
         	$image = imagecreatefrompng($this->_file);
-        	$miniature = imagecreatetruecolor($x,$y);
+        	$miniature = imagecreateTRUEcolor($x, $y);
         	// Transparence.
-        	imagealphablending($miniature, false);
-        	imagesavealpha($miniature,true);
+        	imagealphablending($miniature, FALSE);
+        	imagesavealpha($miniature, TRUE);
         	$transparent = imagecolorallocatealpha($miniature, 255, 255, 255, 127);
         	imagefilledrectangle($miniature, 0, 0, $x, $y, $transparent);
         	imagecopyresampled($miniature,$image,0,0,0,0,$x,$y,$image_x,$image_y);
         	imagesavealpha ($miniature, TRUE);
         	imagepng($miniature,$this->_file);
         }
-        elseif ($mime == 'image/gif')
+        elseif ($mime == "image/gif")
         {
         	$image = imagecreatefromgif($this->_file);
-        	$miniature = imagecreatetruecolor($x,$y);
+        	$miniature = imagecreateTRUEcolor($x,$y);
         	imagecopyresampled($miniature,$image,0,0,0,0,$x,$y,$image_x,$image_y);
         	imagegif($miniature,$this->_file);
         }
@@ -329,24 +347,11 @@ class File
     }
     
     /**
-     * Génère une erreur.
-     * @param string $msg Message de l'erreur.
-     * @param int $level Nombre de fonction à remonter pour l'erreur.
-     * @throws FireException
-     */
-    private static function set_error($msg, $level=1)
-    {
-        $d = debug_backtrace();
-        $d = $d[$level];
-        throw new FireException($msg, $d['file'], $d['line']);
-    }
-    
-    /**
      * Reçoit une taille en octet et la retourne avec une unité plus adaptée.
-     * @param int $size Taille en octet.
+     * @param float $size Taille en octet.
      * @return string Taille avec l'unité.
      */
-    public static function format_size($size)
+    public static function format_size(float $size) : string
     {
     	if (is_numeric($size) == FALSE || $size < 0)
     	{
@@ -354,101 +359,13 @@ class File
     	}
     	if ($size == 0)
     	{
-    		return '0 o';
+    		return "0 o";
     	}
-	    $unit = array('o','Ko','Mo','Go', 'To');
+	    $unit = array("o","Ko","Mo","Go", "To");
 	    $i = floor(log($size, 1024));
 	    $size = round($size/pow(1024, $i), 2);
-	    $size .= ' '.$unit[$i];
+	    $size .= " ".$unit[$i];
 	    return $size;
-    }
-    
-    /**
-     * Compte le nombre de fichiers selon les extentions.
-     * @param string $dir Nom dossier.
-     * @param array<string> $exts Liste des extensions à compter.
-     * @param boolean $subdir Si TRUE, la fonction ira récursivement dans les sous dossiers.
-     * @return int 
-     */
-    public static function count($dir='.', $exts=array(), $subdir=TRUE)
-    {
-        $dir = (is_dir($dir)) ? ($dir) : ('.');
-        $dir = (substr($dir, -1) == '/') ? ($dir) : ($dir.'/');
-        $specified = (is_array($exts) && count($exts) > 0);
-        $exts = array_map('strtolower', $exts);
-        $nb_files = 0;
-        $list_dirs = array($dir);
-        $i = 0;
-        while(isset($list_dirs[$i]))
-        {
-            $d = $list_dirs[$i];
-            $list = array_diff(scandir($d), array('..', '.'));
-            foreach ($list as $f)
-            {
-                if (is_dir($d.$f))
-                {
-                    $list_dirs[] = $d.$f.'/';
-                }
-                elseif ($specified)
-                {
-                    if (in_array(strtolower(substr(strrchr($f,"."), 1)), $exts))
-                    {
-                        $nb_files++;
-                    }
-                }
-                else
-                {
-                    $nb_files++;
-                }
-                   
-            }
-            $i++;
-        } 
-        return $nb_files;
-    }
-    
-    /**
-     * Compte le nombre ligne des fichiers d'un répertoire selon les extentions.
-     * @param string $dir Nom dossier.
-     * @param array<string> $exts Liste des extensions à prendre en compte.
-     * @param boolean $subdir Si TRUE, la fonction ira récursivement dans les sous dossiers.
-     * @return int
-     */
-    public static function count_line($dir='.', $exts=array(), $subdir=TRUE)
-    {
-    	$dir = (is_dir($dir)) ? ($dir) : ('.');
-    	$dir = (substr($dir, -1) == '/') ? ($dir) : ($dir.'/');
-    	$specified = (is_array($exts) && count($exts) > 0);
-    	$exts = array_map('strtolower', $exts);
-    	$nb_lines = 0;
-    	$list_dirs = array($dir);
-    	$i = 0;
-    	while(isset($list_dirs[$i]))
-    	{
-    		$d = $list_dirs[$i];
-    		$list = array_diff(scandir($d), array('..', '.'));
-    		foreach ($list as $f)
-    		{
-    			if (is_dir($d.$f))
-    			{
-    				$list_dirs[] = $d.$f.'/';
-    			}
-    			elseif ($specified)
-    			{
-    				if (in_array(strtolower(substr(strrchr($f,"."), 1)), $exts))
-    				{
-    					$nb_lines += count(file($d.$f));
-    				}
-    			}
-    			else
-    			{
-    				$nb_lines += count(file($d.$f));
-    			}
-    			 
-    		}
-    		$i++;
-    	}
-    	return $nb_lines;
     }
 }
 ?>

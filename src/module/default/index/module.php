@@ -3,9 +3,30 @@ class IndexModule extends Module
 {
 	public function action_index()
 	{
-		user::search();
+		// UPLOAD FILE
+		// $_FILES["file"]["name"] = "ob_002ad3_tumblr-lwoqr74juo1qeiog9.png";
+		// $_FILES["file"]["type"] = "image/png";
+		// $_FILES["file"]["tmp_name"] = "../club-manga-v2/tmp.png";
+		// $_FILES["file"]["error"] = 0;
+		// $_FILES["file"]["size"] = 54531;
+		// // Exigence.
+		// $this->upload
+		// 	->expect(Upload::FILE_TYPE_IMAGE)
+		// 	->size(100000)
+		// 	->exts(["jpg", "jpeg", "bmp", "png"]);
+		// try 
+		// {
+		// 	$this->upload->load("file"); // Vérification.
+		// 	$this->upload->move("avatar.png"); // Déplacement.
+		// }
+		// catch (Throwable $t)
+		// {
+		// 	Debug::show($t);
+		// }
 
-		// COMPONENT.
+		// user::search();
+
+		// COMPONENT
 		// $c = new UlComponent();
 		// $c->set('elements', ['Element 1', 'Element 2', 'Element 3']);
 		// $this->tpl->assign('component', $c->fetch());
@@ -43,14 +64,14 @@ class IndexModule extends Module
 		// Debug::show($q->table('user')->join('user_group')->order('name', 'DESC')->sql());
 		
 		// POUR L'AJAX, RETOURNER FALSE POUR NE PAS APPELER LE TEMPLATE DU MODULE 
-		// mais seulement le principale qui retournera la r�ponse.
+		// mais seulement le principale qui retournera la réponse.
  		// $this->tpl->assign('ajax', 'test');
 		// return FALSE;
 
 		// GESTIONNAIRE DE LOG
 		// $l = new FileLogger();
 		// $l->path('./app/var/log')->granularity(FileLogger::TIME_MONTH);
-		// $e = new Event("User", "D�but de la r�cup�ration des utilisateurs", "error", ['args'=>  func_get_args(), 'test'=>['1',2,3]]);
+		// $e = new Event("User", "Début de la récupération des utilisateurs", "error", ['args'=>  func_get_args(), 'test'=>['1',2,3]]);
 		// $e->fire();
 		// $l->notify($e);
 		// $l->log();
