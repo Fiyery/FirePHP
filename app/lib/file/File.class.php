@@ -78,7 +78,7 @@ class File
      * Retourne le type mime du fichier.
      * @return string 
      */
-    public function type_mime() : string
+    public function type_mime() : ?string
     {
         if ($this->_type_mime === NULL)
         {
