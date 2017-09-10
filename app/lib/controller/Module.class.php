@@ -173,5 +173,14 @@ abstract class Module implements Observer
 	{
 	    return $this->_services->get($name);
 	}
+
+	/**
+	 * Récupère un service.
+	 * @param string $name Nom du service
+	 */
+	public function get(string $name)
+	{
+	    return $this->_services->get($name);
+	}
 }
 ?>
