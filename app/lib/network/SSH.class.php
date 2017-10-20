@@ -56,7 +56,7 @@ class SSH
 		{
 			return FALSE;
 		}
-		$this->_connection = ssh2_connect($host, 22);
+		$this->_connection = ssh2_connect($host, $port);
 		return (is_resource($this->_connection));
 	}
 	
