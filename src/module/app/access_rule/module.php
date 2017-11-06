@@ -12,7 +12,7 @@ class AccessRuleModule extends Module
         // $rules = Access_Rule::search();
         // foreach ($rules as $r)
         // {
-        //     $this->access->add_rules($r->id_group, $r->module, $r->action);
+        //     $this->access->add_rule($r->id_group, $r->module, $r->action);
         // }
     }
 }
