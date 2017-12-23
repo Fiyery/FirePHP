@@ -85,6 +85,18 @@ class DataBase
 	private $_cache_dir = NULL;
 	
 	/**
+	 * Définie si la prochaine requête sera mise en tampon (résultat chargé totalement) ou non. 
+	 * @var bool
+	 */
+	private $_use_buffered_query = TRUE;
+
+	/**
+	 * Requête PDO.
+	 * @var PDOStatement
+	 */
+	private $_pdo_statement = NULL;
+	
+	/**
 	 * Constructeur.
 	 */
 	public function __construct()
@@ -125,7 +137,43 @@ class DataBase
 	 * @return boolean|array Retourne le résultat de la requête, TRUE si cette dernière ne retourne rien, ou FALSE s'il y a une erreur. 
 	 * @throws DataBaseException
 	 */
-	public function query($sql, $value=NULL)
+	public function query(string $sql, array $value=NULL)
+	{
+		$this->_prepare_query($sql, $value);
+		if ($this->_pdo_statement === FALSE)
+		{
+			 return FALSE;
+		}
+		if (get_class($this->_pdo_statement) === 'PDOStatement')
+		{
+			$result = $this->_pdo_statement->fetchAll(PDO::FETCH_ASSOC);
+		}
+		return $result;
+	}
+
+	/**
+	 * Exécute une requête sql et retourne un interateur. 
+	 * @param string $sql Requête sql à exécuté.
+	 * @param array $value Tableau contenant les valeurs "?" vérifier par PDO.
+	 * @return boolean|array Retourne le résultat de la requête, TRUE si cette dernière ne retourne rien, ou FALSE s'il y a une erreur. 
+	 * @throws DataBaseException
+	 */
+	public function yield_query(string $sql, array $value=NULL)
+	{
+		$this->_prepare_query($sql, $value);
+		if (get_class($this->_pdo_statement) === 'PDOStatement')
+		{
+			foreach ($this->_pdo_statement as $r)
+			{
+				yield (array_filter($r, function($k){
+					return (is_numeric($k) === FALSE);
+				}, ARRAY_FILTER_USE_KEY));
+			}
+		}
+		return $result;
+	}
+
+	public function _prepare_query($sql, $value=NULL)
 	{
 		$this->_check_connection();
 		$history = $this->_format_query_history($sql, $value);
@@ -134,7 +182,7 @@ class DataBase
 		{
 		    $history['time'] = -1;
 		    $this->_history[] = $history;
-		    return $cache;
+		    $this->_pdo_statement = $cache;
 		}
 		else
 		{
@@ -144,36 +192,26 @@ class DataBase
 				throw new DataBaseException("Il manque des paramètres pour la requête préparée");
 			}
 		    $time = microtime(TRUE);
-		    $bd = $this->_connection;
-		    $res = $bd->prepare($sql);
+		    $pdo = $this->_connection;
+			if ($this->_use_buffered_query === FALSE)
+			{
+				$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, FALSE);
+			}
+			$this->_pdo_statement = $pdo->prepare($sql);
 	    	if (is_array($value) && count($value) > 0)
 	    	{
-	    		$res->execute(array_values($value));
+	    		$this->_pdo_statement->execute(array_values($value));
 	    	}
 	    	else
 	    	{
-	    		$res->execute();
+	    		$this->_pdo_statement->execute();
 	    	}
+			$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, TRUE);
 		    $end_time = microtime(TRUE);
 		    $this->_time += $end_time - $time;
 		    $history['time'] = $end_time - $time;
 		    $this->_history[] = $history;
-		    $this->_error = $res->errorInfo();
-		    if ($res->rowCount() > 0)
-		    {
-		    	$result = $res->fetchAll(PDO::FETCH_ASSOC);
-		    }
-		    elseif ($res->errorCode() == '00000')
-		    {
-		    	$result = TRUE;
-		    }
-		    else
-		    {
-		    	$result = FALSE;
-		    }
-		    $this->_write_cache($sql, $result);
-		    $this->_cache_time = 0;
-		    return $result;
+		    $this->_error = $this->_pdo_statement->errorInfo();
 		}
 	}
 
@@ -548,6 +586,44 @@ class DataBase
 		{
 			throw new DataBaseException('Aucune base de donnée trouvée', 2);
 		}
+	}
+
+	/**
+	 * Retourne le dernier id inséré.
+	 * @param string $base Nom de la base.
+	 * @return string
+	 */
+	public function last_insert_id() : string
+	{
+		$this->_check_connection();
+		return $this->_connection->lastInsertId();
+	}
+
+	/**
+	 * Retourne le nombre d'enregistrement affectés.
+	 * @param string $base Nom de la base.
+	 * @return int
+	 */
+	public function row_count() : int
+	{
+		return $this->_pdo_statement->rowCount();
+	}
+
+	/**
+	 * Ouvre une requête non bufferisée qui doit impérativement être fermé.
+	 */
+	public function open_unbuffered_query()
+	{
+		$this->_use_buffered_query = FALSE;
+	}
+
+	/**
+	 * Définie si les requêtes doit être bufferisée.
+	 * @param bool $bool 
+	 */
+	public function close_unbuffered_query()
+	{
+		$this->_pdo_statement->closeCursor();
 	}
 }
 ?>

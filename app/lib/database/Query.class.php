@@ -16,6 +16,7 @@ class Query
 	const UPDATE 		= 4;
 	const DELETE 		= 5;
 	const COUNT 		= 6;
+	const TRUNCATE 		= 7;
 	
 	/**
 	 * Instance de la base de données.
@@ -59,7 +60,7 @@ class Query
 	 * @param string $class Nom de la classe de retour du resultat.
 	 * @param string $table Nom de la table à requêter.
 	 */
-	public function __construct(Database $base = NULL, $class = NULL, $table = NULL)
+	public function __construct(Database $base = NULL, string $class = NULL, string $table = NULL)
 	{
 		$this->_base = $base;
 		$this->_class = $class;
@@ -72,7 +73,7 @@ class Query
 	 * @param string $name Nom de la table.
 	 * @return Query
 	 */
-	public function table($name)
+	public function table(string $name) : Query
 	{
 		$this->_tables = [$name];
 		$this->select();
@@ -84,7 +85,7 @@ class Query
 	 * @param string $name Nom de la classe.
 	 * @return Query
 	 */
-	public function classe($name)
+	public function classe(string $name) : Query
 	{
 		$this->_class = $name;
 		return $this;
@@ -95,10 +96,21 @@ class Query
 	 * @param array $fields Tableau des champs à afficher.
 	 * @return Query
 	 */
-	public function select(Array $fields=[])
+	public function select(array $fields=[]) : Query
 	{
 		$this->_type = self::SELECT;
-		$this->_sql = 'SELECT '.((count($fields) > 0) ? (implode(', ', $fields)) : ('*')).' FROM '.$this->_tables[0];
+		$this->_sql = 'SELECT '.((count($fields) > 0) ? (implode(', ', $fields)) : ('*')).' FROM `'.$this->_tables[0].'`';
+		return $this;
+	}
+
+	/**
+	 * Vide la table via TRUNCATE et remet l'auto-incrémente à 0.
+	 * @return Query
+	 */
+	public function clear() : Query
+	{
+		$this->_type = self::SELECT;
+		$this->_sql = 'TRUNCATE `'.$this->_tables[0].'`; ALTER TABLE `'.$this->_tables[0].'` AUTO_INCREMENT = 1;';
 		return $this;
 	}
 	
@@ -107,98 +119,81 @@ class Query
 	 * @param array $fields Tableau des champs à afficher.
 	 * @return Query
 	 */
-	public function count()
+	public function count() : Query
 	{
 		$this->_type = self::COUNT;
-		$this->_sql = 'SELECT COUNT(*) nb FROM '.$this->_tables[0];
+		$this->_sql = 'SELECT COUNT(*) nb FROM `'.$this->_tables[0].'`';
 		return $this;
 	}
 	
 	/**
 	 * Effectue une jointure simple entre deux tables.
-	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
 	 */
-	public function join($table, $id_tables = NULL, $foreign_table = NULL, $id_foreign = NULL)
+	public function join(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
 	{
-		return $this->_join('INNER', $table, $id_tables, $foreign_table, $id_foreign);
+		return $this->_join('INNER', $foreign_table, $id_foreign, $id_table);
 	}
 	
 	/**
 	 * Effectue une jointure gauche entre deux tables.
-	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
 	 */
-	public function join_left($table, $id_tables = NULL, $foreign_table = NULL, $id_foreign = NULL)
+	public function join_left(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
 	{
-		return $this->_join('LEFT', $table, $id_tables, $foreign_table, $id_foreign);
+		return $this->_join('LEFT', $foreign_table, $id_foreign, $id_table);
 	}
 	
 	/**
 	 * Effectue une jointure droite entre deux tables.
-	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
 	 */
-	public function join_right($table, $id_tables = NULL, $foreign_table = NULL, $id_foreign = NULL)
+	public function join_right(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
 	{
-		return $this->_join('RIGHT', $table, $id_tables, $foreign_table, $id_foreign);
+		return $this->_join('RIGHT', $foreign_table, $id_foreign, $id_table);
 	}
 	
 	/**
 	 * Effectue une jointure entre deux tables.
 	 * @param string $type Type de jointure.
-	 * @param string $table Nom de la table à joindre.
-	 * @param string $id_tables Nom du champ de la table à joindre à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
 	 */
-	private function _join($type, $table, $id_tables, $foreign_table, $id_foreign)
+	private function _join(string $type, string $foreign_table, string $id_foreign, string $id_table) : Query
 	{
-		$table = strtolower($table);
-		if ($id_tables === NULL || $foreign_table === NULL || $id_foreign === NULL)
+		$foreign_table = strtolower($foreign_table);
+		$this->_tables[] = $foreign_table;
+		if ($foreign_table === NULL)
 		{
-			$foreign_fields = $this->_base->fields($table);
-			$foreign_fields = array_map(function($a){
-				return $a['Field'];
-			}, $foreign_fields);
-			foreach ($this->_tables as $t)
+			return NULL;
+				}
+		if ($id_table === NULL || $id_foreign === NULL)
+		{
+			$foreign_fields = $this->_base->foreign_keys($this->_tables[0]);
+			$find = FALSE;
+			foreach ($foreign_fields as $f)
 			{
-				if (in_array('id_'.$t, $foreign_fields))
+				if (strtolower($f["REFERENCED_TABLE_NAME"]) === $foreign_table)
 				{
-					$id_tables = 'id_'.$t;
-					$foreign_table = $t;
-					$id_foreign = 'id';
+					$find = TRUE;
+					$id_table = $f["COLUMN_NAME"];
+					$id_foreign = $f["REFERENCED_COLUMN_NAME"];
 				}
 			}
-			if ($id_tables === NULL)
+			if ($find === FALSE) 
 			{
-				foreach ($this->_tables as $t)
-				{
-					$foreign_fields = $this->_base->fields($t);
-					$foreign_fields = array_map(function($a){
-						return $a['Field'];
-					}, $foreign_fields);
-					if (in_array('id_'.$table, $foreign_fields))
-					{
-						$id_tables = 'id';
-						$foreign_table = $t;
-						$id_foreign = 'id_'.$table;
-					}
-				}
-			}
+				$id_table = ($id_table != NULL) ? ($id_table) : ('id');
+				$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ($this->_tables[0].'.id_'.$this->_tables[0]);
 		}
-		else 
-		{
-			$id_tables = ($id_tables != NULL) ? ($id_tables) : ('id');
-			$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ($this->_tables[0].'.id_'.$table);
 		}
-		$this->_sql .= ' '.$type.' JOIN '.$table.' ON '.$table.'.'.$id_tables.' = '.$foreign_table.'.'.$id_foreign;
+		$this->_sql .= ' '.$type.' JOIN `'.$foreign_table.'` ON `'.$this->_tables[0].'`.`'.$id_table.'` = `'.$foreign_table.'`.`'.$id_foreign.'`';
 		return $this;
 	}
 	
@@ -206,7 +201,7 @@ class Query
 	 * Définie le type de requête à DESCRIBE.
 	 * @return Query
 	 */
-	public function describe()
+	public function describe() : Query
 	{
 		$this->_type = self::DESCRIBE;
 		$this->_sql = 'DESCRIBE '.$this->_tables[0];
@@ -217,7 +212,7 @@ class Query
 	 * Définie le type de requête à DELETE.
 	 * @return Query
 	 */
-	public function delete()
+	public function delete() : Query
 	{
 		$this->_type = self::DELETE;
 		$this->_sql = 'DELETE FROM '.$this->_tables[0];
@@ -229,7 +224,7 @@ class Query
 	 * @param array $fields Nom des champs pour l'insertion.
 	 * @return Query
 	 */
-	public function insert(Array $fields=[])
+	public function insert(array $fields=[]) : Query
 	{
 		$this->_type = self::INSERT;
 		$this->_sql = 'INSERT INTO '.$this->_tables[0];
@@ -246,7 +241,7 @@ class Query
 	 * @param array $values Liste de valeur.
 	 * @return Query
 	 */
-	public function values(Array $values)
+	public function values(array $values) : Query
 	{
 		if (count($this->_values) > 0)
 		{
@@ -262,7 +257,7 @@ class Query
 	 * @param array $fields Liste des noms des champs à mettre à jour.
 	 * @return Query
 	 */
-	public function insert_update(Array $fields)
+	public function insert_update(array $fields) : Query
 	{
 		$this->_sql .= ' ON DUPLICATE KEY UPDATE';
     	$i = count($fields);
@@ -286,6 +281,7 @@ class Query
 	public function raw($sql, $values=[])
 	{
 		$this->_sql = $sql;
+		$this->_values = $values;
 		return $this;
 	}
 	
@@ -309,13 +305,13 @@ class Query
 				{
 					$field = array_shift($fields);
 					$value = array_shift($values);
-					$this->_sql .= ' WHERE '.$field.' '.$operator.' ?';
+					$this->_sql .= ' WHERE `'.$field.'` '.$operator.' ?';
 					$this->_values[] = $value;
 				}
 				$count = count($fields);
 				for($i=0; $i < $count; $i++)
 				{
-					$this->_sql .= ' '.$logique.' '.$fields[$i].' '.$operator.' ?';
+					$this->_sql .= ' '.$logique.' `'.$fields[$i].'` '.$operator.' ?';
 					$this->_values[] = $values[$i];
 				}
 			}
@@ -324,12 +320,12 @@ class Query
 		{
 			if (strpos($this->_sql, ' WHERE ') === FALSE)
 			{
-				$this->_sql .= ' WHERE '.$field.' '.$operator.' ?';
+				$this->_sql .= ' WHERE `'.$field.'` '.$operator.' ?';
 				$this->_values[] = $value;
 			}
 			else 
 			{
-				$this->_sql .= ' '.$logique.' '.$field.' '.$operator.' ?';
+				$this->_sql .= ' '.$logique.' `'.$field.'` '.$operator.' ?';
 				$this->_values[] = $value;
 			}
 		}		
@@ -372,13 +368,13 @@ class Query
 			{
 				$field = array_shift($fields);
 				$order = array_shift($orders);
-				$this->_sql .= ' ORDER BY '.$field.' '.strtoupper($order);
+				$this->_sql .= ' ORDER BY `'.$field.'` '.strtoupper($order);
 				
 			}
 			$count = count($fields);
 			for($i=0; $i < $count; $i++)
 			{
-				$this->_sql .= ', '.$fields[$i].' '.strtoupper($orders[$i]);
+				$this->_sql .= ', `'.$fields[$i].'` '.strtoupper($orders[$i]);
 			}
 		}
 		else 
@@ -386,11 +382,11 @@ class Query
 			$order = strtoupper($order);
 			if (strpos($this->_sql, ' ORDER BY ') === FALSE)
 			{
-				$this->_sql .= ' ORDER BY '.$field.' '.$order;
+				$this->_sql .= ' ORDER BY `'.$field.'` '.$order;
 			}
 			else
 			{
-				$this->_sql .= ', '.$field.' '.$order;
+				$this->_sql .= ', `'.$field.'` '.$order;
 			}
 		}
 		return $this;
