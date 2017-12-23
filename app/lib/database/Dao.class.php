@@ -345,12 +345,32 @@ abstract class Dao
      * @param array $fields Tableau associatif d'égalité entre champ valeur.
      * @return int Nombre d'enregistrements.
      */
-    public static function count(Array $fields=[])
+    public static function count(array $fields=[])
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::count', self::observable()));
 
     	return self::query()->count()->where($fields)->run();
     }   
+
+	/**
+	 * Vide la table.
+	 */
+	public static function clear()
+	{
+		// Notification.
+		self::observable()->notify(new Event(get_called_class().'::clean', self::observable()));
+
+		self::query()->clear();
+	}
+
+	/**
+     * Retourne la liste des paramètres de l'objet.
+     * @return array Liste attribut / valeur.
+     */
+	public function data() : array
+	{
+		return get_object_vars($this);
+	}
 }
 ?>
