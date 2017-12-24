@@ -186,11 +186,6 @@ class DataBase
 		}
 		else
 		{
-			// Vérification du nombre de paramètres.
-			if (substr_count($sql, '?') > count($value))
-			{
-				throw new DataBaseException("Il manque des paramètres pour la requête préparée");
-			}
 		    $time = microtime(TRUE);
 		    $pdo = $this->_connection;
 			if ($this->_use_buffered_query === FALSE)
