@@ -423,7 +423,7 @@ class Query
 	 * Exécute la requête SQL et retourne le résultat.
 	 * @return bool|array
 	 */
-	public function run() : Query
+	public function run() 
 	{
 		$result = $this->_base->query($this->_sql, array_values($this->_values));
 		if ($this->_type === self::COUNT)
