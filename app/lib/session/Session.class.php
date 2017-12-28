@@ -56,7 +56,11 @@ class Session
 	 */
 	public function __destruct()
 	{
-        
+        // Force la sauvegarde de l'utilisateur.
+		if ($this->is_open())
+		{
+			$_SESSION["__user"] = $this->_user;
+		}
 	}
 	
 	/**
