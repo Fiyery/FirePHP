@@ -125,7 +125,7 @@ class DataBase
 			$this->_connection = new PDO($this->_engine.":host=".$this->_host.";dbname=".$this->_name, $user, $pass);
 			if ($this->_connection !== NULL)
 			{
-				$this->query("SET NAMES ".$this->_charset, $name);
+				$this->query("SET NAMES ".$this->_charset);
 			}
 		}
 	}
@@ -173,7 +173,13 @@ class DataBase
 		return $result;
 	}
 
-	public function _prepare_query($sql, $value=NULL)
+	/**
+	 * Execute la partie commune du lanchement de requête entre un retour simple et un retour avec yield.
+	 * @param string $sql Requête SQL.
+	 * @param array $value Liste des paramètres.
+	 * @return mixed
+	 */
+	public function _prepare_query(string $sql, array $value=NULL)
 	{
 		$this->_check_connection();
 		$history = $this->_format_query_history($sql, $value);
