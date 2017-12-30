@@ -56,7 +56,11 @@ class Session
 	 */
 	public function __destruct()
 	{
-        
+        // Force la sauvegarde de l'utilisateur.
+		if ($this->is_open() && is_object($this->_user))
+		{
+			$_SESSION["__user"] = serialize($this->_user);
+		}
 	}
 	
 	/**
@@ -145,12 +149,9 @@ class Session
 	 */
 	public function user()
 	{
-		if (get_class($this->_user) === '__PHP_Incomplete_Class')
+		if (is_string($this->_user))
 		{
-			$vars = get_object_vars($this->_user);
-			$class = $vars['__PHP_Incomplete_Class_Name'];
-			unset($vars['__PHP_Incomplete_Class_Name']);
-			$this->_user = new $class($vars);
+			$this->_user = unserialize($this->_user);
 		}
 		return $this->_user;
 	}

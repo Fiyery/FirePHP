@@ -36,7 +36,7 @@ class Router
      * Adresse URL de la racine.
      * @var string
      */
-    private $_root_www = NULL;
+    private $_root_url = NULL;
     
     /**
      * Routage courant.
@@ -98,12 +98,12 @@ class Router
     /**
      * Initialise le routage.
      * @param string $table Chemin de fichier JSON contenant la table de routage.
-     * @param string $root_www Adresse URL de la racine.
+     * @param string $root_url Adresse URL de la racine.
      * @param string $root_dir Chemin de la racine du site.
      */
-    public function init(string $table, string $root_www, string $root_dir)
+    public function init(string $table, string $root_url, string $root_dir)
     {
-        $this->_root_www = $root_www;
+        $this->_root_url = $root_url;
         $this->_root_dir = $root_dir;
         if (file_exists($table) == FALSE)
         {

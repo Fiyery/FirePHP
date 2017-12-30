@@ -99,7 +99,7 @@ class Query
 	public function select(array $fields=[]) : Query
 	{
 		$this->_type = self::SELECT;
-		$this->_sql = 'SELECT '.((count($fields) > 0) ? (implode(', ', $fields)) : ('*')).' FROM `'.$this->_tables[0].'`';
+		$this->_sql = "SELECT ".((count($fields) > 0) ? (implode(", ", $fields)) : ("*"))." FROM `".$this->_tables[0]."`";
 		return $this;
 	}
 
@@ -110,7 +110,7 @@ class Query
 	public function clear() : Query
 	{
 		$this->_type = self::SELECT;
-		$this->_sql = 'TRUNCATE `'.$this->_tables[0].'`; ALTER TABLE `'.$this->_tables[0].'` AUTO_INCREMENT = 1;';
+		$this->_sql = "TRUNCATE `".$this->_tables[0]."`; ALTER TABLE `".$this->_tables[0]."` AUTO_INCREMENT = 1;";
 		return $this;
 	}
 	
@@ -122,7 +122,7 @@ class Query
 	public function count() : Query
 	{
 		$this->_type = self::COUNT;
-		$this->_sql = 'SELECT COUNT(*) nb FROM `'.$this->_tables[0].'`';
+		$this->_sql = "SELECT COUNT(*) nb FROM `".$this->_tables[0]."`";
 		return $this;
 	}
 	
@@ -134,7 +134,7 @@ class Query
 	 */
 	public function join(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
 	{
-		return $this->_join('INNER', $foreign_table, $id_foreign, $id_table);
+		return $this->_join("INNER", $foreign_table, $id_foreign, $id_table);
 	}
 	
 	/**
@@ -145,7 +145,7 @@ class Query
 	 */
 	public function join_left(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
 	{
-		return $this->_join('LEFT', $foreign_table, $id_foreign, $id_table);
+		return $this->_join("LEFT", $foreign_table, $id_foreign, $id_table);
 	}
 	
 	/**
@@ -156,7 +156,7 @@ class Query
 	 */
 	public function join_right(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
 	{
-		return $this->_join('RIGHT', $foreign_table, $id_foreign, $id_table);
+		return $this->_join("RIGHT", $foreign_table, $id_foreign, $id_table);
 	}
 	
 	/**
@@ -189,11 +189,11 @@ class Query
 			}
 			if ($find === FALSE) 
 			{
-				$id_table = ($id_table != NULL) ? ($id_table) : ('id');
-				$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ($this->_tables[0].'.id_'.$this->_tables[0]);
+				$id_table = ($id_table != NULL) ? ($id_table) : ("id");
+				$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ($this->_tables[0].".id_".$this->_tables[0]);
 		}
 		}
-		$this->_sql .= ' '.$type.' JOIN `'.$foreign_table.'` ON `'.$this->_tables[0].'`.`'.$id_table.'` = `'.$foreign_table.'`.`'.$id_foreign.'`';
+		$this->_sql .= " ".$type." JOIN `".$foreign_table."` ON `".$this->_tables[0]."`.`".$id_table."` = `".$foreign_table."`.`".$id_foreign."`";
 		return $this;
 	}
 	
@@ -204,7 +204,7 @@ class Query
 	public function describe() : Query
 	{
 		$this->_type = self::DESCRIBE;
-		$this->_sql = 'DESCRIBE '.$this->_tables[0];
+		$this->_sql = "DESCRIBE ".$this->_tables[0];
 		return $this;
 	}
 	
@@ -215,7 +215,7 @@ class Query
 	public function delete() : Query
 	{
 		$this->_type = self::DELETE;
-		$this->_sql = 'DELETE FROM '.$this->_tables[0];
+		$this->_sql = "DELETE FROM ".$this->_tables[0];
 		return $this;
 	}
 	
@@ -227,12 +227,12 @@ class Query
 	public function insert(array $fields=[]) : Query
 	{
 		$this->_type = self::INSERT;
-		$this->_sql = 'INSERT INTO '.$this->_tables[0];
+		$this->_sql = "INSERT INTO ".$this->_tables[0];
 		if (count($fields) > 0)
 		{
-			$this->_sql .= ' (`'.implode('`, `', $fields).'`)';
+			$this->_sql .= " (`".implode("`, `", $fields)."`)";
 		}
-		$this->_sql .= ' VALUES';
+		$this->_sql .= " VALUES";
 		return $this;
 	}
 	
@@ -245,9 +245,9 @@ class Query
 	{
 		if (count($this->_values) > 0)
 		{
-			$this->_sql .= ', ';
+			$this->_sql .= ", ";
 		}
-		$this->_sql .= '('.implode(', ', array_fill(0, count($values), '?')).')';
+		$this->_sql .= "(".implode(", ", array_fill(0, count($values), "?")).")";
 		$this->_values = array_merge($this->_values, $values);
 		return $this;
 	}
@@ -259,14 +259,14 @@ class Query
 	 */
 	public function insert_update(array $fields) : Query
 	{
-		$this->_sql .= ' ON DUPLICATE KEY UPDATE';
+		$this->_sql .= " ON DUPLICATE KEY UPDATE";
     	$i = count($fields);
 		foreach ($fields as $f)
 		{
 			$this->_sql .= " `".$f."`= VALUES(`".$f."`)";
 			if (--$i > 0)
 			{
-				$this->_sql .= ',';
+				$this->_sql .= ",";
 			}
 		}
 		return $this;
@@ -278,7 +278,7 @@ class Query
 	 * @param array $values Liste des valeurs pour la requête préparée.
 	 * @return Query
 	 */
-	public function raw($sql, $values=[])
+	public function raw(string $sql, array $values=[]) : Query
 	{
 		$this->_sql = $sql;
 		$this->_values = $values;
@@ -290,10 +290,10 @@ class Query
 	 * @param array|string $field Tableau associatif de champs valeur ou le nom du champ. 
 	 * @param string $operator Opérateur de comparaison SQL.
 	 * @param string $value Valeur du champ dans le cas ou $field est une string.
-	 * @param string $logique Opérateur logique utilisé pour raccroché les conditions entre elles.
+	 * @param string $logic Opérateur logique utilisé pour raccroché les conditions entre elles.
 	 * @return Query
 	 */
-	public function where($field=[], $operator='=', $value=NULL, $logique='AND')
+	public function where(array $field = [], string $operator = "=", string $value = NULL, string $logic = "AND") : Query
 	{
 		if (is_array($field))
 		{
@@ -301,31 +301,31 @@ class Query
 			$fields = array_keys($field);
 			if (isset($fields[0]))
 			{
-				if (strpos($this->_sql, ' WHERE ') === FALSE)
+				if (strpos($this->_sql, " WHERE ") === FALSE)
 				{
 					$field = array_shift($fields);
 					$value = array_shift($values);
-					$this->_sql .= ' WHERE `'.$field.'` '.$operator.' ?';
+					$this->_sql .= " WHERE `".$field."` ".$operator." ?";
 					$this->_values[] = $value;
 				}
 				$count = count($fields);
 				for($i=0; $i < $count; $i++)
 				{
-					$this->_sql .= ' '.$logique.' `'.$fields[$i].'` '.$operator.' ?';
+					$this->_sql .= " ".$logic." `".$fields[$i]."` ".$operator." ?";
 					$this->_values[] = $values[$i];
 				}
 			}
 		}
 		else 
 		{
-			if (strpos($this->_sql, ' WHERE ') === FALSE)
+			if (strpos($this->_sql, " WHERE ") === FALSE)
 			{
-				$this->_sql .= ' WHERE `'.$field.'` '.$operator.' ?';
+				$this->_sql .= " WHERE `".$field."` ".$operator." ?";
 				$this->_values[] = $value;
 			}
 			else 
 			{
-				$this->_sql .= ' '.$logique.' `'.$field.'` '.$operator.' ?';
+				$this->_sql .= " ".$logic." `".$field."` ".$operator." ?";
 				$this->_values[] = $value;
 			}
 		}		
@@ -336,9 +336,9 @@ class Query
 	 * Ajoute une parenthèse ouvrante.
 	 * @return Query
 	 */
-	public function open_parenthesis()
+	public function open_parenthesis() : Query
 	{
-		$this->_sql .= '(';
+		$this->_sql .= "(";
 		return $this;
 	}
 	
@@ -346,9 +346,9 @@ class Query
 	 * Ajoute une parenthèse fermante.
 	 * @return Query
 	 */
-	public function close_parenthesis()
+	public function close_parenthesis() : Query
 	{
-		$this->_sql .= ')';
+		$this->_sql .= ")";
 		return $this;
 	}
 	
@@ -358,35 +358,35 @@ class Query
 	 * @param string $order Type de trie parmi "asc" et "desc".
 	 * @return Query
 	 */
-	public function order($field, $order='ASC')
+	public function order($field, string $order = "ASC") : Query
 	{
 		if (is_array($field))
 		{
 			$orders = array_values($field);
 			$fields = array_keys($field);
-			if (strpos($this->_sql, ' ORDER BY ') === FALSE && isset($fields[0]))
+			if (strpos($this->_sql, " ORDER BY ") === FALSE && isset($fields[0]))
 			{
 				$field = array_shift($fields);
 				$order = array_shift($orders);
-				$this->_sql .= ' ORDER BY `'.$field.'` '.strtoupper($order);
+				$this->_sql .= " ORDER BY `".$field."` ".strtoupper($order);
 				
 			}
 			$count = count($fields);
 			for($i=0; $i < $count; $i++)
 			{
-				$this->_sql .= ', `'.$fields[$i].'` '.strtoupper($orders[$i]);
+				$this->_sql .= ", `".$fields[$i]."` ".strtoupper($orders[$i]);
 			}
 		}
 		else 
 		{
 			$order = strtoupper($order);
-			if (strpos($this->_sql, ' ORDER BY ') === FALSE)
+			if (strpos($this->_sql, " ORDER BY ") === FALSE)
 			{
-				$this->_sql .= ' ORDER BY `'.$field.'` '.$order;
+				$this->_sql .= " ORDER BY `".$field."` ".$order;
 			}
 			else
 			{
-				$this->_sql .= ', `'.$field.'` '.$order;
+				$this->_sql .= ", `".$field."` ".$order;
 			}
 		}
 		return $this;
@@ -398,14 +398,14 @@ class Query
 	 * @param int $end Position du dernier enregistrement qui sera prit en compte.
 	 * @return Query
 	 */
-	public function limit($begin, $end=NULL)
+	public function limit($begin, $end=NULL) : Query
 	{
 		if ($end === NULL)
 		{
 			$end = $begin - 1;
 			$begin = 0;
 		}
-		$this->_sql .= ' LIMIT '.($end-$begin+1).' OFFSET '.$begin;
+		$this->_sql .= " LIMIT ".($end-$begin+1)." OFFSET ".$begin;
 		return $this;
 	}
 	
@@ -413,9 +413,9 @@ class Query
 	 * Définie le nombre d'enregistrements au premier enregistrement retourné.
 	 * @return Query
 	 */
-	public function first()
+	public function first() : Query
 	{
-		$this->_sql .= ' LIMIT 1';
+		$this->_sql .= " LIMIT 1";
 		return $this;
 	}
 	
@@ -423,12 +423,12 @@ class Query
 	 * Exécute la requête SQL et retourne le résultat.
 	 * @return bool|array
 	 */
-	public function run()
+	public function run() 
 	{
 		$result = $this->_base->query($this->_sql, array_values($this->_values));
 		if ($this->_type === self::COUNT)
 		{
-			return (isset($result[0]['NB'])) ? (isset($result[0]['NB'])) : (0);
+			return (isset($result[0]["NB"])) ? (isset($result[0]["NB"])) : (0);
 		}
 		if ($this->_type !== self::SELECT)
 		{
@@ -449,7 +449,7 @@ class Query
 	 * Retourne le status de retour de la dernière requête exécutée.
 	 * @return array
 	 */
-	public function error()
+	public function error() : Query
 	{
 		return $this->_base->error();
 	}
@@ -458,7 +458,7 @@ class Query
 	 * Retourne la requête SQL.
 	 * @return string
 	 */
-	public function sql()
+	public function sql() : Query
 	{ 
 		return $this->_sql;
 	}
@@ -467,7 +467,7 @@ class Query
 	 * Retourne les valeurs SQL des champs pour la requête préparée.
 	 * @return array
 	 */
-	public function sql_values()
+	public function sql_values() : Query
 	{
 		return $this->_values;
 	}
