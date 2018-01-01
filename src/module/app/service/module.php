@@ -27,6 +27,9 @@ class ServiceModule extends Module
 
         // Définition de la classe par défaut des formulaires.
         Form::set_default_class($this->config->system->css_class_form);
+
+        // Définition des préfixs de table.
+        Dao::table_prefix($this->config->db->table_prefix);
     }
 
     /**
@@ -95,7 +98,6 @@ class ServiceModule extends Module
 
         // Définition de la liaison de la base de données à la classe Model.
         Dao::base($this->database);
-        Dao::table_prefix($this->config->db->table_prefix);
     }
 
     /**
