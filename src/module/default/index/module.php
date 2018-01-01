@@ -28,7 +28,7 @@ class IndexModule extends Module
 
 		// COMPONENT
 		// $c = new UlComponent();
-		// $c->set('elements', ['Element 1', 'Element 2', 'Element 3']);
+		// $c->assign('elements', ['Element 1', 'Element 2', 'Element 3']);
 		// $this->tpl->assign('component', $c->fetch());
 
 		// EXEMPLE DE THREAD
