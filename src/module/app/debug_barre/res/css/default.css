@@ -7,7 +7,7 @@ body
 {
 	bottom: 0px;
 	left: 0px;
-	color: black;
+	color: #212121;
 	position: fixed;
 	z-index:1000;
 	width: 100%;
@@ -19,8 +19,8 @@ body
 
 #debug_tool #debug_barre
 {
-	background-color: whitesmoke;
-	border-top: 2px groove tan;
+	background-color: #FFF;
+	border-top: 2px groove #FFF;
 	height: 30px;
 }
 
@@ -33,8 +33,8 @@ body
 #debug_tool #debug_barre .bloc 
 {
 	height:30px;
-	border-right: 1px solid tan;
-	background-color: cornsilk;
+	border-right: 1px solid #CED7DF;
+	background-color: #EDF5FD;
 	width: auto;
 	float: left;  
 }
@@ -43,7 +43,7 @@ body
 {
 	width: 1px;
 	height: 30px;
-	background-color: tan;
+	background-color: #CED7DF;
 	float: left;
 }
 
@@ -71,8 +71,8 @@ body
 #debug_tool .bloc_info
 {
 	z-index: 1001;
-	border: 1px solid tan;
-	border-radius:3px 3px 0px 0px;
+	border: 1px solid #CED7DF;
+	border-radius:2px 2px 0px 0px;
 	overflow: hidden;
 	padding: 5px 10px 10px 10px;
 	display: none;
@@ -159,7 +159,7 @@ body
 #debug_tool .bloc:hover > .bloc_info 
 {
 	display: block;
-	background-color: cornsilk;
+	background-color: #EDF5FD;
 }
 
 #debug_tool .bloc:hover > .trigger
@@ -170,10 +170,10 @@ body
 
 #debug_tool .bloc .trigger
 {
-	background-color: cornsilk;
+	background-color: #EDF5FD;
 	z-index: 1002;
 	position: relative;
-	border-top: 1px solid cornsilk;
+	border-top: 1px solid #EDF5FD;
 	padding: 0px 3px 0px 3px;
 }
 
@@ -227,7 +227,6 @@ body
 	border-collapse: collapse;
 	text-align: center;
 	background-color: #FFF;
-	border: 1px solid #9a7647;
 }
 
 #debug_tool .bloc_info table.table_debug th, 
@@ -238,7 +237,7 @@ body
 
 #debug_tool .bloc_info table.table_debug th
 {
-	background-color: #9a7647;
+	background-color: #A5CFEA;
 	color: #FFF;
 	font-weight: bold;
 }
@@ -250,7 +249,7 @@ body
 
 #debug_tool .bloc_info .title
 {
-	color: #9a7647;
+	color: #757575;
 	font-weight: bold;
 	font-size: 120%;
 	text-align: left;
