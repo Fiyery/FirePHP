@@ -166,7 +166,7 @@ class Query
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
 	 */
-	private function _join(string $type, string $foreign_table, string $id_foreign, string $id_table) : Query
+	private function _join(string $type, string $foreign_table, ?string $id_foreign, ?string $id_table) : Query
 	{
 		$foreign_table = strtolower($foreign_table);
 		$this->_tables[] = $foreign_table;
