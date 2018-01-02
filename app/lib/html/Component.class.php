@@ -13,7 +13,7 @@ class Component
         $this->_tpl = new Template($tmp_dir);
     }
 
-    public function set(string $name, $value)
+    public function assign(string $name, $value)
     {
         $this->_tpl->assign($name, $value);
     }

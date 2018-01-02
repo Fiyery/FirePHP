@@ -15,19 +15,19 @@ abstract class Dao
      * Classe de la base de données.
      * @var DataBase
      */
-    private static $_base = NULL;
+    protected static $_base = NULL;
 
 	/**
      * Classe de la base de données.
      * @var string
      */
-    private static $_table_prefix = NULL;
+    protected static $_table_prefix = NULL;
 		
 	/**
 	 * Observer pour notifier même les méthodes statiques.
 	 * @var Observer
 	 */
-	private static $_observable = NULL;
+	protected static $_observable = NULL;
     
     /**
      * Constructeur
