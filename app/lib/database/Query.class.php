@@ -293,7 +293,7 @@ class Query
 	 * @param string $logic Opérateur logique utilisé pour raccroché les conditions entre elles.
 	 * @return Query
 	 */
-	public function where(array $field = [], string $operator = "=", string $value = NULL, string $logic = "AND") : Query
+	public function where($field, string $operator = "=", string $value = NULL, string $logic = "AND") : Query
 	{
 		if (is_array($field))
 		{
