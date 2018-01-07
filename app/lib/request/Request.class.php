@@ -121,13 +121,31 @@ class Request
 	 * Retourne la source de la requête
 	 * @return string
 	 */
-	public function source() 
+	public function source() : ?string
 	{
 		if ($this->_source == NULL)
 		{
 		    $this->_source = (array_key_exists('HTTP_REFERER', $_SERVER)) ? ($_SERVER['HTTP_REFERER']) : (NULL);
 		}
 	    return $this->_source;
+	}
+
+	/**
+	 * Récupère l'IP du client.
+	 * @return string
+	 */
+	public function ip() : string
+	{
+		if (isset($_SERVER['HTTP_CLIENT_IP'])) 
+		{
+			return $_SERVER['HTTP_CLIENT_IP'];
+		}
+		// IP derrière un proxy
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) 
+		{
+			return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+		return (isset($_SERVER['REMOTE_ADDR'])) ? ($_SERVER['REMOTE_ADDR']) : (NULL);
 	}
 	
 	/**
