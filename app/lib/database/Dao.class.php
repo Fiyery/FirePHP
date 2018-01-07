@@ -125,9 +125,12 @@ abstract class Dao
     		}
     		$value_sql[] = (isset($this->$f)) ? ($this->$f) : (NULL);
     	}
-    	$result = self::$_base->query($sql, $value_sql);
-		$id = self::$_base->last_id();
-    	$this->id = ($id == 0) ? ($this->id) : ($id);
+		$result = self::$_base->query($sql, $value_sql);
+		if (isset($this->id))
+		{
+			$id = self::$_base->last_id();
+			$this->id = ($id == 0) ? ($this->id) : ($id);
+		}
     	return ($result !== FALSE);
     }
     
