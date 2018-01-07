@@ -37,7 +37,11 @@ abstract class Dao
     {
     	foreach($data as $name => $value)
     	{
-    		$this->$name = $value;
+    		if (method_exists($this, $name))
+			{
+				$this->$name($value);
+			}
+			$this->$name = $value;
     	}
     }
     

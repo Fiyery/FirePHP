@@ -1,9 +1,9 @@
 <?php
 /**
- * String regroupe des fonctions utiles sur les chaînes de caractères.
+ * Str regroupe des fonctions utiles sur les chaînes de caractères.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class String
+class Str
 {
     /**
      * Liste des méthodes utilisées pour la comparaison.
