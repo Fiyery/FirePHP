@@ -59,9 +59,9 @@ abstract class Dao
     /**
      * Définie un attribut.
      * @param string $name Nom de l'attribut.
-     * @param string $value Valeur de l'attribut.
+     * @param mixed $value Valeur de l'attribut.
      */
-    public function __set(string $name, string $value=NULL)
+    public function __set(string $name, $value = NULL)
     {
     	if (method_exists($this, $name))
     	{

@@ -54,6 +54,18 @@ class Response
 	 * @var number
 	 */
 	private $_status_code = 200;
+
+	/**
+	 * Liste des scripts.
+	 * @var array
+	 */
+	private $_scripts = [];
+
+	/**
+	 * Liste des styles.
+	 * @var array
+	 */
+	private $_styles = [];
 	
 	/**
 	 * Constructeur.
@@ -110,15 +122,86 @@ class Response
 	}
 
 	/**
+	 * Ajoute un script à la réponse.
+	 * @param string $src Adresse du script.
+	 * @return void
+	 */
+	public function add_script(string $src)
+	{
+		$this->_scripts[] = $src;
+	}
+
+	/**
+	 * Retourne la liste des scripts.
+	 * @return array
+	 */
+	public function get_scripts() : array
+	{
+		return $this->_scripts;
+	}
+
+	/**
+	 * Retourne le contenu des scripts.
+	 * @return string
+	 */
+	public function get_script_content() : string
+	{
+		$content = "";
+		foreach ($this->_scripts as $s)
+		{
+			if (file_exists($s))
+			{
+				$content .= file_get_contents($s);
+			}
+		}
+		return $content;
+	}
+
+	/**
+	 * Ajoute un style à la réponse.
+	 * @param string $src Adresse du style.
+	 * @return void
+	 */
+	public function add_style(string $src)
+	{
+		$this->_styles[] = $src;
+	}
+
+	/**
+	 * Retourne la liste des styles.
+	 * @return array
+	 */
+	public function get_styles() : array
+	{
+		return $this->_styles;
+	}
+
+	/**
+	 * Retourne le contenu des styles.
+	 * @return string
+	 */
+	public function get_style_content() : string
+	{
+		$content = "";
+		foreach ($this->_styles as $s)
+		{
+			if (file_exists($s))
+			{
+				$content = file_get_contents($s);
+			}
+		}
+		return $content;
+	}
+
+	/**
 	 * Définie le Code HTTP de retour.
 	 * @param int @code Numéro du code de retour.
 	 * @return int 
 	 */
-	public function status_code($code=NULL) : int
+	public function status_code(int $code = NULL) : int
 	{
 		if ($code !== NULL)
 		{
-
 			switch ($code)
 			{
 				case 200 : header("HTTP/1.1 200 Ok"); break;
