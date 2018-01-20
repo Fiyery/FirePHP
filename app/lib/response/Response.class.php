@@ -50,6 +50,12 @@ class Response
 	private $_request = NULL;
 
 	/**
+	 * Titre de la réponse.
+	 * @var string
+	 */
+	private $_title = "";
+
+	/**
 	 * Code HTTP de retour.
 	 * @var number
 	 */
@@ -75,6 +81,20 @@ class Response
 	    $this->_session = $session;
 	    $this->_request = $request;
 	}
+
+	/**
+	 * Définie et retourne le titre de la page.
+	 * @param string $title Titre de la page
+	 * @return string
+	 */
+	public function title(string $title = NULL) : string
+	{
+		if ($title !== NULL)
+		{
+			$this->_title = $title;
+		}
+		return $this->_title;
+	}
 	
 	/**
 	 * Ajoute un message.
@@ -99,7 +119,7 @@ class Response
 	 * Retourne les éventuels messages d'information stockés et les supprime.
 	 * @return array
 	 */
-	public function get_alerts() : array
+	public function alerts() : array
 	{
 		if (is_array($this->_session->__messages) === FALSE)
 		{
@@ -135,7 +155,7 @@ class Response
 	 * Retourne la liste des scripts.
 	 * @return array
 	 */
-	public function get_scripts() : array
+	public function scripts() : array
 	{
 		return $this->_scripts;
 	}
@@ -144,7 +164,7 @@ class Response
 	 * Retourne le contenu des scripts.
 	 * @return string
 	 */
-	public function get_script_content() : string
+	public function script_content() : string
 	{
 		$content = "";
 		foreach ($this->_scripts as $s)
@@ -171,7 +191,7 @@ class Response
 	 * Retourne la liste des styles.
 	 * @return array
 	 */
-	public function get_styles() : array
+	public function styles() : array
 	{
 		return $this->_styles;
 	}
@@ -180,7 +200,7 @@ class Response
 	 * Retourne le contenu des styles.
 	 * @return string
 	 */
-	public function get_style_content() : string
+	public function style_content() : string
 	{
 		$content = "";
 		foreach ($this->_styles as $s)
@@ -200,61 +220,8 @@ class Response
 	 */
 	public function status_code(int $code = NULL) : int
 	{
-		if ($code !== NULL)
+		if ($code !== NULL && ($code == http_response_code($code)))
 		{
-			switch ($code)
-			{
-				case 200 : header("HTTP/1.1 200 Ok"); break;
-				case 201 : header("HTTP/1.1 201 Created"); break;
-				case 202 : header("HTTP/1.1 202 Accepted"); break;
-				case 203 : header("HTTP/1.1 203 Nonauthoritative information"); break;
-				case 204 : header("HTTP/1.1 204 No content"); break;
-				case 205 : header("HTTP/1.1 205 Reset content"); break;
-				case 206 : header("HTTP/1.1 206 Partial content"); break;
-				case 300 : header("HTTP/1.1 300 Multiple Choices"); break; 	
-				case 301 : header("HTTP/1.1 301 Moved Permanently"); break;
-				case 302 : header("HTTP/1.1 302 Moved Temporarily"); break; 
-				case 303 : header("HTTP/1.1 303 See Other"); break;
-				case 304 : header("HTTP/1.1 304 Not Modified"); break; 	
-				case 305 : header("HTTP/1.1 305 Use Proxy"); break;	
-				case 306 : header("HTTP/1.1 306 (aucun)"); break;	
-				case 307 : header("HTTP/1.1 307 Temporary Redirect"); break;	
-				case 308 : header("HTTP/1.1 308 Permanent Redirect"); break;
-				case 310 : header("HTTP/1.1 310 Too many Redirectscase"); break;
-				case 400 : header("HTTP/1.1 400 Bad Request"); break;
-				case 401 : header("HTTP/1.1 401 Unauthorized"); break; 	
-				case 402 : header("HTTP/1.1 402 Payment Required"); break;	
-				case 403 : header("HTTP/1.1 403 Forbidden"); break; 	
-				case 404 : header("HTTP/1.1 404 Not Found"); break;	
-				case 405 : header("HTTP/1.1 405 Method Not Allowed"); break; 	
-				case 406 : header("HTTP/1.1 406 Not Acceptable"); break;	
-				case 407 : header("HTTP/1.1 407 Proxy Authentication Required"); break; 	
-				case 408 : header("HTTP/1.1 408 Request Time-out"); break;	
-				case 409 : header("HTTP/1.1 409 Conflict"); break; 
-				case 410 : header("HTTP/1.1 410 Gone"); break;	
-				case 411 : header("HTTP/1.1 411 Length Required"); break; 	
-				case 412 : header("HTTP/1.1 412 Precondition Failed"); break;	
-				case 413 : header("HTTP/1.1 413 Request Entity Too Large"); break; 
-				case 414 : header("HTTP/1.1 414 Request-URI Too Long"); break;
-				case 415 : header("HTTP/1.1 415 Unsupported Media Type"); break; 	
-				case 416 : header("HTTP/1.1 416 Requested range unsatisfiable"); break;
-				case 417 : header("HTTP/1.1 417 Expectation failed"); break; 
-				case 421 : header("HTTP/1.1 421 Bad mapping / Misdirected Request"); break;	
-				case 422 : header("HTTP/1.1 422 Unprocessable entity"); break; 	
-				case 500 : header("HTTP/1.1 500 Internal Server Error"); break;	
-				case 501 : header("HTTP/1.1 501 Not Implemented"); break; 	
-				case 502 : header("HTTP/1.1 502 Bad Gateway ou Proxy Error"); break;	
-				case 503 : header("HTTP/1.1 503 Service Unavailable"); break; 	
-				case 504 : header("HTTP/1.1 504 Gateway Time-out"); break;	
-				case 505 : header("HTTP/1.1 505 HTTP Version not supported"); break; 	
-				case 506 : header("HTTP/1.1 506 Variant also negociate"); break;
-				case 507 : header("HTTP/1.1 507 Insufficient storage"); break; 	
-				case 508 : header("HTTP/1.1 508 Loop detected"); break;
-				case 509 : header("HTTP/1.1 509 Bandwidth Limit Exceeded"); break; 	
-				case 510 : header("HTTP/1.1 510 Not extended"); break;
-				case 511 : header("HTTP/1.1 511 Network authentication required"); break; 
-				case 520 : header("HTTP/1.1 520 Web server is returning an unknown error"); break;
-			}
 			$this->_status_code = $code;
 		}
 		return $this->_status_code;

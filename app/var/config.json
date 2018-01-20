@@ -150,6 +150,8 @@
 		"css" :					"bloc_css",
 		"js" : 					"bloc_javascript",
 		"message" : 			"bloc_messages",
+		"module_script" : 		"module_script",
+		"module_style" : 		"module_style",
 		"site_title" :			"site_title",
 		"site_description" : 	"site_description",
 		"site_author" : 		"site_author",
