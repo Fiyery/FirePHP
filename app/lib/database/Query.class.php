@@ -449,7 +449,7 @@ class Query
 	 * Retourne le status de retour de la dernière requête exécutée.
 	 * @return array
 	 */
-	public function error() : Query
+	public function error() : array
 	{
 		return $this->_base->error();
 	}
