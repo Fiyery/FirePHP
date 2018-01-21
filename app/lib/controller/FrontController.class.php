@@ -242,7 +242,7 @@ class FrontController
 		$this->get_js();
 		
 		// Envoie des messages.
-		$this->tpl->assign($this->config->tpl->message, $this->response->get_alerts());
+		$this->tpl->assign($this->config->tpl->message, $this->response->alerts());
 
 		// Event pour lancer les actions du Hook.
 		try 

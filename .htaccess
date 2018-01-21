@@ -44,6 +44,8 @@ RewriteRule ^(.*)$ index.php/$1 [QSA,L]
 	ExpiresByType image/jpeg "access plus 2592000 seconds"
 	ExpiresByType image/png "access plus 2592000 seconds"
 	ExpiresByType image/gif "access plus 2592000 seconds"
+	AddType image/svg+xml .svg
+	ExpiresByType image/svg+xml "access plus 2592000 seconds"
 	AddType image/x-icon .ico
 	ExpiresByType image/ico "access plus 2592000 seconds"
 	ExpiresByType image/icon "access plus 2592000 seconds"
@@ -56,6 +58,21 @@ RewriteRule ^(.*)$ index.php/$1 [QSA,L]
 	ExpiresByType application/javascript A259200
 	ExpiresByType application/x-javascript "access plus 2592000 seconds"
 	ExpiresByType application/x-shockwave-flash "access plus 2592000 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+	# PROTECTION DU XSS 
+	Header always set X-XSS-Protection "1; mode=block"
+	Header set Content-Security-Policy "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:; base-uri 'self';"
+
+	# SECURITE COOKIE
+	Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+
+	# PROTECTION CLICKJACKING.
+	Header always set X-FRAME-OPTIONS "DENY"
+
+	# PROTECTION MIME SNIFFING
+	Header always set X-Content-Type-Options "nosniff"
 </IfModule>
 
 # BLOQUE LES BOTS MALWARE
