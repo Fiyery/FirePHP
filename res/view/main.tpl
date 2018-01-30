@@ -36,7 +36,9 @@
 				{$bloc_javascript} 
 			{/if}
 
-			{$debug_barre}
+			{if isset($debug_barre)}
+				{$debug_barre}
+			{/if}
 		</body>
 	</html>
 {else}
