@@ -24,8 +24,11 @@ class Config
 			if (file_exists($filename))
 			{
 				$content = file_get_contents($filename);
-				$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
-				$values = $this->_merge_array($values, json_decode($content, TRUE));
+				if (trim($content) !== "")
+				{
+					$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
+					$values = $this->_merge_array($values, json_decode($content, TRUE));
+				}
 			}
 		}		
 		$this->_values = new ConfigValue('config', $values);

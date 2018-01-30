@@ -1,0 +1,9 @@
+{
+    "site" : {
+		"title" : "FirePHP - Le framework PHP modulable - Environnement Prod"
+	},
+    
+    "feature" : {
+		"debug" : false
+    }
+}
