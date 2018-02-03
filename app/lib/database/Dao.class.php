@@ -220,7 +220,7 @@ abstract class Dao
      * @param string $prefix Préfixe utilisé pour les tables.
      * @return string
      */
-    public static function table_prefix(string $prefix)
+    public static function table_prefix(string $prefix = NULL) : string
     {
     	if ($prefix !== NULL)
 		{
@@ -233,16 +233,16 @@ abstract class Dao
      * Retourne le nom de la table correspondant au Dao.
      * @return string 
      */
-	public static function table_name()
+	public static function table_name() : string
 	{
 		return strtolower(self::$_table_prefix.get_called_class());
-	}
-    
+	}    
+
     /**
      * Retourne une instance de Query qui permet d'effectuer des requêtes spécifiques.
      * @return Query
      */
-    public static function query()
+    public static function query() : Query
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::query', self::observable()));
@@ -254,7 +254,7 @@ abstract class Dao
      * Renvoie la liste des champs de la table.
      * @return array Liste des champs.
      */
-    public static function fields()
+    public static function fields() : array
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::fields', self::observable()));
@@ -275,7 +275,7 @@ abstract class Dao
      * Renvoie la liste des clés primaires de la table.
      * @return array Liste des champss.
      */
-    public static function keys()
+    public static function keys() : array
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::keys', self::observable()));
@@ -300,7 +300,7 @@ abstract class Dao
      * @param array|string $values Identifiant ou liste d'identifiants. Prends un nombre quelconque de paramètres pour chaque clé primaire.
      * @return object Instance de l'enregistrement.
      */
-    public static function load($values)
+    public static function load($values) : ?Dao
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::load', self::observable()));
@@ -331,7 +331,7 @@ abstract class Dao
      * @param array $order Tableau associatif avec en clée les noms des champs et en valeur l'ordre.
      * @return object[] Liste des objets trouvés ou un tableau vide.
      */
-    public static function search($fields=[], $begin=NULL, $end=NULL, $order=[])
+    public static function search($fields=[], $begin=NULL, $end=NULL, $order=[]) : array
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::search', self::observable()));
@@ -353,7 +353,7 @@ abstract class Dao
      * @param array $fields Tableau associatif d'égalité entre champ valeur.
      * @return int Nombre d'enregistrements.
      */
-    public static function count(array $fields=[])
+    public static function count(array $fields=[]) : int
     {
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::count', self::observable()));
