@@ -176,6 +176,16 @@ class Router
         $d = $d[$level];
         throw new FireException($msg, $d['file'], $d['line']);
     }
+
+    /**
+     * Retourne l'url courante.
+     * @return string
+     */
+    public function url() : string
+    {
+        return $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].$_SERVER["REQUEST_URI"];
+    }
+
     
     /**
      * Retourne le nom du controller.
