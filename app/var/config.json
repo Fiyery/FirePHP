@@ -55,7 +55,7 @@
 	],
 
 	"feature" : {
-		"debug" : 				false,
+		"debug" : 				true,
 		"access" : 				true,
 		"access_redirection" : 	true,
 		"cache" : 				false,

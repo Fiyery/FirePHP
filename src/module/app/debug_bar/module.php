@@ -1,5 +1,5 @@
 <?php
-class DebugBarreModule extends Module
+class DebugBarModule extends Module
 {
     /**
      * Récupère les informations et initialise la barre de débug.
