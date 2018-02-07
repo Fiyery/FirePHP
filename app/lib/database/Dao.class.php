@@ -374,11 +374,25 @@ abstract class Dao
 
 	/**
      * Retourne la liste des paramètres de l'objet.
+     * @param array|object $data
      * @return array Liste attribut / valeur.
      */
-	public function data() : array
+	public function data($data = NULL) : array
 	{
-		return get_object_vars($this);
+		$data = $data ?? $this;
+		$array = [];
+		foreach ($data as $name => $value)
+		{
+			if (is_object($value) || is_array($value))
+			{
+				$array[$name] = $this->data($value);
+			}
+			else 
+			{
+				$array[$name] = $value;
+			}
+		}
+		return $array;
 	}
 }
 ?>
