@@ -185,9 +185,12 @@ class Template
 		    if ($this->_syntaxe == self::SMARTY)
 		    {
 		    	// Variable tableau
-				$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
-					return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
-				}, $content);
+				do 
+				{
+					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
+						return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
+					}, $content, -1, $count);
+				} while ($count > 0);
 		    		
 		    	// Instruction if.
 		    	$content = preg_replace("#\{\s*if([^\}]+)\}#", "<?php if($1):?>", $content);
@@ -209,9 +212,12 @@ class Template
 		    elseif ($this->_syntaxe == self::SMARTY_STRICT)
 		    {
 		    	// Variable tableau
-				$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
-					return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
-				}, $content);
+				do 
+				{
+					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
+						return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
+					}, $content, -1, $count);
+				} while ($count > 0);
 		    
 		    	// Instruction if.
 		    	$content = preg_replace("#\{if([^\}]+)\}#", "<?php if($1):?>", $content);
