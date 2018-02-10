@@ -418,12 +418,18 @@ class Query
 		$this->_sql .= " LIMIT 1";
 		return $this;
 	}
+
+	public function bind(array $value) : Query
+	{
+		
+	}
 	
 	/**
 	 * Exécute la requête SQL et retourne le résultat.
-	 * @return bool|array
+	 * @param bool $object Si TRUE, le retour se fera sous forme d'objets sinon tableau.
+	 * @return bool|array|int
 	 */
-	public function run() 
+	public function run(bool $object = TRUE) 
 	{
 		$result = $this->_base->query($this->_sql, array_values($this->_values));
 		if ($this->_type === self::COUNT)
@@ -434,15 +440,40 @@ class Query
 		{
 			return $result;
 		}
-		$objects = [];
+		$return = [];	
 		if (is_array($result))
 		{
-			foreach ($result as $r)
+			if ($object === FALSE)
 			{
-				$objects[] = new $this->_class($r);
+				$return = $result;
+			}
+			else 
+			{
+				foreach ($result as $r)
+				{
+					$return[] = new $this->_class($r);
+				}	
 			}		
 		}
-		return $objects;
+		return $return;
+	}
+
+	/**
+	 * Exécute la requête SQL et retourne le résultat sous forme de tableaux.
+	 * @return bool|array|int
+	 */
+	public function run_array() 
+	{
+		return $this->run(FALSE);
+	}
+
+	/**
+	 * Exécute la requête SQL et retourne le résultat sous forme de talbeau d'objets.
+	 * @return bool|array|int
+	 */
+	public function run_object() 
+	{
+		return $this->run(TRUE);
 	}
 	
 	/**
@@ -458,16 +489,31 @@ class Query
 	 * Retourne la requête SQL.
 	 * @return string
 	 */
-	public function sql() : Query
+	public function sql() : string
 	{ 
 		return $this->_sql;
+	}
+
+	/**
+	 * Retourne la requête SQL avec les valeurs.
+	 * @return string
+	 */
+	public function sql_with_values() : string
+	{ 
+		$sql = $this->_sql;
+		foreach ($this->_values as $v)
+		{
+			$pos = strpos($sql, "?");
+			$sql = substr_replace($sql, '"'.$v.'"', $pos, 1);
+		}
+		return $sql;
 	}
 	
 	/**
 	 * Retourne les valeurs SQL des champs pour la requête préparée.
 	 * @return array
 	 */
-	public function sql_values() : Query
+	public function sql_values() : array
 	{
 		return $this->_values;
 	}
