@@ -185,7 +185,9 @@ class Template
 		    if ($this->_syntaxe == self::SMARTY)
 		    {
 		    	// Variable tableau
-		    	$content = preg_replace('#([\$]([\w\[\]]+)\.(\w+))#', "$$2['$3']", $content);
+				$content = preg_replace_callback('#\{(\$\w+)\.([\w\.]+)\}#', function($matches){
+					return "{".$matches[1]."['".implode("']['", explode(".", $matches[2]))."']}";
+				}, $content);
 		    		
 		    	// Instruction if.
 		    	$content = preg_replace("#\{\s*if([^\}]+)\}#", "<?php if($1):?>", $content);
@@ -207,7 +209,9 @@ class Template
 		    elseif ($this->_syntaxe == self::SMARTY_STRICT)
 		    {
 		    	// Variable tableau
-		    	$content = preg_replace('#([\$]([\w\[\]]+)\.(\w+))#', "$$2['$3']", $content);
+				$content = preg_replace_callback('#\{(\$\w+)\.([\w\.]+)\}#', function($matches){
+					return "{".$matches[1]."['".implode("']['", explode(".", $matches[2]))."']}";
+				}, $content);
 		    
 		    	// Instruction if.
 		    	$content = preg_replace("#\{if([^\}]+)\}#", "<?php if($1):?>", $content);
