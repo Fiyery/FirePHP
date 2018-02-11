@@ -114,7 +114,7 @@ class ClassLoader
 	}
 	
 	/**
-	 * Change une classe.
+	 * Charge une classe.
 	 * @param string $name Nom de la classe.
 	 * @return boolean
 	 */
@@ -125,13 +125,16 @@ class ClassLoader
 			return FALSE;
 		}
 		$find = FALSE;
-		$file = $name.$this->_ext;
+		$file = strtolower($name.$this->_ext);
 		reset($this->_dirs);
 		while ($find === FALSE && ($dir = current($this->_dirs)))
 		{
-			if (file_exists($dir.$file))
+			$original = glob($dir."*");
+			$dir = strtolower($dir);
+			$files = array_map("strtolower", $original);
+			if (($index = array_search($dir.$file, $files)) !== FALSE)
 			{
-				include($dir.$file);
+				include($original[$index]);
 				$find = TRUE;
 			}
 			next($this->_dirs);
