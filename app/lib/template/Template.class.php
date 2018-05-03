@@ -100,7 +100,7 @@ class Template
 		if (is_array($name))
 		{
 			$error = FALSE;
-			while ((list($n,$v) = each($name)))
+			foreach ($name as $n => $v)
 			{
 				if (is_numeric($n) == FALSE && preg_match('/^(\w+)$/',$n))
 				{
