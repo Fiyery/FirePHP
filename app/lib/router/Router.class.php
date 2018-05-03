@@ -178,12 +178,33 @@ class Router
     }
 
     /**
+     * Retourne le schéma utilisé.
+     * @return string
+     */
+    public function scheme() 
+    {
+        if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"])) 
+        {
+            return $_SERVER["HTTP_X_FORWARDED_PROTO"];
+        }
+        elseif (isset($_SERVER["REQUEST_SCHEME"]))
+        {
+            return $_SERVER["REQUEST_SCHEME"];
+        }
+        elseif (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
+        {
+            return "https";
+        }
+        return "http";
+    }
+
+    /**
      * Retourne l'url courante.
      * @return string
      */
     public function url() : string
     {
-        return $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].$_SERVER["REQUEST_URI"];
+        return $this->scheme()."://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
     }
 
     
