@@ -170,11 +170,32 @@ class Router
      * @param int $level Nombre de fonction à remonter pour l'erreur.
      * @throws FireException
      */
-    private function _error($msg, $level=1)
+    private function _error(string $msg, int $level = 1)
     {
         $d = debug_backtrace();
         $d = $d[$level];
         throw new FireException($msg, $d['file'], $d['line']);
+    }
+
+    /**
+     * Retourne le schéma utilisé.
+     * @return string
+     */
+    public function scheme() 
+    {
+        if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"])) 
+        {
+            return $_SERVER["HTTP_X_FORWARDED_PROTO"];
+        }
+        elseif (isset($_SERVER["REQUEST_SCHEME"]))
+        {
+            return $_SERVER["REQUEST_SCHEME"];
+        }
+        elseif (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
+        {
+            return "https";
+        }
+        return "http";
     }
 
     /**
@@ -183,17 +204,22 @@ class Router
      */
     public function url() : string
     {
-        return $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].$_SERVER["REQUEST_URI"];
+        return $this->scheme()."://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
     }
 
     
     /**
-     * Retourne le nom du controller.
+     * Définie et retourne le nom du controller.
+     * @param string $value Nom du controller.
      * @return string 
      */
-    public function get_controller()
+    public function controller(string $value = NULL) : ?string
     {
-        if ($this->_controller === NULL)
+        if (is_string($value)) 
+        {
+            $this->_controller = $value;
+        }
+        elseif (empty($this->_controller))
         {
             if (substr($this->_current->controller, 0, 1) != '?')
             {
@@ -209,12 +235,17 @@ class Router
     }
     
     /**
-     * Retourne le nom du module.
+     * Définie et retourne le nom du module.
+     * @param string $value Nom du module.
      * @return string 
      */
-    public function get_module()
+    public function module(string $value = NULL) : ?string
     {
-        if (empty($this->_module))
+        if (is_string($value)) 
+        {
+            $this->_module = $value;
+        }
+        elseif (empty($this->_module))
         {
             if (substr($this->_current->module, 0, 1) != '?')
             {
@@ -230,12 +261,17 @@ class Router
     }
     
     /**
-     * Retourne le nom de l'action.
+     * Définie et retourne le nom de l'action.
+     * @param string $value Nom de l'action.
      * @return string
      */
-    public function get_action()
+    public function action(string $value = NULL) : ?string
     {
-    	if (empty($this->_action))
+    	if (is_string($value)) 
+        {
+            $this->_action = $value;
+        }
+        elseif (empty($this->_action))
     	{
     		if (substr($this->_current->action, 0, 1) != '?')
     		{
@@ -254,45 +290,9 @@ class Router
      * Retourne l'identification de la page.
      * @return string
      */
-    public function get_id()
+    public function id() : string
     {
-        return $this->get_controller().'-'.$this->get_module().'-'.$this->get_action();
-    }
-    
-    /**
-     * Définie le controller.
-     * @param string $name Nom du controller.
-     */
-    public function set_controller($name)
-    {
-        if (is_string($name))
-        {
-            $this->_controller = $name;
-        }
-    }
-    
-    /**
-     * Définie le module.
-     * @param string $name Nom du module.
-     */
-    public function set_module($name)
-    {
-        if (is_string($name))
-        {
-        	$this->_module = $name;
-        }
-    }
-    
-    /**
-     * Définie l'action.
-     * @param string $name Nom du action.
-     */
-    public function set_action($name)
-    {
-        if (is_string($name))
-        {
-        	$this->_action = $name;
-        }
+        return $this->controller().'-'.$this->module().'-'.$this->action();
     }
     
     /**
@@ -300,7 +300,7 @@ class Router
      * @param string $module Nom du module cible ou Adresse URL.
      * @param string $action Nom de l'action.
      */
-    public function redirect($module = 'Index', $action = 'index')
+    public function redirect(string $module = 'index', string $action = 'index')
     {
     	if (strpos($module, '.') === FALSE && strpos($module, '/') === FALSE)
     	{
@@ -328,7 +328,7 @@ class Router
      * Génère des variables par routage si le format de l'URL et sa définition le permettent.
      * @param array $match Résultat du preg_match lors de l'initialisation.
      */
-    private function _generate_vars($match)
+    private function _generate_vars(array $match)
     {
         array_shift($match);
         $count = count($match);

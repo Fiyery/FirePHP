@@ -6,7 +6,7 @@ require(__DIR__.'/lib/core/Core.class.php');
 $core = new Core();
 
 // Chargement des paramètres et classes outils et récupération du controller.
-$controller = $core->get_controller();
+$controller = $core->controller();
 
 // On impose à la fin du script le lancement de la barre de debug.
 if ($controller->config->feature->debug && $controller->request->disable_debug_tool == NULL)

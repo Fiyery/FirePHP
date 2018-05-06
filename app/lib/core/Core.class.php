@@ -130,10 +130,10 @@ class Core
      * Retourne le Controller.
      * @return Controller
      */
-    public function get_controller() : Controller
+    public function controller() : Controller
     {
         // Chargement du Moteur du site.
-        $filename = $this->_services->get("config")->path->root_dir.$this->_services->get("config")->path->controller.$this->_services->get("router")->get_controller().".class.php";
+        $filename = $this->_services->get("config")->path->root_dir.$this->_services->get("config")->path->controller.$this->_services->get("router")->controller().".class.php";
         if (file_exists($filename) === FALSE)
         {
             throw new FireException("Controller introuvable", __FILE__, __LINE__);

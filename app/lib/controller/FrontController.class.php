@@ -63,9 +63,9 @@ class FrontController
 			return FALSE;
 		}
 		
-		$name = strtolower($this->router->get_id());
-		$module = strtolower($this->router->get_module());
-		$action = strtolower($this->router->get_action());
+		$name = strtolower($this->router->id());
+		$module = strtolower($this->router->module());
+		$action = strtolower($this->router->action());
 		$var = $this->cache->read('css-'.$name, Cache::WEEK);
 		if ($var == NULL)
 		{
@@ -76,7 +76,7 @@ class FrontController
 			{
 				$this->css->create($name);
 			}
-			$dir .= strtolower($this->router->get_controller()).'/modules/'.$module.'/';
+			$dir .= strtolower($this->router->controller()).'/modules/'.$module.'/';
 			$this->css->add($dir.$module.'.css');
 			$this->css->add($dir.$module.'-'.$action.'.css');
 			$this->css->get();
@@ -104,9 +104,9 @@ class FrontController
 			return FALSE;
 		}
 		
-	    $name = strtolower($this->router->get_id());
-	    $module = strtolower($this->router->get_module());
-	    $action = strtolower($this->router->get_action());
+	    $name = strtolower($this->router->id());
+	    $module = strtolower($this->router->module());
+	    $action = strtolower($this->router->action());
 		$var = $this->cache->read('js-'.$name, Cache::WEEK);
 		if ($var == NULL)
 		{
@@ -120,7 +120,7 @@ class FrontController
 			{
 				$this->js->create($name);
 			}
-			$dir .= strtolower($this->router->get_controller()).'/modules/'.$module.'/';
+			$dir .= strtolower($this->router->controller()).'/modules/'.$module.'/';
 			$this->js->add($dir.$module.'.js');
 			$this->js->add($dir.$module.'-'.$action.'.js');
 			$this->js->get();
@@ -163,7 +163,7 @@ class FrontController
 		{
 			$this->js->create('main');
 			$this->css->create('main');
-			$name = strtolower($this->router->get_id());
+			$name = strtolower($this->router->id());
 			$this->js->create($name);
 			$this->css->create($name);
 		}
@@ -172,12 +172,12 @@ class FrontController
 		try 
 		{
 			// Event pour lancer le module.
-			if ($this->hook->notify(new Event(($this->router->get_module()).'::'.($this->router->get_action()))) === FALSE)
+			if ($this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()))) === FALSE)
 			{
 				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
-				$this->router->set_controller('Default');
-				$this->router->set_module('Error');
-				$this->router->set_action('404');
+				$this->router->controller('Default');
+				$this->router->module('Error');
+				$this->router->action('404');
 				$this->response->status_code(404);
 				$this->hook->notify(new Event('Erreur::404'));
 			}
@@ -189,12 +189,12 @@ class FrontController
 			$this->error->handle_throwable($t);
 
 			// On fait appel au module d'erreur.
-			$this->router->set_controller('Default');
-			$this->router->set_module('Error');
-			$this->router->set_action('500');
+			$this->router->controller('Default');
+			$this->router->module('Error');
+			$this->router->action('500');
 			$this->response->status_code(500);
 			$this->tpl->assign('error_msg', $t->getMessage());
-			$this->hook->notify(new Event(($this->router->get_module()).'::'.($this->router->get_action())));
+			$this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action())));
 		}
 
 		// Event pour lancer les actions du Hook.
@@ -221,13 +221,13 @@ class FrontController
 	{	
 		try 
 		{
-			if ($this->hook->notify(new Event(($this->router->get_module()).'::'.($this->router->get_action()).'::tpl')) === FALSE)
+			if ($this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()).'::tpl')) === FALSE)
 			{
-				$this->router->set_controller('Default');
-				$this->router->set_module('Error');
-				$this->router->set_action('404');
+				$this->router->controller('Default');
+				$this->router->module('Error');
+				$this->router->action('404');
 				$this->response->status_code(404);
-				$this->hook->notify(new Event(($this->router->get_module()).'::'.($this->router->get_action()).'::tpl'));
+				$this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()).'::tpl'));
 			}
 		}
 		catch (Throwable $t)
