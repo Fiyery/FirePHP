@@ -140,9 +140,9 @@ class DebugBarModule extends Module
         $vars['ip_server'] = $_SERVER['SERVER_ADDR'];
         $vars['name_server'] = $_SERVER['SERVER_NAME'];    
         $vars['cache_active'] = ($this->config->feature->cache) ? ('On') : ('Off');
-        $vars['app_controller'] = $this->router->get_controller();
-        $vars['app_module'] = $this->router->get_module();
-        $vars['app_action'] = $this->router->get_action();
+        $vars['app_controller'] = $this->router->controller();
+        $vars['app_module'] = $this->router->module();
+        $vars['app_action'] = $this->router->action();
 
         // Images
         $vars['time_image'] = 'data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/res/img/time.png'));
