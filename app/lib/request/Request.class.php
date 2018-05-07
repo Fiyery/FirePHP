@@ -65,6 +65,15 @@ class Request
 	}
 
 	/**
+	 * Retourne toutes les valeurs envoyées.
+	 * @return array
+	 */
+	public function values() : array
+	{
+		return $this->_values;
+	}
+
+	/**
 	 * Récupère un paramètre de la classe Request protégé des injections.
 	 * @param string $name Nom du paramètre.
 	 * @return string Valeur du paramètre ou NULL.
