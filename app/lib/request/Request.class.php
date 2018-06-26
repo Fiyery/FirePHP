@@ -106,11 +106,11 @@ class Request
 	/**
 	 * Protège une valeur contre les injections de code (Faille XSS).
 	 * @param string $name 
-	 * @return string
+	 * @return string|array
 	 */
-	public function secure(string $name) : string
+	public function secure(string $name)
 	{
-		return htmlentities($this->_values[$name]);
+		return (is_array($this->_values[$name])) ? (array_map("htmlentities", $this->_values[$name])) : (htmlentities($this->_values[$name]));
 	}
 
 	/**
