@@ -434,7 +434,7 @@ class Query
 		$result = $this->_base->query($this->_sql, array_values($this->_values));
 		if ($this->_type === self::COUNT)
 		{
-			return (isset($result[0]["NB"])) ? (isset($result[0]["NB"])) : (0);
+			return (isset($result[0]["nb"])) ? ($result[0]["nb"]) : (0);
 		}
 		if ($this->_type !== self::SELECT)
 		{
