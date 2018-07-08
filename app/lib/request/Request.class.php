@@ -125,6 +125,30 @@ class Request
 		}
 		return $this;
 	}
+
+	/**
+	 * Supprime les tags HTML sur une valeur.
+	 * @param string|array $value 
+	 * @return string|array
+	 */
+	public function strip_tags($value)
+	{
+		return (is_array($value)) ? (array_map([$this, "strip_tags"], $value)) : (strip_tags($value));
+	}
+
+	/**
+	 * Supprime les tags HTML.
+	 * @return Request
+	 */
+	public function strip_tag_values() : Request
+	{
+		Debug::show($this->_values);
+		foreach ($this->_values as $name => $value)
+		{
+			$this->$name = $this->strip_tags($value);
+		}
+		return $this;
+	}
 	
 	/**
 	 * Retourne la source de la requête
