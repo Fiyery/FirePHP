@@ -64,7 +64,7 @@ class ResponseAjaxData
      * @param string|array $name
      * @param mixed $value
      */
-    public function set($name, $value)
+    public function set($name, $value = NULL)
     {
         if (is_array($name)) 
         {
