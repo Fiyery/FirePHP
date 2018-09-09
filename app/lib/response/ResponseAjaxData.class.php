@@ -62,9 +62,9 @@ class ResponseAjaxData
     /**
      * Définie une donnée.
      * @param string|array $name
-     * @param string $value
+     * @param mixed $value
      */
-    public function set($name, string $value)
+    public function set($name, $value)
     {
         if (is_array($name)) 
         {
@@ -74,6 +74,15 @@ class ResponseAjaxData
         {
             $this->_list[$name] = $value;
         }
+    }
+
+    /**
+     * Ajotue une valeur sans préciser de clé.
+     * @param mixed $value
+     */
+    public function add($value)
+    {
+            $this->_list[] = $value;
     }
 
     /**
