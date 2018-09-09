@@ -306,7 +306,7 @@ abstract class Dao
 		self::observable()->notify(new Event(get_called_class().'::load', self::observable()));
 
     	// Génération des bons paramètres.
-    	$values = func_get_args();
+    	$values = (is_array($values)) ? ($values) : (func_get_args());
     	
     	// Génération des informations des champs.
     	$keys = self::keys();
