@@ -1,36 +1,12 @@
 <?php
 /**
- * Site est la class qui gère les actions primaires du site telles que l'affichage de messages, la modification du titre de la page ou les redirections.
+ * Response gère le retour du serveur au travers du code retour, des entêtes et des messages informatifs.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Session
  * @uses Request
  */
-class Response 
+class Response implements ResponseInterface
 {
-	/**
-	 * Constant qui définie le format d'un message.
-	 * @var string
-	 */
-	const ALERT_INFO = 'alert_info';
-	
-	/**
-	 * Constant qui définie le format d'un message.
-	 * @var string
-	 */
-	const ALERT_SUCCESS = 'alert_success';
-	
-	/**
-	 * Constant qui définie le format d'un message.
-	 * @var string
-	 */
-	const ALERT_WARNING = 'alert_warning';
-	
-	/**
-	 * Constant qui définie le format d'un message.
-	 * @var string
-	 */
-	const ALERT_ERROR = 'alert_error';
-
 	/**
 	 * Variable d'instance de singleton.
 	 * @var Site
@@ -38,40 +14,58 @@ class Response
 	protected static $_instance = NULL;
 
 	/**
+	 * Gestion d'e l'entête.
+	 * @var ResponseHeader
+	 */
+	protected $_header = NULL;
+
+	/**
+	 * Gestion du corps.
+	 * @var ResponseBody
+	 */
+	protected $_body = NULL;
+
+	/**
+	 * Gestion des messages informatifs.
+	 * @var ResponseAlert
+	 */
+	protected $_alert = NULL;
+
+	/**
+	 * Code retour.
+	 * @var int
+	 */
+	protected $_status_code = 200;
+
+	/**
 	 * Variable de session pour les messages.
 	 * @var Session
 	 */
-	private $_session = NULL;
+	protected $_session = NULL;
 	
 	/**
 	 * Variable de requête.
 	 * @var Request
 	 */
-	private $_request = NULL;
+	protected $_request = NULL;
 
 	/**
 	 * Titre de la réponse.
 	 * @var string
 	 */
-	private $_title = "";
-
-	/**
-	 * Code HTTP de retour.
-	 * @var number
-	 */
-	private $_status_code = 200;
+	protected $_title = "";
 
 	/**
 	 * Liste des scripts.
 	 * @var array
 	 */
-	private $_scripts = [];
+	protected $_scripts = [];
 
 	/**
 	 * Liste des styles.
 	 * @var array
 	 */
-	private $_styles = [];
+	protected $_styles = [];
 	
 	/**
 	 * Constructeur.
@@ -79,7 +73,61 @@ class Response
 	public function __construct(Session $session, Template $request)
 	{
 	    $this->_session = $session;
-	    $this->_request = $request;
+		$this->_request = $request;
+		$this->_body = new ResponseBody();
+		$this->_header = new ResponseHeader();
+		
+		$messages = (is_array($this->_session->__messages)) ? ($this->_session->__messages) : ([]);
+		$this->_alert = new ResponseAlert($messages);
+	}
+
+	/**
+	 * Destructeur.
+	 */
+	public function __destruct()
+	{
+		$this->_session->__messages = $this->_alert->lists();
+	}
+
+    /**
+     * Retourne la classe de gestion des entêtes.
+     * @return ResponseHeader
+     */
+	public function header() : ResponseHeader
+	{
+		return $this->_header;
+	}
+
+    /**
+     * Retourne la classe de gestion des messages informatifs.
+     * @return ResponseAlert
+     */
+	public function alert() : ResponseAlert
+	{
+		return $this->_alert;
+	}
+    
+    /**
+     * Retourne la classe de gestion du corps.
+     * @return ResponseBody
+     */
+	public function body() : ResponseBody
+	{
+		return $this->_body();
+	}
+
+	/**
+	 * Définie le Code HTTP de retour.
+	 * @param int @code Numéro du code de retour.
+	 * @return int
+	 */
+	public function status_code(int $code = NULL) : int
+	{
+		if ($code !== NULL && ($code == http_response_code($code)))
+		{
+			$this->_status_code = $code;
+		}
+		return $this->_status_code;
 	}
 
 	/**
@@ -96,51 +144,6 @@ class Response
 		return $this->_title;
 	}
 	
-	/**
-	 * Ajoute un message.
-	 * @param string $message Message à afficher.
-	 * @param int $type Type de message parmi les constantes ALERT_*.
-	 */
-	public function add_alert(string $message, string $type = self::ALERT_INFO)
-	{
-		if (is_array($this->_session->__messages) === FALSE)
-		{
-			$this->_session->__messages = [];
-		}
-		$list = $this->_session->__messages;
-		$list[] = [
-			'message' 	=> $message,
-			'type' 		=> $type
-		];
-		$this->_session->__messages = $list;
-	}
-	
-	/**
-	 * Retourne les éventuels messages d'information stockés et les supprime.
-	 * @return array
-	 */
-	public function alerts() : array
-	{
-		if (is_array($this->_session->__messages) === FALSE)
-		{
-			return [];
-		}
-		else
-		{
-			$tmp = $this->_session->__messages;
-			$this->clean_alerts();
-			return $tmp;
-		}
-	}
-	
-	/**
-	 * Supprime tous les messages.
-	 */
-	public function clean_alerts()
-	{
-		unset($this->_session->__messages);
-	}
-
 	/**
 	 * Ajoute un script à la réponse.
 	 * @param string $src Adresse du script.
@@ -211,20 +214,6 @@ class Response
 			}
 		}
 		return $content;
-	}
-
-	/**
-	 * Définie le Code HTTP de retour.
-	 * @param int @code Numéro du code de retour.
-	 * @return int 
-	 */
-	public function status_code(int $code = NULL) : int
-	{
-		if ($code !== NULL && ($code == http_response_code($code)))
-		{
-			$this->_status_code = $code;
-		}
-		return $this->_status_code;
 	}
 }
 ?>
