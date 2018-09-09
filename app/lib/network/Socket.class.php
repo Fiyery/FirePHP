@@ -100,7 +100,6 @@ class Socket
 		{
 			return NULL;
 		}
-		var_dump(socket_getpeername($remote_socket, &$adress,&$port));
 		$object = new Socket();
 		$object->set($remote_socket);
 		return $object;

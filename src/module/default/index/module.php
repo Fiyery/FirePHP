@@ -3,6 +3,19 @@ class IndexModule extends Module
 {
 	public function action_index()
 	{
+		// RESPONSE AJAX
+		$response = new ResponseAjax();
+
+		$response->data()->toto = 1;
+		// $response->alert()->add_error("Paramètre invalide");
+
+		$response->send();
+
+		// REPONSE
+		// $this->response->alert()->add_error("Tests");
+		// $this->response->status_code(403);
+		// exit();
+
 		// UPLOAD FILE
 		// $_FILES["file"]["name"] = "ob_002ad3_tumblr-lwoqr74juo1qeiog9.png";
 		// $_FILES["file"]["type"] = "image/png";
