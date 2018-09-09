@@ -6,7 +6,8 @@ class IndexModule extends Module
 		// RESPONSE AJAX
 		$response = new ResponseAjax();
 
-		$response->data()->toto = 1;
+		// $response->data()->toto = 1;
+		$response->data()->add(["toto" => 1]);
 		// $response->alert()->add_error("Paramètre invalide");
 
 		$response->send();
