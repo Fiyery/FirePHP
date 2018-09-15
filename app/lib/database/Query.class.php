@@ -298,7 +298,9 @@ class Query
 		if (is_array($field))
 		{
 			$values = array_values($field);
-			$fields = array_keys($field);
+			$fields = array_map(function($i){
+				return str_replace(".", "`.`", $i);
+			}, array_keys($field));
 			if (isset($fields[0]))
 			{
 				if (strpos($this->_sql, " WHERE ") === FALSE)
@@ -320,12 +322,12 @@ class Query
 		{
 			if (strpos($this->_sql, " WHERE ") === FALSE)
 			{
-				$this->_sql .= " WHERE `".$field."` ".$operator." ?";
+				$this->_sql .= " WHERE `".str_replace(".", "`.`", $field)."` ".$operator." ?";
 				$this->_values[] = $value;
 			}
 			else 
 			{
-				$this->_sql .= " ".$logic." `".$field."` ".$operator." ?";
+				$this->_sql .= " ".$logic." `".str_replace(".", "`.`", $field)."` ".$operator." ?";
 				$this->_values[] = $value;
 			}
 		}		
