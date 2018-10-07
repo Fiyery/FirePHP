@@ -247,7 +247,7 @@ abstract class Dao
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::query', self::observable()));
 
-    	return (new Query(self::base(), get_called_class(), self::table_name()));
+    	return (new Query(self::base(), get_called_class(), self::table_name(), self::table_prefix()));
     }
     
     /**

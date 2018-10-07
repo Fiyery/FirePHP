@@ -23,6 +23,12 @@ class Query
 	 * @var Base
 	 */
 	private $_base = NULL;
+
+	/**
+	 * Prefix des tables.
+	 * @var string
+	 */
+	private $_prefix = NULL;
 	
 	/**
 	 * Type de requête SQL.
@@ -53,16 +59,18 @@ class Query
 	 * @var string
 	 */
 	private $_class = [];
-	
+
 	/**
 	 * Constructeur.
 	 * @param Database $base Instance de la base de données.
 	 * @param string $class Nom de la classe de retour du resultat.
 	 * @param string $table Nom de la table à requêter.
+	 * @param string $prefix Prefix des tables.
 	 */
-	public function __construct(Database $base = NULL, string $class = NULL, string $table = NULL)
+	public function __construct(?Database $base, ?string $class, ?string $table, ?string $prefix)
 	{
 		$this->_base = $base;
+		$this->_prefix = $prefix;
 		$this->_class = $class;
 		$this->_tables[] = $table;
 		$this->select();
@@ -168,18 +176,25 @@ class Query
 	 */
 	private function _join(string $type, string $foreign_table, ?string $id_foreign, ?string $id_table) : Query
 	{
+		$table = $this->_tables[0];
 		$foreign_table = strtolower($foreign_table);
 		$this->_tables[] = $foreign_table;
 		if ($foreign_table === NULL)
 		{
 			return NULL;
-				}
+		}
 		if ($id_table === NULL || $id_foreign === NULL)
 		{
-			$foreign_fields = $this->_base->foreign_keys($this->_tables[0]);
+			$foreign_fields = array_merge($this->_base->foreign_keys($table), $this->_base->foreign_keys($foreign_table));
 			$find = FALSE;
 			foreach ($foreign_fields as $f)
 			{
+				if (strtolower($f["REFERENCED_TABLE_NAME"]) === $table)
+				{
+					$find = TRUE;
+					$id_table = $f["REFERENCED_COLUMN_NAME"];
+					$id_foreign = $f["COLUMN_NAME"];
+				}
 				if (strtolower($f["REFERENCED_TABLE_NAME"]) === $foreign_table)
 				{
 					$find = TRUE;
@@ -190,10 +205,10 @@ class Query
 			if ($find === FALSE) 
 			{
 				$id_table = ($id_table != NULL) ? ($id_table) : ("id");
-				$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ($this->_tables[0].".id_".$this->_tables[0]);
+				$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ("id_".str_replace($this->_prefix, "", $table));
+			}
 		}
-		}
-		$this->_sql .= " ".$type." JOIN `".$foreign_table."` ON `".$this->_tables[0]."`.`".$id_table."` = `".$foreign_table."`.`".$id_foreign."`";
+		$this->_sql .= " ".$type." JOIN `".$foreign_table."` ON `".$table."`.`".$id_table."` = `".$foreign_table."`.`".$id_foreign."`";
 		return $this;
 	}
 	
