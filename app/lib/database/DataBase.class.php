@@ -76,7 +76,7 @@ class DataBase
 	 * Définit le temps de cache des requêtes.
 	 * @var int
 	 */
-	private $_cache_time = self::DEFAUT_TIME_CACHE;
+	private $_cache_time = 0;
 	
 	/**
 	 * Nom du système de gestion de base de données.
@@ -133,34 +133,69 @@ class DataBase
 	/**
 	 * Exécute une requête sql. 
 	 * @param string $sql Requête sql à exécuté.
-	 * @param array $value Tableau contenant les valeurs "?" vérifier par PDO.
+	 * @param array $values Tableau contenant les valeurs "?" vérifier par PDO.
 	 * @return boolean|array Retourne le résultat de la requête, TRUE si cette dernière ne retourne rien, ou FALSE s'il y a une erreur. 
 	 * @throws DataBaseException
 	 */
-	public function query(string $sql, array $value=NULL)
+	public function query(string $sql, array $values = [])
 	{
-		$this->_prepare_query($sql, $value);
+		$history = $this->_format_query_history($sql, $values);
+		$cache = $this->_read_cache($sql, $values);
+		if (is_array($cache))
+		{
+			$history['time'] = -1;
+		    $this->_history[] = $history;
+			$this->_pdo_statement = $cache;
+
+			$this->_cache_time = 0;
+			return $cache;
+		}
+
+		$time = microtime(TRUE);
+
+		$this->_prepare_query($sql, $values);
+
+		$end_time = microtime(TRUE);
+		$this->_time += $end_time - $time;
+		$history['time'] = $end_time - $time;
+		$this->_history[] = $history;
+
 		if ($this->_pdo_statement === FALSE)
 		{
-			 return FALSE;
+			return FALSE;
 		}
 		if (get_class($this->_pdo_statement) === 'PDOStatement')
 		{
 			$result = $this->_pdo_statement->fetchAll(PDO::FETCH_ASSOC);
 		}
+		
+		$this->_write_cache($sql, $values, $result);
+		$this->_cache_time = 0;
 		return $result;
 	}
 
 	/**
 	 * Exécute une requête sql et retourne un interateur. 
 	 * @param string $sql Requête sql à exécuté.
-	 * @param array $value Tableau contenant les valeurs "?" vérifier par PDO.
+	 * @param array $values Tableau contenant les valeurs "?" vérifier par PDO.
 	 * @return boolean|array Retourne le résultat de la requête, TRUE si cette dernière ne retourne rien, ou FALSE s'il y a une erreur. 
 	 * @throws DataBaseException
 	 */
-	public function yield_query(string $sql, array $value=NULL)
+	public function yield_query(string $sql, array $values = [])
 	{
-		$this->_prepare_query($sql, $value);
+		$this->_cache_time = 0; // Pas de cache possible pour du yield query.
+
+		$history = $this->_format_query_history($sql, $values);
+
+		$time = microtime(TRUE);
+
+		$this->_prepare_query($sql, $values);
+
+		$end_time = microtime(TRUE);
+		$this->_time += $end_time - $time;
+		$history['time'] = $end_time - $time;
+		$this->_history[] = $history;
+		
 		if (get_class($this->_pdo_statement) === 'PDOStatement')
 		{
 			foreach ($this->_pdo_statement as $r)
@@ -176,44 +211,28 @@ class DataBase
 	/**
 	 * Execute la partie commune du lanchement de requête entre un retour simple et un retour avec yield.
 	 * @param string $sql Requête SQL.
-	 * @param array $value Liste des paramètres.
+	 * @param array $values Liste des paramètres.
 	 * @return mixed
 	 */
-	public function _prepare_query(string $sql, array $value=NULL)
+	private function _prepare_query(string $sql, array $values = [])
 	{
 		$this->_check_connection();
-		$history = $this->_format_query_history($sql, $value);
-		$cache = $this->_read_cache($sql);
-		if (is_array($cache))
+		$pdo = $this->_connection;
+		if ($this->_use_buffered_query === FALSE)
 		{
-		    $history['time'] = -1;
-		    $this->_history[] = $history;
-		    $this->_pdo_statement = $cache;
+			$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, FALSE);
+		}
+		$this->_pdo_statement = $pdo->prepare($sql);
+		if (count($values) > 0)
+		{
+			$this->_pdo_statement->execute(array_values($values));
 		}
 		else
 		{
-		    $time = microtime(TRUE);
-		    $pdo = $this->_connection;
-			if ($this->_use_buffered_query === FALSE)
-			{
-				$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, FALSE);
-			}
-			$this->_pdo_statement = $pdo->prepare($sql);
-	    	if (is_array($value) && count($value) > 0)
-	    	{
-	    		$this->_pdo_statement->execute(array_values($value));
-	    	}
-	    	else
-	    	{
-	    		$this->_pdo_statement->execute();
-	    	}
-			$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, TRUE);
-		    $end_time = microtime(TRUE);
-		    $this->_time += $end_time - $time;
-		    $history['time'] = $end_time - $time;
-		    $this->_history[] = $history;
-		    $this->_error = $this->_pdo_statement->errorInfo();
+			$this->_pdo_statement->execute();
 		}
+		$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, TRUE);
+		$this->_error = $this->_pdo_statement->errorInfo();
 	}
 
 	/**
@@ -363,10 +382,10 @@ class DataBase
 	 * @return array La liste des clés étrangères et de leur table.
 	 * @throws DataBaseException
 	 */
-	public function foreign_keys($table)
+	public function foreign_keys(string $table) : array
 	{
 		$this->_check_connection();
-		$constraintes = $this->query("
+		$constraintes = $this->cache(604800)->query("
 			SELECT
 				-- k.CONSTRAINT_SCHEMA,
 				-- k.CONSTRAINT_NAME,
@@ -466,7 +485,7 @@ class DataBase
 	 * @param int $seconds Nombre de secondes.
 	 * @return bool
 	 */
-	public function set_cache($enable=TRUE, $dir='.', $seconds=self::DEFAUT_TIME_CACHE)
+	public function set_cache(bool $enable = TRUE, string $dir = '.', int $seconds = self::DEFAUT_TIME_CACHE) : bool
 	{
 	    if ($enable)
 	    {
@@ -497,7 +516,7 @@ class DataBase
 	    else 
 	    {
 	    	$this->_cache_enable = FALSE;
-	    }
+		}
 	    return TRUE;
 	}
 	
@@ -534,25 +553,28 @@ class DataBase
 	/**
 	 * Tente de récupérer le cache de la requête.
 	 * @param string $sql Requête à chercher dans le cache.
+	 * @param array $sql Requête à chercher dans le cache.
 	 * @return array Renvoie le résultat ou NULL.
 	 */
-	private function _read_cache($sql)
+	private function _read_cache(string $sql, array $values = [])
 	{
 	    if ($this->_cache_dir === NULL || $this->_cache_time <= 0)
 	    {
 	        return NULL;
-	    }
+		}
+		
 	    $sql = trim($sql);
-	    $type = strtolower(substr($sql, 0, strpos($sql, ' ')));
-	    if (in_array($type, ['select', 'show', 'describe']) === FALSE)
-	    {
-	        return NULL;
-	    }
-	    $file = $this->_cache_dir.sha1($sql).'.sql.tmp';
+	    preg_match("/^[a-zA-Z]+/", $sql, $match);
+		if (isset($match[0]) && in_array(strtolower($match[0]), ['select', 'show', 'describe']) == FALSE)
+		{
+			return NULL;
+		}
+		
+	    $file = $this->_cache_dir.sha1($sql.implode(",", $values)).'.sql.tmp';
 	    if (file_exists($file) && filemtime($file) + $this->_cache_time >= time())
 	    {
 	    	return unserialize(file_get_contents($file));
-	    }
+		}
 	    return NULL;
 	}
 	
@@ -562,18 +584,19 @@ class DataBase
 	 * @param array $result Résultat de la requête.
 	 * @return boolean
 	 */
-	private function _write_cache($sql, $result)
+	private function _write_cache(string $sql, array $values, $result)
 	{
 		if ($this->_cache_dir == NULL || $this->_cache_time <= 0)
 		{
 			return FALSE;
 		}
-		$type = strtolower(substr($sql, 0, strpos($sql, ' ')));
-		if (in_array($type, ['select', 'show', 'describe']) == FALSE)
+		$sql = trim($sql);
+		preg_match("/^[a-zA-Z]+/", $sql, $match);
+		if (isset($match[0]) && in_array(strtolower($match[0]), ['select', 'show', 'describe']) == FALSE)
 		{
 			return FALSE;
 		}
-		$file = $this->_cache_dir.sha1($sql).'.sql.tmp';
+		$file = $this->_cache_dir.sha1($sql.implode(",", $values)).'.sql.tmp';
 		return (file_put_contents($file, serialize($result)));
 	}
 	
