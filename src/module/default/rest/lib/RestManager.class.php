@@ -5,7 +5,7 @@
  * @uses RestException
  * @uses Request
  * @uses Database
- * @uses Site
+ * @uses Response
  */
 class RestManager
 {
@@ -13,31 +13,31 @@ class RestManager
      * Classe de connexion à la base de données.
      * @var Database
      */
-    private $_base = NULL;
+    private $_database = NULL;
 
     /**
      * Classe de gestion des informations de la requête.
      * @var Request
      */
-    private $_req;
+    private $_request;
 
     /**
      * Classe pour les codes retour HTTP.
-     * @var Site
+     * @var Response
      */
-    private $_site;
+    private $_response;
 
     /**
      * Constructeur.
-     * @param Database $base Classe de connexion à la base de données.
-     * @param Request $req Classe de gestion des informations de la requête.
-     * @param Site $site Classe pour les codes retour HTTP.
+     * @param Database $database Classe de connexion à la base de données.
+     * @param Request $request Classe de gestion des informations de la requête.
+     * @param Site $response Classe pour les codes retour HTTP.
      */
-    public function __construct(Database $base, Request $req, Site $site)
+    public function __construct(Database $database, Request $request, Response $response)
     {
-        $this->_base = $base;
-        $this->_req = $req;
-        $this->_site = $site;
+        $this->_database = $database;
+        $this->_request = $request;
+        $this->_response = $response;
     }
 
     /**
@@ -52,13 +52,13 @@ class RestManager
      */
     public function handle()
     {
-        if ($this->_req->__ressource === NULL)
+        if ($this->_request->__ressource === NULL)
         {
             throw new RestException(RestException::MISSING_NAME);
         }
         $return = NULL;
         // Si le paramètre __method est renseigné, il prime sur la véritable valeur de la méthode HTTP.
-        $method = ($this->_req->__method !== NULL) ? ($this->_req->__method) : ($this->_req->method());
+        $method = ($this->_request->__method !== NULL) ? ($this->_request->__method) : ($this->_request->method());
         switch (strtolower($method)) {
             case 'get':
                 $return = $this->_handle_get();
@@ -85,7 +85,7 @@ class RestManager
     private function _handle_get()
     {
         // Récupération des informations sur les clés étrangères.
-        $foreign_keys = $this->_base->foreign_keys($this->_req->__ressource);
+        $foreign_keys = $this->_database->foreign_keys($this->_request->__ressource);
         $tmp = [];
         foreach ($foreign_keys as $k)
         {
@@ -97,21 +97,21 @@ class RestManager
         $foreign_keys = $tmp;
 
         // Récupération des champs.
-        $fields = $this->_base->fields($this->_req->__ressource);
+        $fields = $this->_database->fields($this->_request->__ressource);
         if (is_array($fields) === FALSE)
         {
-            $this->_site->status_code(400);
+            $this->_response->status_code(400);
             throw new RestException(RestException::MISSING_NAME);
         }
 
         // Alias.
-        $table_alias = md5($this->_req->__ressource);
+        $table_alias = md5($this->_request->__ressource);
         $has_alias = FALSE;
 
-        $sql = 'SELECT * FROM `'.$this->_req->__ressource.'`';
+        $sql = 'SELECT * FROM `'.$this->_request->__ressource.'`';
 
         // Load foreign key.
-        if ($this->_req->foreign_table === NULL || $this->_req->foreign_table === "1")
+        if ($this->_request->foreign_table === NULL || $this->_request->foreign_table === "1")
         {
             foreach ($fields as $f)
             {
@@ -124,7 +124,7 @@ class RestManager
                     }
                     $foreign_table = $foreign_keys[$f['Field']]['table'];
                     $foreign_table_alias = $foreign_table.mt_rand();
-                    $foreign_fields = $this->_base->fields($foreign_table);
+                    $foreign_fields = $this->_database->fields($foreign_table);
                     if (is_array($foreign_fields) === FALSE)
                     {
                         throw new RestException(RestException::INVALID_FOREIGN_KEY);
@@ -148,10 +148,10 @@ class RestManager
         ";
 
         $values_sql = [];
-        $req_filter = (is_array($this->_req->filter)) ? ($this->_req->filter) : ([]);
-        if ($this->_req->id !== NULL)
+        $req_filter = (is_array($this->_request->filter)) ? ($this->_request->filter) : ([]);
+        if ($this->_request->id !== NULL)
         {
-            $req_filter['id'] = $this->_req->id;
+            $req_filter['id'] = $this->_request->id;
         }
         if (count($req_filter) > 0)
         {
@@ -168,13 +168,13 @@ class RestManager
         }
 
         // Order.
-        if (is_array($this->_req->order))
+        if (is_array($this->_request->order))
         {
             $sql .= "
                 ORDER BY
             ";
             $order = [];
-            foreach ($this->_req->order as $f => $v)
+            foreach ($this->_request->order as $f => $v)
             {
                 switch (strtolower($v))
                 {
@@ -189,10 +189,10 @@ class RestManager
             $sql .= implode($order, ', ');
         }
 
-        $result = $this->_base->query($sql, $values_sql);
+        $result = $this->_database->query($sql, $values_sql);
         if ($result === TRUE)
         {
-            $this->_site->status_code(200);
+            $this->_response->status_code(200);
             return [];
         }
 
@@ -225,11 +225,11 @@ class RestManager
                 }
             }
 
-            $this->_site->status_code(200);
+            $this->_response->status_code(200);
             return $result;
         }
-        $this->_site->status_code(400);
-        $error = $this->_base->error();
+        $this->_response->status_code(400);
+        $error = $this->_database->error();
         throw new RestException(RestException::ERROR_SQL, '['.$error[0].'] '.$error[2]);
     }
 
@@ -239,26 +239,26 @@ class RestManager
      */
     private function _handle_post()
     {
-        $fields = $this->_base->fields($this->_req->__ressource);
+        $fields = $this->_database->fields($this->_request->__ressource);
         if ($fields === NULL)
         {
-            $this->_site->status_code(400);
+            $this->_response->status_code(400);
             throw new RestException(RestException::NOT_FOUND_TABLE);
         }
 
         // On vérifie s'il n'existe pas déjà le même idée pour le Code retour HTTP.$_COOKIE
-        $this->_site->status_code(201);
-        if ($this->_req->id)
+        $this->_response->status_code(201);
+        if ($this->_request->id)
         {
-            $result = $this->_base->query("SELECT id FROM `".$this->_req->__ressource."` WHERE id = ?", [$this->_req->id]);
+            $result = $this->_database->query("SELECT id FROM `".$this->_request->__ressource."` WHERE id = ?", [$this->_request->id]);
             if (is_array($result) && count($result) === 1)
             {
-                $this->_site->status_code(204);
+                $this->_response->status_code(204);
             }
         }
 
         $sql = "
-            INSERT INTO `".$this->_req->__ressource.'`
+            INSERT INTO `".$this->_request->__ressource.'`
             VALUES ('.implode(',', array_fill(0, count($fields), '?')).')
             ON DUPLICATE KEY UPDATE
             ';
@@ -272,21 +272,21 @@ class RestManager
             }
             $default = $f['Default'];
             $f = $f['Field'];
-            $values_sql[] = (isset($this->_req->$f)) ? ($this->_req->$f) : ($default);
+            $values_sql[] = (isset($this->_request->$f)) ? ($this->_request->$f) : ($default);
         }
         $sql .= implode(',', $updates);
 
-        $result = $this->_base->query($sql, $values_sql);
+        $result = $this->_database->query($sql, $values_sql);
         if ($result === TRUE || is_array($result))
         {
-            if ($this->_site->status_code() === 201)
+            if ($this->_response->status_code() === 201)
             {
-                header('Location: '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['PATH_INFO'].$this->_base->last_id().'/'); 
+                header('Location: '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['PATH_INFO'].$this->_database->last_id().'/'); 
             }
             return NULL;
         }
-        $this->_site->status_code(400);
-        $error = $this->_base->error();
+        $this->_response->status_code(400);
+        $error = $this->_database->error();
         throw new RestException(RestException::ERROR_SQL.' : ['.$error[0].'] '.$error[2]);
     }
 
@@ -296,35 +296,35 @@ class RestManager
      */
     private function _handle_delete()
     {
-        if ($this->_req->id === NULL)
+        if ($this->_request->id === NULL)
         {
-            $this->_site->status_code(400);
+            $this->_response->status_code(400);
             throw new RestException(RestException::MISSING_INSTANCE_ID);
         }
 
         // Pour savoir si l'entité existe ou non pour le code HTTP de retour
-        $result = $this->_base->query("SELECT id FROM `".$this->_req->__ressource."` WHERE id = ?", [$this->_req->id]);
+        $result = $this->_database->query("SELECT id FROM `".$this->_request->__ressource."` WHERE id = ?", [$this->_request->id]);
         if (is_array($result) && count($result) === 1)
         {
-            $this->_site->status_code(200);
+            $this->_response->status_code(200);
         }
         else
         {
-            $this->_site->status_code(404);
+            $this->_response->status_code(404);
             return NULL;
         }
 
         $sql = "
-            DELETE FROM `".$this->_req->__ressource."`
+            DELETE FROM `".$this->_request->__ressource."`
             WHERE id = ?;
         ";
-        $result = $this->_base->query($sql, [$this->_req->id]);
+        $result = $this->_database->query($sql, [$this->_request->id]);
         if ($result === TRUE || is_array($result))
         {
-            $this->_site->status_code(200);
+            $this->_response->status_code(200);
             return NULL;
         }
-        $this->_site->status_code(400);
+        $this->_response->status_code(400);
         $error = $result->errorInfo();
         throw new RestException(RestException::ERROR_SQL, '['.$error[0].'] '.$error[2]);
     }
