@@ -5,6 +5,9 @@
             "app/var/config.json",
             "app/var/config_user.json",
             "app/var/config_{$env->get()}.json"
+        ],
+        "alias" : [
+            "conf"
         ]
     },
 
@@ -32,18 +35,29 @@
             "$config->db->user",
             "$config->db->pass",
             "$config->db->charset"
+        ],
+        "alias" : [
+            "db",
+            "base"
         ]
     },
 
-    "tpl" : {
+    "template" : {
         "class" : "Template",
         "args" : [
             "$config->path->tpl_cache"
+        ],
+        "alias" : [
+            "tpl",
+            "view"
         ]
     },
 
     "request" : {
-        "class" : "Request"
+        "class" : "Request",
+        "alias" : [
+            "req"
+        ]
     },
 
     "response" : {
@@ -51,6 +65,9 @@
         "args" : [
             "$session",
             "$tpl"
+        ],
+        "alias" : [
+            "res"
         ]
     },
 
