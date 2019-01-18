@@ -5,13 +5,19 @@ class RestModule extends Module
     {
         try
         {
-            $rest = new RestManager($this->base, $this->req, $this->site);
+            $rest = new RestManager($this->database, $this->request, $this->response);
             echo $rest->handle();
+        }
+        catch (RestException $e)
+        {
+            echo json_encode([
+                'error' => ($e->detail() !== NULL) ? ($e->getMessage().' : '.$e->detail()) : ($e->getMessage())
+            ]);
         }
         catch (Exception $e)
         {
             echo json_encode([
-                'error' => ($e->detail() !== NULL) ? ($e->getMessage().' : '.$e->detail()) : ($e->getMessage())
+                'error' => $e->getMessage()
             ]);
         }
         exit();

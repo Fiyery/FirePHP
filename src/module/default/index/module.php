@@ -4,13 +4,11 @@ class IndexModule extends Module
 	public function action_index()
 	{
 		// RESPONSE AJAX
-		$response = new ResponseAjax();
-
+		// $response = new ResponseAjax();
 		// $response->data()->toto = 1;
-		$response->data()->add(["toto" => 1]);
+		// $response->data()->add(["toto" => 1]);
 		// $response->alert()->add_error("Paramètre invalide");
-
-		$response->send();
+		// $response->send();
 
 		// REPONSE
 		// $this->response->alert()->add_error("Tests");
