@@ -36,6 +36,12 @@ class ServiceContainer extends Singleton implements Observable
 	 * @var array
 	 */
 	private $_observers = [];
+
+	/**
+	 * Liste des alias.
+	 * @var array
+	 */
+	private $_alias = [];
 	
 	/**
 	 * Constructeur.
@@ -55,9 +61,14 @@ class ServiceContainer extends Singleton implements Observable
 		$services = json_decode(file_get_contents($this->_filename));
         foreach ($services as $name => $params)
         {
-            $factory = new ServiceFactory($this, $name, $params);
+			$factory = new ServiceFactory($this, $name, $params);
 			$this->_call[$name] = $factory->get();
-        }
+			$alias = (isset($params->alias)) ? (array_merge([$name], $params->alias)) : ([$name]);
+			foreach ($alias as $a) 
+			{
+				$this->_alias[$a] = $name;
+			}
+		}
 	}
 
 	/**
@@ -157,6 +168,7 @@ class ServiceContainer extends Singleton implements Observable
 	 */
 	public function get($name)
 	{
+		$name = (isset($this->_alias[$name])) ? ($this->_alias[$name]) : ($name);
 		if (isset($this->_factories[$name]))
 		{
 			return $this->_factories[$name]();
