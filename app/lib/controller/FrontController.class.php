@@ -76,9 +76,21 @@ class FrontController
 			{
 				$this->css->create($name);
 			}
-			$dir .= strtolower($this->router->controller()).'/modules/'.$module.'/';
-			$this->css->add($dir.$module.'.css');
-			$this->css->add($dir.$module.'-'.$action.'.css');
+			if ($this->config->feature->css_module_loader)
+			{
+				$dir_module = $this->config->path->root_dir.$this->config->path->module.strtolower($this->router->controller())."/".$module."/".$this->config->path->css;
+				if (file_exists($dir_module)) 
+				{
+					$files = [
+						"main",
+						$action
+					];
+					foreach ($files as $f)
+					{
+						$this->css->add($dir_module.$f.'.css');
+					}
+				}
+			}
 			$this->css->get();
 			$html = $this->css->get_html($this->config->path->root_dir, $this->config->path->root_url);
 			$html = str_replace($this->config->path->css_cache, 'css/', $html);
@@ -120,9 +132,21 @@ class FrontController
 			{
 				$this->js->create($name);
 			}
-			$dir .= strtolower($this->router->controller()).'/modules/'.$module.'/';
-			$this->js->add($dir.$module.'.js');
-			$this->js->add($dir.$module.'-'.$action.'.js');
+			if ($this->config->feature->js_module_loader)
+			{
+				$dir_module = $this->config->path->root_dir.$this->config->path->module.strtolower($this->router->controller())."/".$module."/".$this->config->path->js;
+				if (file_exists($dir_module)) 
+				{
+					$files = [
+						"main",
+						$action
+					];
+					foreach ($files as $f)
+					{
+						$this->js->add($dir_module.$f.'.js');
+					}
+				}
+			}
 			$this->js->get();
 			$html = $this->js->get_html($this->config->path->root_dir, $this->config->path->root_url);
 			$html = str_replace($this->config->path->js_cache, 'js/', $html);
@@ -277,7 +301,7 @@ class FrontController
 	 */
 	protected function after_execute()
 	{
-
+		
 	}
 }
 ?>

@@ -65,7 +65,9 @@
 		"session_instance" : 	true,
 		"tpl_save" : 			false,
 		"secure_html_post" : 	false,
-		"minify_ressource" : 	true
+		"minify_ressource" : 	true,
+		"css_module_loader" : 	true,
+		"js_module_loader" :	true
 	},
 	
 	"ftp" : {
