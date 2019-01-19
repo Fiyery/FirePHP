@@ -1,10 +1,10 @@
 // Config du module.
 {
     // Si le module peut être appelé par une requête HTTP.
-    "http_allow" : false,
+    "allowed_http_request" : false,
 
     // Défini les événements qui déclenche le module.
-    "load_on_event" : [
+    "loaded_on_event" : [
         "Core::init"
     ]
 }

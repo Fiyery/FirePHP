@@ -18,7 +18,7 @@ class Config
 	 */ 
 	public function __construct(string ...$filenames)
 	{
-		$values = [];
+		$values = new stdClass();
 		foreach ($filenames as $filename)
 		{
 			if (file_exists($filename))
@@ -26,74 +26,83 @@ class Config
 				$content = file_get_contents($filename);
 				if (trim($content) !== "")
 				{
-					$content = preg_replace('#\/\/[^"\n]*$#m', '', $content);
-					$values = $this->_merge_array($values, json_decode($content, TRUE));
+					$content = preg_replace("#\/\/[^\"\n]*$#m", "", $content);
+					$values = $this->_merge_object($values, json_decode($content));
 				}
 			}
 		}		
-		$this->_values = new ConfigValue('config', $values);
+		$this->_values = new ConfigValue("config", $values);
 		$this->_parse($this->_values);
 	}
 
 	/**
 	 * Permet la surcharge des configurations.
-	 * @param array $array1 Configuration mère.
-	 * @param array $array2 Configuration fille.
+	 * @param stdClass $object1 Configuration mère.
+	 * @param stdClass $object2 Configuration fille.
 	 */ 
-	private function _merge_array(array $array1, array $array2)	
+	private function _merge_object(stdClass $object1, stdClass $object2)	
 	{
-		foreach ($array2 as $name => $value)
+		foreach ($object2 as $name => $value)
 		{
-			if (isset($array1[$name]) && is_array($array1[$name]) && is_array($array2[$name]))
+			if (isset($object1->$name) && is_object($object1->$name) && is_object($object2->$name))
 			{
-				$array1[$name] = $this->_merge_array($array1[$name], $array2[$name]);
+				$object1->$name = $this->_merge_object($object1->$name, $object2->$name);
 			}
 			else
 			{
-				$array1[$name] = $value;
+				$object1->$name = $value;
 			}
 		}
-		return $array1;
+		return $object1;
 	}
 	
 	/**
 	 * Remplace les variables du fichier de configuration par leur valeur.
-	 * @param stdClass $var Objet des paramètres.
+	 * @param stdClass $data Objet des paramètres.
 	 */
-	private function _parse($values)
+	private function _parse($data)
 	{
-		$keys = $values->keys();
-		foreach ($keys as $key)
+		foreach ($data->iterate() as &$d)
 		{
-			if (is_object($values->$key))
+			if (is_object($d))
 			{
-				$this->_parse($values->$key);
+				$this->_parse($d);
 			} 
-			else
+			elseif (is_array($d))
 			{
-				if (preg_match('#{\$([\w\.]*)}#', $values->$key, $m))
+				foreach ($d as $n => $v)
 				{
-					$name = $m[1];
-					$m = explode('.', $name);
-					$i = 0;
-					$max = count($m);
-					$val = $this->_values;
-					while(isset($m[$i]) && ($attr = $m[$i]) && isset($val->$attr))
+					if (preg_match("#{\\$([\w\.]*)}#", $v, $m))
 					{
-						$val = $val->$attr;
-						$i++;
-					}
-					if ($i == $max && is_scalar($val))
-					{
-						$values->$key = str_replace('{$'.$name.'}', $val, $values->$key);
-					}
-					else
-					{
-						trigger_error('Undefined var "'.$name.'" in the configuration file');
+						$d[$n] = str_replace("{\$".$m[1]."}", $this->resolve(explode('.', $m[1])), $v);
 					}
 				}
 			}
+			else 
+			{
+				if (preg_match("#{\\$([\w\.]*)}#", $d, $m))
+				{
+					$d = str_replace("{\$".$m[1]."}", $this->resolve(explode('.', $m[1])), $d);
+				}
+			}
 		}
+	}
+
+	public function resolve(array $args) 
+	{
+		$i = 0;
+		$max = count($args);
+		$value = $this->_values;
+		while(isset($args[$i]) && ($attr = $args[$i]) && isset($value->$attr))
+		{
+			$value = $value->$attr;
+			$i++;
+		}
+		if ($i !== $max) 
+		{
+			throw FireException("Undefined var \"$".implode(".", $args)."\" in the configuration file");
+		}
+		return $value;
 	}
 	
 	/**
@@ -123,7 +132,7 @@ class Config
 	 */
 	public function __isset(string $name) : bool
 	{
-		return (isset($this->_values, $name));
+		return (isset($this->_values->$name));
 	}
 	
 	/**
@@ -134,7 +143,7 @@ class Config
 	{
 		if (isset($this->$name))
 		{
-			unset($this->_values[$name]);
+			unset($this->_values->$name);
 		}
 	}
 }
