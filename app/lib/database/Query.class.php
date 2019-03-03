@@ -208,7 +208,7 @@ class Query
 				$id_foreign = ($id_foreign != NULL) ? ($id_foreign) : ("id_".str_replace($this->_prefix, "", $table));
 			}
 		}
-		$this->_sql .= " ".$type." JOIN `".$foreign_table."` ON `".$table."`.`".$id_table."` = `".$foreign_table.".`".$id_foreign."`";
+		$this->_sql .= " ".$type." JOIN `".$foreign_table."` ON `".$table."`.`".$id_table."` = `".$foreign_table."`.`".$id_foreign."`";
 		return $this;
 	}
 	
