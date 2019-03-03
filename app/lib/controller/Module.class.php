@@ -65,9 +65,9 @@ abstract class Module implements Observer
 		if (file_exists($this->_dir.'/config.json'))
 		{
 			$this->_params = new Config($this->_dir.'/config.json');
-			if (isset($this->params()->load_on_event))
+			if (isset($this->params()->loaded_on_event))
 			{
-				$this->_events = $this->params()->load_on_event->values();
+				$this->_events = $this->params()->loaded_on_event;
 			}
 		}
 	}
@@ -134,7 +134,8 @@ abstract class Module implements Observer
 	public function notify(Event $event) : bool
 	{
 		// Si le nom de l'Event est le même que celui du module, on l'analyse.
-		if (($this->params() === NULL || $this->params()->http_allow !== FALSE) && substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
+		$allowed_http_request = ($this->params() === NULL || isset($this->params()->allowed_http_request) === FALSE || $this->params()->allowed_http_request !== FALSE);
+		if ($allowed_http_request && substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
 		{
 			// Evenement de type génération du tpl du module pour une action donnée.
 			if (substr($event->name(), -5) === '::tpl')

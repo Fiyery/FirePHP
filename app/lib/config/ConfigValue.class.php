@@ -30,7 +30,7 @@ class ConfigValue implements Iterator
      */
     public function __construct(string $name, $value, ConfigValue $parent = NULL)
     {
-        $this->_value = (is_object($value)) ? ($this->_object_to_array($value)) : ($value);
+        $this->_value = $this->_parse_values($value);
         $this->_name = $name;
         $this->_parent = $parent;
     }
@@ -52,6 +52,15 @@ class ConfigValue implements Iterator
         return $array;
     }
 
+    private function _parse_values($values) : stdClass
+    {
+        foreach($values as $key => &$v) 
+        {
+            $values->$key = (is_object($v)) ? (new self($key, $v, $this)) : ($v);
+        }
+        return $values;
+    }
+
     /**
      * Retourne la valeur recherchée.
      * @param string $name Nom de la variable.
@@ -63,15 +72,11 @@ class ConfigValue implements Iterator
         {
             return NULL;
         }
-        if (isset($this->_value[$name]) === FALSE)
+        if (isset($this->_value->$name) === FALSE)
         {
             throw new FireException("Undefined var \"".$name."\" for config \"".$this->_name."\"", 1);
         }
-        if (is_array($this->_value[$name])) 
-        {
-            return new self($name, $this->_value[$name], $this);
-        }
-        return $this->_value[$name];
+        return $this->_value->$name;
     }
 
     /**
@@ -81,7 +86,7 @@ class ConfigValue implements Iterator
      */
     public function __set(string $name, $value)
     {
-        $this->_value[$name] = (is_object($value)) ? ($this->_object_to_array($value)) : ($value);
+        $this->_value->$name = (is_object($value)) ? ($this->_parse_values($value)) : ($value);
         if ($this->_parent !== NULL)
         {
             $name = $this->_name;
@@ -96,7 +101,7 @@ class ConfigValue implements Iterator
 	 */
 	public function __isset(string $name) : bool
 	{
-		return (isset($this->_value, $name));
+		return (isset($this->_value->$name));
 	}
 
     /**
@@ -107,7 +112,7 @@ class ConfigValue implements Iterator
 	{
 		if (isset($this->$name))
 		{
-			unset($this->_values[$name]);
+			unset($this->_value->$name);
 		}
 	}
 
@@ -117,16 +122,16 @@ class ConfigValue implements Iterator
      */
     public function keys() : array
     {
-        return (is_array($this->_value)) ? (array_keys($this->_value)) : ([]);
+        return array_keys(get_object_vars($this->_value));
     }
 
     /**
      * Retourne la liste des valeurs.
-     * @return array
+     * @return stdClass
      */
-    public function values() : array
+    public function values() : stdClass
     {
-        return (is_array($this->_value)) ? ($this->_value) : ([]);
+        return $this->_value;
     }
 
     /**
@@ -135,10 +140,6 @@ class ConfigValue implements Iterator
      */
     public function current()
     {
-        if (is_array(current($this->_value)))
-        {
-            return new self($this->_name.'->'.key($this->_value), current($this->_value)); 
-        }  
         return current($this->_value);
     }
 
@@ -148,10 +149,6 @@ class ConfigValue implements Iterator
      */
     public function key()
     {
-        if (is_array($this->_value) === FALSE)
-        {
-            return FALSE; 
-        }  
         return key($this->_value);
     }
 
@@ -160,10 +157,7 @@ class ConfigValue implements Iterator
      */
     public function next()
     {
-        if (is_array($this->_value))
-        {
-            next($this->_value);
-        }
+        next($this->_value);
     }
 
     /**
@@ -171,10 +165,6 @@ class ConfigValue implements Iterator
      */
     public function rewind()
     {
-        if (is_array($this->_value) === FALSE)
-        {
-            return FALSE; 
-        }  
         reset($this->_value);
     }
 
@@ -184,11 +174,19 @@ class ConfigValue implements Iterator
      */
     public function valid() : bool
     {
-        if (is_array($this->_value) === FALSE)
-        {
-            return FALSE; 
-        }   
         return (current($this->_value) !== FALSE);
+    }
+
+    /**
+     * Itère sur les valeurs en permettant lors passage par référence pour les modifier dans une boucle.
+     * @return mixed
+     */
+    public function &iterate()
+    {
+        foreach ($this->_value as &$v) 
+        {
+            yield $v;
+        }
     }
 }
     
