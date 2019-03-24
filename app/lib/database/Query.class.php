@@ -312,28 +312,31 @@ class Query
 	{
 		if (is_array($field))
 		{
-			$values = array_values($field);
-			$fields = array_map(function($i){
-				return str_replace(".", "`.`", $i);
-			}, array_keys($field));
-			if (isset($fields[0]))
+			if (count($field) > 0)
 			{
-				if (strpos($this->_sql, " WHERE ") === FALSE)
+				$values = array_values($field);
+				$fields = array_map(function($i){
+					return str_replace(".", "`.`", $i);
+				}, array_keys($field));
+				if (isset($fields[0]))
 				{
-					$field = array_shift($fields);
-					$value = array_shift($values);
-					$this->_sql .= " WHERE `".$field."` ".$operator." ?";
-					$this->_values[] = $value;
-				}
-				$count = count($fields);
-				for($i=0; $i < $count; $i++)
-				{
-					$this->_sql .= " ".$logic." `".$fields[$i]."` ".$operator." ?";
-					$this->_values[] = $values[$i];
+					if (strpos($this->_sql, " WHERE ") === FALSE)
+					{
+						$field = array_shift($fields);
+						$value = array_shift($values);
+						$this->_sql .= " WHERE `".$field."` ".$operator." ?";
+						$this->_values[] = $value;
+					}
+					$count = count($fields);
+					for($i=0; $i < $count; $i++)
+					{
+						$this->_sql .= " ".$logic." `".$fields[$i]."` ".$operator." ?";
+						$this->_values[] = $values[$i];
+					}
 				}
 			}
 		}
-		else 
+		elseif ($field != "")
 		{
 			if (strpos($this->_sql, " WHERE ") === FALSE)
 			{
