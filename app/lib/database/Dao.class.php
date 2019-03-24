@@ -52,8 +52,7 @@ abstract class Dao implements ArrayAccess
      */
     public function __get(string $name)
     {
-        $caller = get_called_class();
-    	if (property_exists($caller, $name) === FALSE)
+    	if (property_exists($this, $name) === FALSE)
     	{
     	    throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
     	}
@@ -92,8 +91,7 @@ abstract class Dao implements ArrayAccess
 		}
 		if ($count === 0)
 		{
-			$caller = get_called_class();
-			if (property_exists($caller, $name) === FALSE)
+			if (property_exists($this, $name) === FALSE)
 			{
 				throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
 			}
