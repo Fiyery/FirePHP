@@ -9,7 +9,7 @@
  * @uses Observable
  * @uses Observer
  */
-abstract class Dao 
+abstract class Dao implements ArrayAccess
 {
     /**
      * Classe de la base de données.
@@ -52,8 +52,7 @@ abstract class Dao
      */
     public function __get(string $name)
     {
-        $caller = get_called_class();
-    	if (property_exists($caller, $name) === FALSE)
+    	if (property_exists($this, $name) === FALSE)
     	{
     	    throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
     	}
@@ -92,8 +91,7 @@ abstract class Dao
 		}
 		if ($count === 0)
 		{
-			$caller = get_called_class();
-			if (property_exists($caller, $name) === FALSE)
+			if (property_exists($this, $name) === FALSE)
 			{
 				throw new DaoException('Propriété invalide "'.$name.'" pour la classe '.$caller, 1);
 			}
@@ -344,7 +342,7 @@ abstract class Dao
     	if ($begin !== NULL)
     	{
     		$query->limit($begin, $end);
-    	}
+			}
     	return $query->run();
     }
     
@@ -393,6 +391,47 @@ abstract class Dao
 			}
 		}
 		return $array;
-	}
+    }
+    
+    /**
+     * ArrayAccess : offsetSet
+     * @param string $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($offset, $value) 
+    {
+        $this->__set($offset, $name);
+    }
+
+    /**
+     * ArrayAccess : offsetExists
+     * @param string $offset
+     * @return bool
+     */
+    public function offsetExists($offset) : bool
+    {
+        return property_exists($this, $offset);
+    }
+
+    /**
+     * ArrayAccess : offsetUnset
+     * @param string $offset
+     * @return void
+     */
+    public function offsetUnset($offset) 
+    {
+        unset($this->$offset);
+    }
+
+    /**
+     * ArrayAccess : offsetGet
+     * @param string $offset
+     * @return mixed
+     */
+    public function offsetGet($offset) 
+    {
+        return $this->__get($offset);
+    }
 }
 ?>
