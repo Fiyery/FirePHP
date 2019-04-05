@@ -4,7 +4,7 @@
     "allowed_http_request" : false,
 
     // Défini les événements qui déclenche le module.
-    "loaded_on_event" : [
+    "load_on_event" : [
         "Core::assign"
     ]
 }
