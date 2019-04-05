@@ -65,9 +65,9 @@ abstract class Module implements Observer
 		if (file_exists($this->_dir.'/config.json'))
 		{
 			$this->_params = new Config($this->_dir.'/config.json');
-			if (isset($this->params()->loaded_on_event))
+			if (isset($this->params()->load_on_event))
 			{
-				$this->_events = $this->params()->loaded_on_event;
+				$this->_events = $this->params()->load_on_event;
 			}
 		}
 	}
