@@ -53,7 +53,7 @@ class Access
 	 * Renvoie la liste des règles d'accès.
 	 * @return array Liste des règles.
 	 */
-	public function get_rules()
+	public function get_rules() : array
 	{
 		return $this->_rules;
 	}
@@ -68,7 +68,7 @@ class Access
 	 * 	Si FALSE, la fonction renvera TRUE si au moins un id a la permission
 	 * @return boolean
 	 */
-	public function is_authorized($id, $module, $action=NULL, $strict=TRUE)
+	public function is_authorized($id, $module, $action=NULL, $strict=TRUE) : bool
 	{
 		if ($this->is_enabled() == FALSE)
 		{
@@ -84,9 +84,9 @@ class Access
 		    $return = $strict;
 		    foreach ($id as $i)
 		    {
-		        if (isset($this->_rules[$i]) == FALSE)
+		        if (isset($this->_rules[$i]) === FALSE)
 		        {
-		        	$acces = FALSE;
+		        	$access = FALSE;
 		        }
 		        else 
 		        {
@@ -152,7 +152,7 @@ class Access
 	 * Vérifie si la classe est active.
 	 * @return boolean
 	 */
-	public function is_enabled()
+	public function is_enabled() : bool
 	{
 	    return $this->_enable;
 	}
