@@ -142,7 +142,6 @@ class Request
 	 */
 	public function strip_tag_values() : Request
 	{
-		Debug::show($this->_values);
 		foreach ($this->_values as $name => $value)
 		{
 			$this->$name = $this->strip_tags($value);
