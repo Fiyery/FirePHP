@@ -137,6 +137,10 @@ class ServiceModule extends Module
             $this->config->path->root_url,
             $this->config->path->root_dir
         );
+
+        // Formatage du nom de module et de l'action.
+        $this->router->module(preg_replace("#\W#", "_", $this->router->module()));
+        $this->router->action(preg_replace("#\W#", "_", $this->router->action()));
     }
 
     /**
