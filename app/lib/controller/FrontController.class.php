@@ -195,10 +195,6 @@ class FrontController
 		// Exécution du module.
 		try 
 		{
-            // Formatage du nom de module et de l'action.
-            $this->router->module(preg_replace("#\W#", "_", $this->router->module()));
-            $this->router->action(preg_replace("#\W#", "_", $this->router->action()));
-
 			// Event pour lancer le module.
 			if ($this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()))) === FALSE)
 			{
