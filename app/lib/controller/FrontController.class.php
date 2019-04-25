@@ -195,15 +195,19 @@ class FrontController
 		// Exécution du module.
 		try 
 		{
+            // Formatage du nom de module et de l'action.
+            $this->router->module(preg_replace("#\W#", "_", $this->router->module()));
+            $this->router->action(preg_replace("#\W#", "_", $this->router->action()));
+
 			// Event pour lancer le module.
 			if ($this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()))) === FALSE)
 			{
 				// Si aucun module n'a pu être déclenché, on fait appel au module d'erreur 404.
 				$this->router->controller('Default');
-				$this->router->module('Error');
+				$this->router->module('error');
 				$this->router->action('404');
 				$this->response->status_code(404);
-				$this->hook->notify(new Event('Erreur::404'));
+				$this->hook->notify(new Event('error::404'));
 			}
 		}
 		catch (Throwable $t)
@@ -214,7 +218,7 @@ class FrontController
 
 			// On fait appel au module d'erreur.
 			$this->router->controller('Default');
-			$this->router->module('Error');
+			$this->router->module('error');
 			$this->router->action('500');
 			$this->response->status_code(500);
 			$this->tpl->assign('error_msg', $t->getMessage());
@@ -248,7 +252,7 @@ class FrontController
 			if ($this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()).'::tpl')) === FALSE)
 			{
 				$this->router->controller('Default');
-				$this->router->module('Error');
+				$this->router->module('error');
 				$this->router->action('404');
 				$this->response->status_code(404);
 				$this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action()).'::tpl'));
