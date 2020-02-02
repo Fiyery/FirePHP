@@ -58,7 +58,13 @@ class Query
 	 * Nom de la classe des objets retournés.
 	 * @var string
 	 */
-	private $_class = [];
+    private $_class = [];
+    
+	/**
+	 * Activation ou non du prefixe automatique des tables en paramètre.
+	 * @var bool
+	 */
+	private $_prefix_auto = FALSE;
 
 	/**
 	 * Constructeur.
@@ -74,7 +80,18 @@ class Query
 		$this->_class = $class;
 		$this->_tables[] = $table;
 		$this->select();
-	}
+    }
+    
+    /**
+     * Définie si les noms des tables en paramètre seront autopréfixés.
+     * @param boolean $enable Activation ou désactivation.
+     * @return Query
+     */
+    public function prefix(bool $enable = TRUE) : Query
+    {
+        $this->_prefix_auto = $enable;
+        return $this;
+    }
 	
 	/**
 	 * Définie le nom de la table.
@@ -83,7 +100,7 @@ class Query
 	 */
 	public function table(string $name) : Query
 	{
-		$this->_tables = [$name];
+		$this->_tables = [($this->_prefix_auto) ? ($this->_prefix.$name) : ($name)];
 		$this->select();
 		return $this;
 	}
@@ -139,10 +156,12 @@ class Query
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
 	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
+	 * @param string $table_join Nom de la table à lier avec la jointure.
+     * @return Query
 	 */
-	public function join(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
+	public function join(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL, string $table_join = NULL) : Query
 	{
-		return $this->_join("INNER", $foreign_table, $id_foreign, $id_table);
+		return $this->_join("INNER", $foreign_table, $id_foreign, $id_table, $table_join);
 	}
 	
 	/**
@@ -150,10 +169,12 @@ class Query
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
 	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
+	 * @param string $table_join Nom de la table à lier avec la jointure.
+     * @return Query
 	 */
-	public function join_left(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
+	public function join_left(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL, string $table_join = NULL) : Query
 	{
-		return $this->_join("LEFT", $foreign_table, $id_foreign, $id_table);
+		return $this->_join("LEFT", $foreign_table, $id_foreign, $id_table, $table_join);
 	}
 	
 	/**
@@ -161,23 +182,32 @@ class Query
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
 	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
+	 * @param string $table_join Nom de la table à lier avec la jointure.
+     * @return Query
 	 */
-	public function join_right(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL) : Query
+	public function join_right(string $foreign_table = NULL, string $id_foreign = NULL, string $id_table = NULL, string $table_join = NULL) : Query
 	{
-		return $this->_join("RIGHT", $foreign_table, $id_foreign, $id_table);
+		return $this->_join("RIGHT", $foreign_table, $id_foreign, $id_table, $table_join);
 	}
 	
 	/**
 	 * Effectue une jointure entre deux tables.
 	 * @param string $type Type de jointure.
-	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
 	 * @param string $foreign_table Nom de la table de la requête.
 	 * @param string $id_foreign Nom du champ à mettre en relation.
+	 * @param string $id_table Nom du champ de la table à joindre à mettre en relation.
+	 * @param string $table_join Nom de la table à lier avec la jointure.
+     * @return Query
 	 */
-	private function _join(string $type, string $foreign_table, ?string $id_foreign, ?string $id_table) : Query
+	private function _join(string $type, string $foreign_table, ?string $id_foreign, ?string $id_table, ?string $table_join = NULL) : Query
 	{
-		$table = $this->_tables[0];
+        $table = $this->_tables[0];
+        if ($table_join !== NULL) 
+        {
+            $table = ($this->_prefix_auto) ? ($this->_prefix.$table_join) : ($table_join);
+        }
 		$foreign_table = strtolower($foreign_table);
+        $foreign_table = ($this->_prefix_auto) ? ($this->_prefix.$foreign_table) : ($foreign_table);
 		$this->_tables[] = $foreign_table;
 		if ($foreign_table === NULL)
 		{
@@ -418,7 +448,7 @@ class Query
 	 * @param int $end Position du dernier enregistrement qui sera prit en compte.
 	 * @return Query
 	 */
-	public function limit($begin, $end=NULL) : Query
+	public function limit(int $begin, int $end = NULL) : Query
 	{
 		if ($end === NULL)
 		{
@@ -437,12 +467,34 @@ class Query
 	{
 		$this->_sql .= " LIMIT 1";
 		return $this;
-	}
-
-	public function bind(array $value) : Query
-	{
-		
-	}
+    }
+    
+    /**
+     * Change le SELECT pour retourner tous les champs dont les alias seront préfixé par la table.
+     * @return Query
+     */
+    public function all_columns() : Query
+    {
+        if ($this->_type === self::SELECT)
+        {
+            $fields = [];
+            $query = clone $this;
+            foreach ($this->_tables as $table)
+            {
+                $return = $query->prefix(FALSE)->table($table)->describe()->run();
+                if (is_array($return))
+                {
+                    foreach ($return as $f)
+                    {
+                        $table_label = str_replace($this->_prefix, "", $table);
+                        $fields[] = "`".$table."`.`".$f["Field"]."` \"".$table_label.".".$f["Field"]."\"";
+                    }
+                }
+            }
+            $this->_sql = str_replace("SELECT *", "SELECT ".implode(",", $fields), $this->_sql);
+        }
+        return $this;
+    }
 	
 	/**
 	 * Exécute la requête SQL et retourne le résultat.
@@ -482,7 +534,7 @@ class Query
 	 * Exécute la requête SQL et retourne le résultat sous forme de tableaux.
 	 * @return bool|array|int
 	 */
-	public function run_array() 
+	public function run_array()
 	{
 		return $this->run(FALSE);
 	}
