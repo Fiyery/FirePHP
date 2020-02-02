@@ -416,15 +416,15 @@ class Query
 			$fields = array_keys($field);
 			if (strpos($this->_sql, " ORDER BY ") === FALSE && isset($fields[0]))
 			{
-				$field = array_shift($fields);
-				$order = array_shift($orders);
+				$field = str_replace(".", "`.`", array_shift($fields));
+                $order = array_shift($orders);
 				$this->_sql .= " ORDER BY `".$field."` ".strtoupper($order);
 				
 			}
 			$count = count($fields);
 			for($i=0; $i < $count; $i++)
 			{
-				$this->_sql .= ", `".$fields[$i]."` ".strtoupper($orders[$i]);
+				$this->_sql .= ", `".str_replace(".", "`.`", $fields[$i])."` ".strtoupper($orders[$i]);
 			}
 		}
 		else 
@@ -432,11 +432,11 @@ class Query
 			$order = strtoupper($order);
 			if (strpos($this->_sql, " ORDER BY ") === FALSE)
 			{
-				$this->_sql .= " ORDER BY `".$field."` ".$order;
+				$this->_sql .= " ORDER BY `".str_replace(".", "`.`", $field)."` ".$order;
 			}
 			else
 			{
-				$this->_sql .= ", `".$field."` ".$order;
+				$this->_sql .= ", `".str_replace(".", "`.`", $field)."` ".$order;
 			}
 		}
 		return $this;
