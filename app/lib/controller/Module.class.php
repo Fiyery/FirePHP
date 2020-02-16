@@ -134,8 +134,8 @@ abstract class Module implements Observer
 	public function notify(Event $event) : bool
 	{
 		// Si le nom de l'Event est le même que celui du module, on l'analyse.
-		$allowed_http_request = ($this->params() === NULL || isset($this->params()->allowed_http_request) === FALSE || $this->params()->allowed_http_request !== FALSE);
-		if ($allowed_http_request && substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
+		$allow_http_request = ($this->params() === NULL || isset($this->params()->allow_http_request) === FALSE || $this->params()->allow_http_request !== FALSE);
+		if ($allow_http_request && substr(strtolower($event->name()), 0, strlen($this->_name) + 2) === $this->_name.'::')
 		{
 			// Evenement de type génération du tpl du module pour une action donnée.
 			if (substr($event->name(), -5) === '::tpl')
