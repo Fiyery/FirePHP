@@ -217,18 +217,18 @@ class Router
     {
         if (is_string($value)) 
         {
-            $this->_controller = $value;
+            $this->_controller = strtolower($value);
         }
         elseif (empty($this->_controller))
         {
             if (substr($this->_current->controller, 0, 1) != '?')
             {
-                $this->_controller = $this->_current->controller;
+                $this->_controller = strtolower($this->_current->controller);
             }
             else
             {
                 $var = substr($this->_current->controller, 1);
-                $this->_controller = (empty($this->_request->$var) == FALSE) ? ($this->_request->$var) : (NULL);
+                $this->_controller = (empty($this->_request->$var) == FALSE) ? (strtolower($this->_request->$var)) : (NULL);
             }
         }
         return $this->_controller;
@@ -243,18 +243,18 @@ class Router
     {
         if (is_string($value)) 
         {
-            $this->_module = $value;
+            $this->_module = strtolower($value);
         }
         elseif (empty($this->_module))
         {
             if (substr($this->_current->module, 0, 1) != '?')
             {
-                $this->_module = $this->_current->module;
+                $this->_module = strtolower($this->_current->module);
             }
             else
             {
                 $var = substr($this->_current->module, 1);
-                $this->_module = (empty($this->_request->$var) == FALSE) ? ($this->_request->$var) : (NULL);
+                $this->_module = (empty($this->_request->$var) == FALSE) ? (strtolower($this->_request->$var)) : (NULL);
             }
         }
         return $this->_module;
@@ -269,18 +269,18 @@ class Router
     {
     	if (is_string($value)) 
         {
-            $this->_action = $value;
+            $this->_action = strtolower($value);
         }
         elseif (empty($this->_action))
     	{
     		if (substr($this->_current->action, 0, 1) != '?')
     		{
-    			$this->_action = $this->_current->action;
+    			$this->_action = strtolower($this->_current->action);
     		}
     		else
     		{
     			$var = substr($this->_current->action, 1);
-    			$this->_action = (empty($this->_request->$var) == FALSE) ? ($this->_request->$var) : (NULL);
+    			$this->_action = (empty($this->_request->$var) == FALSE) ? (strtolower($this->_request->$var)) : (NULL);
     		}
     	}
     	return $this->_action;
