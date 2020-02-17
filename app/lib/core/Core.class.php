@@ -133,8 +133,17 @@ class Core
     public function controller() : Controller
     {
         // Chargement du Moteur du site.
-        $filename = $this->_services->get("config")->path->root_dir.$this->_services->get("config")->path->controller.$this->_services->get("router")->controller().".class.php";
-        if (file_exists($filename) === FALSE)
+        $name = $this->_services->get("router")->controller().".class.php";
+        $filename = NULL;
+        $controller_filenames = glob($this->_services->get("config")->path->root_dir.$this->_services->get("config")->path->controller."*.class.php");
+        foreach ($controller_filenames as $file)
+        {
+            if (strtolower(basename($file)) === $name)
+            {
+                $filename = $file;
+            }
+        }
+        if ($filename === NULL || file_exists($filename) === FALSE)
         {
             throw new FireException("Controller introuvable", __FILE__, __LINE__);
         }
