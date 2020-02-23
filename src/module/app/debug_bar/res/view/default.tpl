@@ -19,11 +19,11 @@
                     {foreach $errors as $e}
                         {if $e.type === "Exception"}
                             <div style="color:red">
-                                <b>{$e.file}</b> : {$e.line} {$e.string}
+                                <b>{$e.file}:{$e.line}</b> {$e.string}
                             </div>
                         {else}
                             <div>
-                                <b>{$e.file}</b> : {$e.line} {$e.string}
+                                <b>{$e.file}:{$e.line}</b> {$e.string}
                             </div>
                         {/if}
                     {/foreach}
