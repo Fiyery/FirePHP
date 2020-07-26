@@ -112,9 +112,33 @@ class File
      */
     public function size() : int
     {
-    	if ($this->_size < 0)
-    	{
-    	    $this->_size = filesize($this->_file);
+		if ($this->_size < 0)
+		{
+			$size = "".filesize($this->_file);
+			if ($size < 0)
+			{
+				$file = fopen($this->_file, 'rb');
+				if ($file === FALSE)
+				{
+					return FALSE;
+				}
+				$size = PHP_INT_MAX - 1;
+				if (fseek($file, PHP_INT_MAX - 1) !== 0)
+				{
+					fclose($file);
+					return FALSE;
+				}
+				$length = 1024 * 1024;
+				while (feof($file) === FALSE)
+				{
+					$read = fread($file, $length);
+					$size = bcadd($size, $length);
+				}
+				$size = bcsub($size, $length);
+				$size = bcadd($size, strlen($read));
+				fclose($file);
+			}
+			$this->_size = $size;
     	}
     	return $this->_size;
     }
