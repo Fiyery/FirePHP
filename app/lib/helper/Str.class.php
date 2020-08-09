@@ -134,7 +134,7 @@ class Str
 		{
 			if ($numbers[$i] + 1 !== $numbers[$i + 1])
 			{
-				$reduced[] = $i;
+				$reduced[] = $numbers[$i];
 			}
 			else 
 			{
