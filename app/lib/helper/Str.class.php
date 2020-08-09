@@ -118,6 +118,36 @@ class Str
         }
         $count = count($rates);
         return ($count > 0) ? (array_sum($rates) / $count) : (0);
-    }
+	}
+	
+	/**
+	 * Transforme un tableau d'entier en tableau interval si les entiers se suivent.
+	 * @param array $numbers Tableau d'entier
+	 * @return array
+	 */
+	public static function numbers_to_interval(array $numbers) : array
+	{
+		$reduced = [];
+		$count = count($numbers);
+		sort($numbers);
+		for($i = 0; $i < $count - 1; $i++) 
+		{
+			if ($numbers[$i] + 1 !== $numbers[$i + 1])
+			{
+				$reduced[] = $i;
+			}
+			else 
+			{
+				$j = $i + 1;
+				while ($numbers[$j] + 1 == $numbers[$j + 1] && $j < $count)
+				{
+					$j++;
+				}
+				$reduced[] = $numbers[$i] . "-" . $numbers[$j];
+				$i = $j;
+			}
+		}
+		return $reduced;
+	}
 }
 ?>
