@@ -1,6 +1,6 @@
 <?php
 /**
- * ClassLoader gère le chargement des classe du site.
+ * ClassLoader gère le chargement des classes ou interfaces de l'application.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
 class ClassLoader
@@ -13,9 +13,9 @@ class ClassLoader
 	
 	/**
 	 * Extention des fichiers classe.
-	 * @var sting
+	 * @var string[]
 	 */
-	private $_ext = '.php';
+	private $_exts = [".php"];
 	
 	/**
 	 * Constructeur.
@@ -29,11 +29,11 @@ class ClassLoader
 	 * Ajoute un nouveau dossier de classes.
 	 * @param string $dir Chemin du dosier de classes.
 	 */
-	public function add_dir($dir)
+	public function add_dir(string $dir)
 	{
 		if (is_string($dir) && file_exists($dir) && in_array($dir, $this->_dirs) === FALSE)
 		{
-			$this->_dirs[] = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
+			$this->_dirs[] = (substr($dir,-1) != "/") ? ($dir."/") : ($dir);
 		}
 	}
 
@@ -43,15 +43,15 @@ class ClassLoader
 	 * @param string[] $excluded Nom de dossier 
 	 * @param int $depth Niveau des sous-dode sous dossier à ajouter
 	 */
-	public function add_dir_recursive($dir, $excluded=[], $depth=-1)
+	public function add_dir_recursive(string $dir, array $excluded = [], int $depth = -1)
 	{
 		if (is_string($dir) && file_exists($dir))
 		{
-			$dir = (substr($dir,-1) != '/') ? ($dir.'/') : ($dir);
+			$dir = (substr($dir,-1) != "/") ? ($dir."/") : ($dir);
 			$this->_dirs[] = $dir;
 			if ($depth != 0)
 			{
-				$dirs = array_diff(scandir($dir), ['..', '.']);
+				$dirs = array_diff(scandir($dir), ["..", "."]);
 				foreach ($dirs as $d)
 				{
 					if (is_dir($dir.$d) && in_array($d, $excluded) === FALSE)
@@ -65,11 +65,15 @@ class ClassLoader
 	
 	/**
 	 * Définie l'extention des fichiers.
-	 * @param string $ext Extention des classes.
+	 * @param string $exts Extention des classes.
 	 */
-	public function set_ext($ext='php')
+	public function set_exts(array $exts = [".php"])
 	{
-		$this->_ext = (substr($ext, 0, -1) != '.') ? ('.'.$ext) : ($ext);
+		$this->_exts = [];
+		foreach ($exts as $e) 
+		{
+			$this->_exts[] = (substr($e, 0, 1) != ".") ? (".".$e) : ($e);
+		}
 	}
 	
 	/**
@@ -77,7 +81,7 @@ class ClassLoader
 	 */
 	public function enable()
 	{
-		spl_autoload_register(array($this,'load'),TRUE);
+		spl_autoload_register(array($this,"load"),TRUE);
 	}
 	
 	/**
@@ -85,7 +89,7 @@ class ClassLoader
 	 */
 	public function disable()
 	{
-		spl_autoload_unregister(array($this,'load'));
+		spl_autoload_unregister(array($this,"load"));
 	}
 	
 	/**
@@ -93,7 +97,7 @@ class ClassLoader
 	 * @param string $file_pattern Pattern de la fonction glob().
 	 * @return boolean TRUE si importation d'au moins un fichier.
 	 */
-	public function import($file_pattern)
+	public function import(string $file_pattern)
 	{
 		$file = glob($file_pattern);
 		if (is_array($file) && count($file) > 0)
@@ -114,33 +118,42 @@ class ClassLoader
 	}
 	
 	/**
-	 * Charge une classe.
-	 * @param string $name Nom de la classe.
-	 * @return boolean
+	 * Charge une classe ou interface.
+	 * @param string $name Nom de la classe ou interface.
+	 * @return bool
 	 */
-	public function load($name)
+	public function load(string $name) : bool
 	{
 		if (count($this->_dirs) === 0 || class_exists($name))
 		{
 			return FALSE;
 		}
 		$find = FALSE;
-		$file = strtolower($name.$this->_ext);
-		reset($this->_dirs);
-		while ($find === FALSE && ($dir = current($this->_dirs)))
+		$files = [];
+		foreach ($this->_exts as $e) 
+		{
+			$files[] = strtolower($name.$e);
+		}
+		foreach ($this->_dirs as $dir)
 		{
 			$original = glob($dir."*");
 			$dir = strtolower($dir);
-			$files = array_map("strtolower", $original);
-			if (($index = array_search($dir.$file, $files)) !== FALSE)
+			$dir_files = array_map("strtolower", $original);
+			foreach ($files as $file)
 			{
-				include($original[$index]);
-				$find = TRUE;
+				if (($index = array_search($dir.$file, $dir_files)) !== FALSE)
+				{
+					include($original[$index]);
+					$find = TRUE;
+					break;
+				}
 			}
-			next($this->_dirs);
+		}
+		if ($find === FALSE)
+		{
+			throw new Exception("Class or interface \"" . $name . "\" not found");
 		}
 		return TRUE;
 	}
 }
-
 ?>

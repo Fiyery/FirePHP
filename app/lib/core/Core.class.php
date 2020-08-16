@@ -53,14 +53,11 @@ class Core
         $loader = new ClassLoader();
 
         // Extention des classes.
-        $loader->set_ext("class.php");
+        $loader->set_exts([".class.php", ".interface.php"]);
 
         // Chargement des classes du framework.
-        $loader->add_dir_recursive($this->_dir."lib", ["obsolete"]);
-        $loader->enable();
-
-        // Importe les interfaces.
-        $loader->import($this->_dir."/lib/interfaces/*.interface.php");
+		$loader->add_dir_recursive($this->_dir."lib", ["obsolete"]);
+		$loader->enable();
 
         return $loader;
     }
