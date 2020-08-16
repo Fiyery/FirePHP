@@ -11,14 +11,15 @@ function init()
     // Chargement des paramètres et classes outils et récupération du controller.
     $controller = $core->controller();
     
-    // On impose à la fin du script le lancement de la barre de debug.
-    if ($controller->config->feature->debug && $controller->request->disable_debug_tool == NULL)
-    {
-        register_shutdown_function(function() use ($controller)
-        {
-            $controller->hook->notify(new Event('Core::end_script'));
-        });
-    }
+	register_shutdown_function(function() use ($controller)
+	{
+		$errors = error_get_last();
+		if (is_array($errors) && count($errors) > 0)
+		{
+			var_dump($errors);
+		}
+		$controller->hook->notify(new Event('Core::end_script'));
+	});
     return $controller;
 }
 
