@@ -168,6 +168,11 @@ class DataBase
 		{
 			$result = $this->_pdo_statement->fetchAll(PDO::FETCH_ASSOC);
 		}
+
+		if (is_array($result) && count($result) === 0 && $this->error()[0] != 0)
+		{ 
+			return FALSE;
+		}
 		
 		$this->_write_cache($sql, $values, $result);
 		$this->_cache_time = 0;
