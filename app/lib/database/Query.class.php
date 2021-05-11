@@ -73,7 +73,7 @@ class Query
 	 * @param string $table Nom de la table à requêter.
 	 * @param string $prefix Prefix des tables.
 	 */
-	public function __construct(?Database $base, ?string $class, ?string $table, ?string $prefix)
+	public function __construct(?Database $base = NULL, ?string $class = NULL, ?string $table = NULL, ?string $prefix = NULL)
 	{
 		$this->_base = $base;
 		$this->_prefix = $prefix;
@@ -331,7 +331,7 @@ class Query
 	}
 	
 	/**
-	 * Ajoute une close WHERE AND.
+	 * Ajoute une clause WHERE AND.
 	 * @param array|string $field Tableau associatif de champs valeur ou le nom du champ. 
 	 * @param string $operator Opérateur de comparaison SQL.
 	 * @param string $value Valeur du champ dans le cas ou $field est une string.
@@ -515,17 +515,17 @@ class Query
 		$return = [];	
 		if (is_array($result))
 		{
-			if ($object === FALSE)
-			{
-				$return = $result;
-			}
-			else 
+			if ($object && $this->_class !== NULL)
 			{
 				foreach ($result as $r)
 				{
 					$return[] = new $this->_class($r);
 				}	
 			}		
+			else 
+			{
+				$return = $result;
+			}			
 		}
 		return $return;
 	}
