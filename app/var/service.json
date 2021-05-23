@@ -1,6 +1,6 @@
 {
     "config" : {
-        "class" : "Config", 
+        "class" : "FirePHP\\Config\\Config", 
         "args" : [
             "app/var/config.json",
             "app/var/config_user.json",
@@ -12,11 +12,11 @@
     },
 
     "error" : {
-        "class" : "ExceptionManager"
+        "class" : "FirePHP\\Exception\\ExceptionManager"
     },
 
     "log" : {
-        "class" : "FileLogger", 
+        "class" : "FirePHP\\Event\\FileLogger", 
         "args" : [
             "$config->path->log",
             "$config->log->granularity"
@@ -24,11 +24,11 @@
     },
 
     "session" : {
-        "class" : "Session"
+        "class" : "FirePHP\\Session\\Session"
     },
 
     "database" : {
-        "class" : "DataBase",
+        "class" : "FirePHP\\Database\\DataBase",
         "args" : [
             "$config->db->host",
             "$config->db->name",
@@ -43,7 +43,7 @@
     },
 
     "template" : {
-        "class" : "Template",
+        "class" : "FirePHP\\Html\\Template",
         "args" : [
             "$config->path->tpl_cache"
         ],
@@ -54,14 +54,14 @@
     },
 
     "request" : {
-        "class" : "Request",
+        "class" : "FirePHP\\Request\\Request",
         "alias" : [
             "req"
         ]
     },
 
     "response" : {
-        "class" : "Response",
+        "class" : "FirePHP\\Response\\Response",
         "args" : [
             "$session",
             "$tpl"
@@ -72,53 +72,53 @@
     },
 
     "router" : {
-        "class" : "Router",
+        "class" : "FirePHP\\Router\\Router",
         "args" : [
             "$request"
         ]
     },
 
     "access" : {
-        "class" : "Access"
+        "class" : "FirePHP\\Security\\Access"
     },
 
     "cache" : {
-        "class" : "Cache",
+        "class" : "FirePHP\\Cache\\Cache",
         "args" : [
             "$config->path->cache"
         ]
     },
 
     "css" : {
-        "class" : "Css",
+        "class" : "FirePHP\\Resource\\Css",
         "args" : [
             "$config->path->css_cache"
         ]
     },
 
     "js" : {
-        "class" : "Javascript",
+        "class" : "FirePHP\\Resource\\Javascript",
         "args" : [
             "$config->path->js_cache"
         ]
     },
 
     "crypt" : {
-        "class" : "Crypt"
+        "class" : "FirePHP\\Security\\Crypt"
     },
 
     "upload" : {
-        "class" : "Upload"
+        "class" : "FirePHP\\File\\Upload"
     },
 
     "browser" : {
-        "class" : "Browser",
+        "class" : "FirePHP\\Request\\Browser",
         "args" : [
             "$config->browser->file"
         ]
     },
 
     "mail" : {
-        "class" : "Mail"
+        "class" : "FirePHP\\Helper\\Mail"
     }
 }

@@ -1,11 +1,17 @@
 <?php
 
+error_reporting(E_ALL); 
+ini_set("display_errors", "stdout");
+
+require(__DIR__.'/lib/core/Core.class.php');
+use FirePHP\Core\Core;
+use FirePHP\Event\Event;
+use FirePHP\Controller\FrontController;
+
 function init() 
 {
     // Début de la capture du tampon de sortie.
     ob_start();
-
-    require(__DIR__.'/lib/core/Core.class.php');
     $core = new Core();
     
     // Chargement des paramètres et classes outils et récupération du controller.
@@ -23,7 +29,7 @@ function init()
     return $controller;
 }
 
-function execute(Frontcontroller $controller)
+function execute(FrontController $controller)
 {
     try
     {
@@ -40,7 +46,7 @@ function execute(Frontcontroller $controller)
     }
 }
 
-function show(Frontcontroller $controller)
+function show(FrontController $controller)
 {
     // Récupération les affichages "parasites" (echo, print, var_dump...).
     $echx = ob_get_clean();

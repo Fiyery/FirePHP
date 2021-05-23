@@ -1,4 +1,7 @@
 <?php
+namespace FirePHP\Database;
+
+use FirePHP\Architecture\Singleton;
 /**
  * Base est l'interface de connexion et de requetage à la base de données sous forme de fichiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -51,13 +54,13 @@ class BaseFile extends Singleton
 	 * Liste des conditions de sélection.
 	 * @var array
 	 */
-	private $_conditions = array();
+	private $_conditions = [];
 	
 	/**
 	 * Liste des contenus des tables chargées et modifiées.
 	 * @var array
 	 */
-	private $_contents = array();
+	private $_contents = [];
 	
 	/**
 	 * Constructeur.
@@ -83,28 +86,28 @@ class BaseFile extends Singleton
 	 * Crée une nouvelle table.
 	 * @param string $name Nom de la table.
 	 * @param array $columns Liste des noms des colonnes avec en valeur les types.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function create($name, $columns)
+	public function create(string $name, array $columns) : bool
 	{
 		if (file_exists($this->_get_file($name)))
 		{
 			return FALSE;
 		}
-		$data = array(
+		$data = [
 				'name' => $name,
 				'fields' => $columns,
-				'rows' => array()
-		);
+				'rows' => []
+		];
 		return file_put_contents($this->_get_file($name), json_encode($data));
 	}
 	
 	/**
 	 * Supprime un table.
 	 * @param string $name Nom de la table.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function drop($name)
+	public function drop(string $name) : bool
 	{
 		$filename = $this->_get_file($name);
 		if (file_exists($filename) == FALSE)
@@ -119,7 +122,7 @@ class BaseFile extends Singleton
 	 * @param string $name Nom de la table.
 	 * @return BaseFile
 	 */
-	public function select($name)
+	public function select(string $name) : BaseFile
 	{
 		if (is_string($name) && empty($name) == FALSE)
 		{
@@ -150,9 +153,9 @@ class BaseFile extends Singleton
 	/**
 	 * Ajoute un nouvel enregistrement dans la table selectionnée.
 	 * @param array $columns Liste des valeurs de l'enregistrement.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function insert($columns)
+	public function insert(array $columns) : bool
 	{
 		if (empty($this->_table))
 		{
@@ -173,13 +176,13 @@ class BaseFile extends Singleton
 	 * @param string $opp Opérateur de comparaison.
 	 * @return BaseFile
 	 */
-	public function cond($name, $value, $opp)
+	public function cond(string $name, string $value, string $opp) : BaseFile
 	{
-		$this->_conditions[] = array(
+		$this->_conditions[] = [
 			'name' => $name,
 			'value' => $value,
 			'opp' => $opp
-		);
+		];
 		return $this;
 	}
 
@@ -187,15 +190,15 @@ class BaseFile extends Singleton
 	 * Recherche les enregistrements correspondants aux conditions. 
 	 * @return array Liste des enregistrements trouvés.
 	 */
-	public function search()
+	public function search() : array
 	{
 		if (empty($this->_table))
 		{
-			return array();
+			return [];
 		}
 		if (count($this->_contents[$this->_table]->rows) == 0)
 		{
-			return array();
+			return [];
 		}
 		$results = $this->_find($this->_parse($this->_contents[$this->_table]->rows));
 		$this->_table = NULL;
@@ -215,7 +218,7 @@ class BaseFile extends Singleton
 		}
 		$find = TRUE;
 		$fields = $this->fields();
-		$field_numbers = array(); 
+		$field_numbers = []; 
 		foreach ($values as $n => $v)
 		{
 			$key = array_search($n, $fields);
@@ -276,7 +279,7 @@ class BaseFile extends Singleton
 	{
 		if (empty($this->_table))
 		{
-			return array();
+			return [];
 		}
 		return array_keys(get_object_vars($this->_contents[$this->_table]->fields));
 	}
@@ -328,9 +331,9 @@ class BaseFile extends Singleton
 		}
 		else 
 		{
-			$results = array_filter($rows, array($this, '_check'));
+			$results = array_filter($rows, [$this, '_check']);
 		}
-		$this->_conditions = array();
+		$this->_conditions = [];
 		return $results;
 	}
 	
@@ -396,12 +399,12 @@ class BaseFile extends Singleton
 	 */
 	private function _parse($rows)
 	{
-		$objects = array();
+		$objects = [];
 		$fields = $this->fields();
 		$count = count($fields);	
 		foreach ($rows as $r)
 		{
-			$o = array();
+			$o = [];
 			for($i=0; $i < $count; $i++)
 			{
 				$o[$fields[$i]] = $r[$i];

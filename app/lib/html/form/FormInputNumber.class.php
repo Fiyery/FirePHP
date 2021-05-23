@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputNumber génère input type number pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

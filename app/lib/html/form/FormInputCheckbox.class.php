@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputCheckbox génère input type checkbox pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Core;
+
+use FirePHP\Loader\ClassLoader;
+use FirePHP\Loader\Hook;
+use FirePHP\Config\Environment;
 /**
  * Core intialise les dépendances fondamentales du framework.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -55,8 +60,11 @@ class Core
         // Extention des classes.
         $loader->set_exts([".class.php", ".interface.php"]);
 
-        // Chargement des classes du framework.
+        // Chargement des classes du framework sans namespace.
 		$loader->add_dir_recursive($this->_dir."lib", ["obsolete"]);
+
+		// Chargement des classes du framework avec namespace.
+		$loader->add_prefix_namespace("FirePHP", dirname(__DIR__)."/");
 		$loader->enable();
 
         return $loader;

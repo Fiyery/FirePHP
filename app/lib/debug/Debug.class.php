@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Debug;
 /**
  * Debug gère la gestion du debugage du site par les affichages de variable, de la consommation en mémoire, du temps d'exécution d'un bout de code, l'affichage du backtrace et la création manuelle de log.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -192,7 +193,6 @@ class Debug
 	 */
 	public static function buffer($buffer=TRUE, $clean=FALSE)
 	{
-		self::$_buffer = $buffer;
 		if ($clean && file_exists(self::$_dir.'debug.log'))
 		{
 			unlink(self::$_dir.'debug.log');
@@ -232,7 +232,7 @@ class Debug
 	 * Retourne la memoire maximale utilisée.
 	 * @return string Mémoire utilisée formatée en octet.
 	 */
-	public static function memory_max_usage()
+	public static function memory_max_usage() : string
 	{
 	    $size = memory_get_peak_usage();
 		$unit = array('o','Ko','Mo','Go', 'To');
@@ -240,7 +240,6 @@ class Debug
 		$size = round($size/pow(1024, $i), 2);
 		$size .= ' '.$unit[$i];
 		return $size;
-		return self::$_max_memory;
 	}
 	
 	/**
@@ -248,7 +247,7 @@ class Debug
 	 * @param int $pos Nombre de saut en arrière.
 	 * @return string[] Liste des paramètre de l'appelant.
 	 */
-	public static function get_caller($pos=1)
+	public static function get_caller(int $pos = 1) : array
 	{
 	    $debug = debug_backtrace();
 	    return (isset($debug[$pos])) ? ($debug[$pos]) : (array());

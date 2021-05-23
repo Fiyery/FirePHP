@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Html\Form;
+
+use FirePHP\Html\HTMLElement;
+
 /**
  * FormSelect génère un select pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -85,7 +89,7 @@ class FormSelect extends FormField
             {
                 $label = $value;
             }
-            $op = new HTMLTag('option');
+            $op = new HTMLElement('option');
             $op->content($label);
             $op->value = $value;
             if ($selected)
@@ -99,7 +103,7 @@ class FormSelect extends FormField
         {
         	foreach ($value as $v)
         	{
-        		$op = new HTMLTag('option');
+        		$op = new HTMLElement('option');
         		$op->content($v);
         		$op->value = $v;
         		$this->_content[] = $op;

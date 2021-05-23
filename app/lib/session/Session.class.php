@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Session;
 /**
  * Session est l'interface de gestion des la session.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

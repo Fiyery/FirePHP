@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html;
+
 /**
  * Page permet de générer le code html d'un pagination en incorporant l'url, le nombre de page et la page courante.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

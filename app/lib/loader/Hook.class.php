@@ -1,4 +1,10 @@
 <?php
+namespace FirePHP\Loader;
+
+use Throwable;
+use FirePHP\Event\Observer;
+use FirePHP\Event\Event;
+use FirePHP\Controller\Module;
 /**
  * Hook permet l'importation et l'exécution de module.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

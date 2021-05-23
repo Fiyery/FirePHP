@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputRadio génère input type radio pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Security;
+
 /**
  * Captcha est une classe qui génère des images type captcha. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -192,7 +194,6 @@ class Captcha
 			$word .= $letters[array_rand($letters)];
 		}
 		$this->_word = $word;
-		$this->save();
 		return $this->_word;
 	}
 	
@@ -202,7 +203,7 @@ class Captcha
 	 */
 	public function get_captcha($show=FALSE)
 	{
-		$image = imagecreate($this->_width,$this->_height);
+		$image = imagecreate($this->_width, $this->_height);
 		$white = imagecolorallocate($image, 255, 255, 255);
 		$colors = $this->get_colors($image);
 		$fonts = $this->get_fonts();
@@ -236,14 +237,6 @@ class Captcha
 			imagepng($image,self::$_dir.'captcha-'.md5($this->_word).'.png');
 		}
 		imagedestroy($image);
-	}
-
-	/**
-	 * Sauvegarde en session le mot du captcha pour la vérification.
-	 */
-	private function save()
-	{
-		Session::get_instance()->__captcha = $this;
 	}
 
 	/**
@@ -314,19 +307,6 @@ class Captcha
 	{
 		return ($word == $this->_word);
 	}
-	
-	/**
-	 * Récupère les inforations du captcha en session.
-	 * @return Captcha Retourne le captcha en session s'il est présent sinon NULL.
-	 */
-	public static function load()
-	{
-		$session = Session::get_instance();
-		$captcha = $session->__captcha;
-		unset($session->__captcha);
-		return $captcha;
-	}
-	
 	
 	/**
 	 * Définie le dossier ou sera sauvegarder les images des captchas.

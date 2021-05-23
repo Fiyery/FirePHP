@@ -1,16 +1,12 @@
 <?php
+namespace FirePHP\Request;
+
 /**
  * Request est un moyen de gestion des requêtes simplifié en plus d'avoir quelques fonctions utiles.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
 class Request 
 {
-	/**
-	 * Liste des balises HTML dangereuses.
-	 * @var string[]
-	 */
-	private $_tags;
-	
 	/**
 	 * Tableau des valeurs de la requête.
 	 * @var array
@@ -41,7 +37,6 @@ class Request
 	public function __construct()
 	{
 		$this->_values = $_REQUEST;	
-		// $_SESSION['__last_request'] = 
 	}
 	
 	/**

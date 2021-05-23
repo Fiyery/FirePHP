@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Html\Form;
+
+use FirePHP\Html\HTMLElement;
+
 /**
  * Form génère des formulaires HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

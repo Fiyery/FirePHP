@@ -1,10 +1,14 @@
 <?php
+namespace FirePHP\Html\Form;
+
+use FirePHP\Html\HTMLElement;
+
 /**
  * FormField est la classe mère de tous les champs d'un formulaire.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses HTMLTag
  */
-abstract class FormField extends HTMLTag
+abstract class FormField extends HTMLElement
 {
     /**
      * Valeur du label.
@@ -102,7 +106,7 @@ abstract class FormField extends HTMLTag
 		$s = '';
 		if ($this->_label != NULL)
 		{
-			$label = new HTMLTag('label');
+			$label = new HTMLElement('label');
 			$label->content($this->_label);
 			$s = $label->__toString();
 		}

@@ -1,4 +1,11 @@
 <?php
+namespace FirePHP\Controller;
+
+use ReflectionClass;
+use FirePHP\Event\Observer;
+use FirePHP\Event\Event;
+use FirePHP\Core\ServiceContainer;
+use FirePHP\Config\Config;
 /**
  * Module est la classe mère de l'ensemble des actions de traitement de données de chaque page.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -160,10 +167,18 @@ abstract class Module implements Observer
 		}
 		elseif (in_array($event->name(), $this->_events))
 		{
-			$this->init($event)->run();
+			$this->init($event)->run(); // Méthode enfant sur les modules qui se déclenche par des événéments. 
 			return TRUE;
 		}
 		return FALSE;
+	}
+	
+	/**
+	 * Lance un traitement déclenché par un Event. Cette méthode est à surcharger par la classe enfant.
+	 */
+	public function run() 
+	{
+		
 	}
 	
 	/**

@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Security;
+
 /**
  * Key génère des clés aléatoires et unique.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

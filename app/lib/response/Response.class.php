@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Response;
+
+use FirePHP\Session\Session;
+use FirePHP\Html\Template;
+
 /**
  * Response gère le retour du serveur au travers du code retour, des entêtes et des messages informatifs.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -113,7 +118,7 @@ class Response implements ResponseInterface
      */
 	public function body() : ResponseBody
 	{
-		return $this->_body();
+		return $this->_body;
 	}
 
 	/**

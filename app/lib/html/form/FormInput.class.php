@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInput est la classe mère de tous les champs input d'un formulaire.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

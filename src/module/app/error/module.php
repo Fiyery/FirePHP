@@ -1,4 +1,5 @@
 <?php
+use FirePHP\Controller\Module; 
 class ErrorModule extends Module
 {
     public function action_404()

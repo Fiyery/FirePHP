@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Architecture;
 /**
  * Singleton permet de transformer les classes héritantes en singleton. La classe qui hérite de Singleton doit posséder l'attribut "protected static $_instance = NULL".
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

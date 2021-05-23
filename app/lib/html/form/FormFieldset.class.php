@@ -1,10 +1,14 @@
 <?php
+namespace FirePHP\Html\Form;
+
+use FirePHP\Html\HTMLElement;
+
 /**
  * FormFieldset génère un fieldset pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses HTMLTag
  */
-class FormFieldset extends HTMLTag
+class FormFieldset extends HTMLElement
 {
     /**
      * Nom du legend.
@@ -48,7 +52,7 @@ class FormFieldset extends HTMLTag
     	$s .= '>';
     	if (empty($this->_legend) == FALSE)
     	{
-    		$legend = new HTMLTag('legend');
+    		$legend = new HTMLElement('legend');
     		$legend->content($this->_legend);
     		$s .= $legend->__toString();
     	}

@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Network;
+
 /**
  * FTP est une interface simplifiée de l'utilisation du File Transfert Protocol.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -34,12 +36,6 @@ class FTP
 	 * @var Ressource
 	 */
 	private $_connection = NULL;
-	
-	/**
-	 * Dossier courant.
-	 * @var string
-	 */
-	private $_dir = './';
 	
 	/**
 	 * Définie si les envois et receptions se fond en mode bloquant ou non.
@@ -270,7 +266,7 @@ class FTP
 	    {
 	    	return FALSE;
 	    }
-	    if ($this->is_exists($dir))
+	    if ($this->is_existed($dir))
 	    {
 	        return FALSE;
 	    }
@@ -288,7 +284,7 @@ class FTP
 	    {
 	    	return FALSE;
 	    }
-	    if ($this->is_exists($dir) == FALSE)
+	    if ($this->is_existed($dir) == FALSE)
 	    {
 	    	return FALSE;
 	    }
@@ -367,16 +363,17 @@ class FTP
 	
 	/**
 	 * Renomme un fichier.
-	 * @param string $file Nom du fichier.
+	 * @param string $old Nom du fichier à renommer.
+	 * @param string $new Nouveau Nom.
 	 * @return boolean
 	 */
-	public function rename($file)
+	public function rename(string $old, string $new)
 	{
 	    if ($this->is_connected() == FALSE)
 	    {
 	    	return FALSE;
 	    }
-		return ftp_rename($this->_connection, $file);
+		return ftp_rename($this->_connection, $old, $new);
 	}
 	
 	/**

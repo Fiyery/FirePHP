@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Response;
+
 /**
  * Response gère le retour du serveur lors des appels Ajax.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

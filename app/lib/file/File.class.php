@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\File;
+
+use finfo;
+
 /**
  * File est une classe qui rassemble des fonctions utiles sur les fichiers et dossiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

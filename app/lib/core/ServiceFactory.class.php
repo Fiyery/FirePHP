@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Core;
+
+use stdClass;
+use ReflectionClass;
+
 /**
  * ServiceFactory créer des service.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

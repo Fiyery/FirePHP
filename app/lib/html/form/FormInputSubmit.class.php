@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputSubmit génère input type submit pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

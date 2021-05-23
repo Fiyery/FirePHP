@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Database;
+
+use FirePHP\Event\Observer;
+use FirePHP\Event\Event;
+use FirePHP\Loader\Hook;
 /**
  * DaoInitializer permet d'instancier la Database si un appel est fait.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

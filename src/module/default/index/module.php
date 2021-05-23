@@ -1,8 +1,35 @@
 <?php
+use FirePHP\Controller\Module; 
+
 class IndexModule extends Module
 {
 	public function action_index()
 	{
+		
+	
+
+
+
+
+
+
+		// $result = self::query()
+		// 	->table(self::table_prefix().substr($prop, 3))
+		// 	// ->select([
+		// 	// 	self::table_prefix().substr($prop, 3).".id", 
+		// 	// 	self::table_prefix().substr($prop, 3).".name", 
+		// 	// ])
+		// 	->join($table, "id_sheet_entity")
+		// 	->order(["name" => "ASC"])
+		// 	->run_array();
+
+
+
+
+
+
+
+
 		// RESPONSE AJAX
 		// $response = new ResponseAjax();
 		// $response->data()->toto = 1;

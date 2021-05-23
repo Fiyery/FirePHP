@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Network;
+
 /**
  * Crawler est un système qui analyse les pages d'un site et récupère les codes HTTP de ces pages.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -37,13 +39,13 @@ class Crawler
 	
 	/**
 	 * Timestamps du démarrage du scan.
-	 * @var number
+	 * @var int
 	 */
 	private $_time_begin = NULL;
 	
 	/**
 	 * Timestamps de la fin du scan.
-	 * @var number
+	 * @var int
 	 */
 	private $_time_end = NULL;
 	
@@ -177,7 +179,7 @@ class Crawler
 	
 	/**
 	 * Nombre de secondes de l'analyse.
-	 * @return number
+	 * @return int
 	 */
 	public function get_crawl_time()
 	{

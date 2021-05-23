@@ -1,4 +1,10 @@
 <?php
+namespace FirePHP\Router;
+
+use FirePHP\File\File;
+use FirePHP\Exception\Exception;
+use FirePHP\Request\Request;
+
 /**
  * Router permet la liaison entre l'url et le traitement spécfique du serveur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -168,13 +174,13 @@ class Router
      * Génère une erreur.
      * @param string $msg Message de l'erreur.
      * @param int $level Nombre de fonction à remonter pour l'erreur.
-     * @throws FireException
+     * @throws Exception
      */
     private function _error(string $msg, int $level = 1)
     {
         $d = debug_backtrace();
         $d = $d[$level];
-        throw new FireException($msg, $d['file'], $d['line']);
+        throw new Exception($msg, $d['file'], $d['line']);
     }
 
     /**

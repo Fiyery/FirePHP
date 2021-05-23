@@ -1,10 +1,14 @@
 <?php
+namespace FirePHP\Html\Form;
+
+use FirePHP\Html\HTMLElement;
+
 /**
  * FormDatalist génère les datalist pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses HTMLTag
  */
-class FormDatalist extends HTMLTag
+class FormDatalist extends HTMLElement
 {
     /**
      * Constructeur
@@ -25,7 +29,7 @@ class FormDatalist extends HTMLTag
     	if (is_scalar($value))
     	{
 
-    	    $op = new HTMLTag('option');
+    	    $op = new HTMLElement('option');
     		if (is_null($label))
     		{
     			$label = $value;
@@ -40,7 +44,7 @@ class FormDatalist extends HTMLTag
     	    {
     	        if (is_scalar($v))
     	        {
-    	            $op = new HTMLTag('option');
+    	            $op = new HTMLElement('option');
     	            $op->value = $v;
     	            $this->_content[] = $op;
     	        }

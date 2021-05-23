@@ -1,4 +1,6 @@
 <?php
+use FirePHP\Controller\Module; 
+
 class DebugBarModule extends Module
 {
     /**

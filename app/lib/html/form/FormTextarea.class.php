@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormTextarea génère les textarea pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

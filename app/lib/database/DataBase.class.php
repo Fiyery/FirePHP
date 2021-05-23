@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Database;
+
+use PDO;
+use FirePHP\Exception\DataBaseException;
 /**
  * Base est l'interface de connexion et de requetage à la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -210,7 +214,6 @@ class DataBase
 				}, ARRAY_FILTER_USE_KEY));
 			}
 		}
-		return $result;
 	}
 
 	/**
@@ -265,59 +268,6 @@ class DataBase
 			}
 		}
 		return ['sql' => $sql];
-	}
-	
-	/**
-	 * Sauvegarde de la base de donnée.
-	 * @param string $filename Chemin de l'exécutable MySQLDump.
-	 * @param array $excludes Liste des tables à exclure de la sauvegarde.
-	 * @return string Contenu de la sauvegarde de la base de données.
-	 * @throws DataBaseException
-	 */
-	public function save($filename=NULL, $excludes=NULL)
-	{
-	    $this->_check_connection();
-	    $save = '';
-	    if (empty($save))
-	    {
-        	$pdo = $this->_connection;
-        	$bd_save = '-- SAUVEGARDE de '.$this->_name.' le '.date('d/m/Y à H:G:s')."\n";
-        	$tables = $this->tables();
-        	$res = $pdo->prepare( "SHOW CREATE DATABASE `".$this->_name."`;");
-        	$res->execute();
-        	$create_database = $res->fetchAll(PDO::FETCH_NUM);
-        	$bd_save .= str_replace('CREATE DATABASE','CREATE DATABASE IF NOT EXISTS', $create_database[0][1]);
-        	$bd_save .= "\nUSE `".$this->_name."`;\n";
-        	foreach ($tables as $t)
-        	{
-        		$bd_save .= "\n\n".'DROP TABLE IF EXISTS `'.$t.'`;'."\n";
-        		$res = $pdo->prepare('SHOW CREATE TABLE `'.$t.'`;');
-        		$res->execute();
-        		$create_table = $res->fetchAll(PDO::FETCH_NUM);
-        		$bd_save .= $create_table[0][1]."\n";
-        		$res = $pdo->prepare('SELECT * FROM `'.$t.'`;');
-        		$res->execute();
-        		if ($res->rowCount() > 0)
-        		{
-        			$rows = $res->fetchAll(PDO::FETCH_NUM);
-        			$insert = 'INSERT INTO `'.$t.'` VALUES '."\n";
-        			foreach ($rows as $r)
-        			{
-        				$insert .= "(";
-        				$values = array();
-        				foreach ($r as $c)
-        				{
-        					$values[] = str_replace("'","\'",$c);
-        				}
-        				$insert.= "'".implode("','",$values)."'),\n";
-        			}
-        			$bd_save .= substr($insert,0 , -2);
-        			$bd_save .=";\n";
-        		}
-        	}
-        	$save .= ($value['charset'] != 'utf-8') ? (utf8_encode($data)) : ($bd_save); 
-	    }
-		return $save;
 	}
 	
 	/**

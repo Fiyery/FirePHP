@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputFile génère input type file pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

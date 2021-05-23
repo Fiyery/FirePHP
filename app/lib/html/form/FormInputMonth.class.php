@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputMonth génère input type month pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

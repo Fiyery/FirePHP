@@ -1,4 +1,10 @@
 <?php
+namespace FirePHP\Database;
+
+use FirePHP\Event\Observable;
+use FirePHP\Event\Observer;
+use FirePHP\Event\Event;
+
 /**
  * DaoObservable permet d'observer les événements de Dao même les méthodes statiques.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -43,13 +49,15 @@ class DaoObservable implements Observable
 	/**
      * Génère un événement.
      * @param Event $event
+	 * @return bool
      */
-    public function notify(Event $event)
+    public function notify(Event $event) : bool
 	{
 		foreach ($this->get_observers() as $observer)
 		{
 			$observer->notify($event);
 		}
+		return TRUE;
 	}
     
     /**

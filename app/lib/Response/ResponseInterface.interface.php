@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Response;
+
 /**
  * Interface sur la réponse d'une requête.
  */

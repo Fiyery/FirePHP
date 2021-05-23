@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputUrl génère input type url pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Helper;
+
 /**
  * Str regroupe des fonctions utiles sur les chaînes de caractères.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

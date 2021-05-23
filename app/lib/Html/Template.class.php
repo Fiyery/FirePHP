@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Html;
+
+use FirePHP\Exception\Exception;
+
 /**
  * Template est le moteur de template.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -259,7 +263,7 @@ class Template
 	 */
 	private function error($type, $var=NULL)
 	{
-		throw new FireException(str_replace('$var', $var, $this->_list_errors[$type]['message']), 2);
+		throw new Exception(str_replace('$var', $var, $this->_list_errors[$type]['message']), 2);
 	}
 	
 	/**

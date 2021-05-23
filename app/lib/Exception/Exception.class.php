@@ -1,9 +1,12 @@
 <?php
+namespace FirePHP\Exception;
+
+use Exception as PHPException;
 /**
  * FireException est l'exception personnalisée de l'application.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class FireException extends Exception
+class Exception extends PHPException
 {    
     /**
      * Constructeur.

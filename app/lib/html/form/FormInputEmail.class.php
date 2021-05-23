@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputEmail génère input type email pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

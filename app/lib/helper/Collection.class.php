@@ -1,4 +1,11 @@
 <?php
+namespace FirePHP\Helper;
+
+use Countable;
+use ArrayAccess;
+use ArrayIterator;
+use IteratorAggregate;
+
 /**
  * Helper pour l'utilisation des Tableaux.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -93,7 +100,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index
      * @param mixed $value
      */
-    public function set(strin $index, $value)
+    public function set(string $index, $value)
     {
         // Reset les indexs sauvegardés.
         $this->_dichotomous_index = [];
@@ -240,9 +247,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable
         else
         {
             reset($this->_array);
-            while (list($i, $o) = each($this->_array))
+			foreach ($this->_array as $k => $o)
             {
-                $this->_array[$i][$column] = call_user_func($callback, $this->_array[$i][$column]);
+                $this->_array[$k][$column] = call_user_func($callback, $o[$column]);
             }
         }
         return $this;

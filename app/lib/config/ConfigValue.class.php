@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Config;
+
+use Iterator;
+use stdClass;
+use FirePHP\Exception\Exception;
 /**
  * ConfigValue est une valeur de la config qui génère une Exception en cas d'erreur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -74,7 +79,7 @@ class ConfigValue implements Iterator
         }
         if (isset($this->_value->$name) === FALSE)
         {
-            throw new FireException("Undefined var \"".$name."\" for config \"".$this->_name."\"", 1);
+            throw new Exception("Undefined var \"".$name."\" for config \"".$this->_name."\"", 1);
         }
         return $this->_value->$name;
     }
