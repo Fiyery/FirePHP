@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Helper;
+
 /**
  * Mail gère l'envoie de mail.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

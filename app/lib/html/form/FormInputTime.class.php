@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputTime génère input type time pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

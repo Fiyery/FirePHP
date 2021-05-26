@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputColor génère input type color pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

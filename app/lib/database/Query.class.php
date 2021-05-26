@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Database;
+
 /**
  * Query est la classe qui permet de gérer les requêtes SQL depuis les models.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

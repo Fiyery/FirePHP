@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Helper;
+
 /**
  * Hierarchy gère les hiérarchies récursives sur plusieurs niveaux.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -7,7 +9,7 @@ class Hierarchy
 {
 	/**
 	 * Contient la liste 
-	 * @var unknown
+	 * @var array
 	 */
 	private $_list = [];
 	

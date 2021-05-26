@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Config;
 /**
  * Environment permet la différentiation de l'application selon les plateformes.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

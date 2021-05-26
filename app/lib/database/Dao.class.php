@@ -1,4 +1,11 @@
 <?php
+namespace FirePHP\Database;
+
+use ArrayAccess;
+use FirePHP\Exception\DaoException;
+use FirePHP\Event\Event;
+use FirePHP\Database\DataBase;
+use FirePHP\Database\Query;
 /**
  * Dao est la classe générale et mère de toutes les Dao spécifiques d'accès au table de la base de données.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -162,7 +169,7 @@ abstract class Dao implements ArrayAccess
 		// Notification.
 		self::observable()->notify(new Event(get_called_class().'::dependances', self::observable()));
 
-    	$constraintes = self::$_base->foreign_key(self::_to_table_name());
+    	$constraintes = self::$_base->foreign_keys(self::table_name());
     	$tables = array();
     	$done = array();
     	foreach ($constraintes as $c)
@@ -399,11 +406,10 @@ abstract class Dao implements ArrayAccess
      * ArrayAccess : offsetSet
      * @param string $offset
      * @param mixed $value
-     * @return void
      */
     public function offsetSet($offset, $value) 
     {
-        $this->__set($offset, $name);
+        $this->__set($offset, $value);
     }
 
     /**

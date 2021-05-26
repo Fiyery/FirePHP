@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\File;
+
+use DOMDocument;
+
 /**
  * XML est une interface simplifiée de gestion de contenu XML et notamment RSS.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

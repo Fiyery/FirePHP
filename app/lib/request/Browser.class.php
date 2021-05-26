@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Request;
+
 /**
  * Browser renseigne toute sorte d'informations sur le navigateur du client.
  * Attention les informations ne sont données qu'à titre indicatif et peuvent tout à faire être fausse. 
@@ -40,7 +42,7 @@ class Browser
      * Constructeur.
      * @param string $file Chemin du fichier de browscap.
      */
-	public function __construct($file=NULL)
+	public function __construct(string $file = NULL)
 	{
 		if (get_cfg_var('browscap'))
 		{
@@ -64,7 +66,7 @@ class Browser
 	 * @param string $filename_browscap Chemin du fichier.
 	 * @return array
 	 */
-	private function get_browser($filename_browscap)
+	private function get_browser(string $filename_browscap)
 	{
 		if (file_exists($filename_browscap) == FALSE)
 		{
@@ -106,7 +108,7 @@ class Browser
 	 * @param string $b Valeur 2 du tableau.
 	 * @return int
 	 */
-	private function sort_browscap($a, $b)
+	private function sort_browscap(string $a, string $b)
 	{
 		$sa = strlen($a);
 		$sb = strlen($b);
@@ -126,10 +128,10 @@ class Browser
 
 	/**
 	 * Met en minuscule les information du fichier browscap.
-	 * @param string $r Information à formater.
+	 * @param array $r Information à formater.
 	 * @return string
 	 */
-	private function lower_browscap($r) 
+	private function lower_browscap(array $r) 
 	{
 		return array_change_key_case($r, CASE_LOWER);
 	}
@@ -138,7 +140,7 @@ class Browser
 	 * Récupère le système d'exploitation du visiteur.
 	 * @return string
 	 */
-	public function get_plateform()
+	public function get_plateform() : string 
 	{
 		if ($this->_plateform == NULL)
 		{
@@ -183,7 +185,7 @@ class Browser
 		        	'nintendo wii' 				=> 'Nintendo Wii',
 		        	'playstation portable' 		=> 'PlayStation Portable'
 		        );
-		        $name_os = NULL;
+		        $name_os = "";
 		        while ((list($needle, $name) = each($list)) && $name_os == NULL)
 		        {
 		        	if (stripos($user_agent, $needle) !== FALSE)

@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\File;
+
+use FirePHP\Exception\Exception;
+
 /**
  * Dir est une classe qui rassemble des fonctions utiles sur les dossiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -15,14 +19,14 @@ class Dir
     /**
      * Constructeur.
      * @param string $dirname Chemin du dossier.
-     * @throws FireException
+     * @throws Exception
      */
     public function __construct($dirname='.')
     {
         if (is_dir($dirname) == FALSE)
         {
             $d = debug_backtrace();
-            throw new FireException('Dossier invalide', $d[0]['file'], $d[0]['line']);
+            throw new Exception('Dossier invalide', $d[0]['file'], $d[0]['line']);
         }
         $this->_dirname = (substr($dirname, -1) != '/') ? ($dirname.'/') : ($dirname);
     }

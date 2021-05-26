@@ -1,8 +1,45 @@
 <?php
+use FirePHP\Controller\Module; 
+
 class IndexModule extends Module
 {
 	public function action_index()
 	{
+
+		$c = new FirePHP\Security\Captcha();
+		// var_dump($c);
+		$c->get_captcha(TRUE);
+
+		// $c = "\FirePHP\Helper\Color";
+		// var_dump($c::rgb_to_hex([51, 51, 255]));
+		// var_dump($c::hex_to_rgb('#3333FF'));
+
+
+		exit();
+	
+
+
+
+
+
+
+		// $result = self::query()
+		// 	->table(self::table_prefix().substr($prop, 3))
+		// 	// ->select([
+		// 	// 	self::table_prefix().substr($prop, 3).".id", 
+		// 	// 	self::table_prefix().substr($prop, 3).".name", 
+		// 	// ])
+		// 	->join($table, "id_sheet_entity")
+		// 	->order(["name" => "ASC"])
+		// 	->run_array();
+
+
+
+
+
+
+
+
 		// RESPONSE AJAX
 		// $response = new ResponseAjax();
 		// $response->data()->toto = 1;

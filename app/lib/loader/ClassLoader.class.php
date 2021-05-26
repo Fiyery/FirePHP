@@ -1,4 +1,6 @@
 <?php
+
+namespace FirePHP\Loader;
 /**
  * ClassLoader gère le chargement des classes ou interfaces de l'application.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -9,7 +11,13 @@ class ClassLoader
 	 * Tableau des localisations des fichiers des classes.
 	 * @var string[]
 	 */
-	private $_dirs = array();	
+	private $_dirs = [];	
+
+	/**
+	 * Tableau des prefixes des namespace à convertir.
+	 * @var string[]
+	 */
+	private $_namespaces = [];	
 	
 	/**
 	 * Extention des fichiers classe.
@@ -31,9 +39,10 @@ class ClassLoader
 	 */
 	public function add_dir(string $dir)
 	{
-		if (is_string($dir) && file_exists($dir) && in_array($dir, $this->_dirs) === FALSE)
+		if (is_string($dir) && file_exists($dir) && in_array($dir, $this->_dirs) === FALSE && is_readable($dir))
 		{
-			$this->_dirs[] = (substr($dir,-1) != "/") ? ($dir."/") : ($dir);
+			$dir = str_replace("\\", "/", $dir);
+			$this->_dirs[] = (substr($dir, -1) !== "/") ? ($dir . "/") : ($dir);
 		}
 	}
 
@@ -47,7 +56,8 @@ class ClassLoader
 	{
 		if (is_string($dir) && file_exists($dir))
 		{
-			$dir = (substr($dir,-1) != "/") ? ($dir."/") : ($dir);
+			$dir = str_replace("\\", "/", $dir);
+			$dir = (substr($dir, -1) !== "/") ? ($dir . "/") : ($dir);
 			$this->_dirs[] = $dir;
 			if ($depth != 0)
 			{
@@ -62,6 +72,21 @@ class ClassLoader
 			}
 		}
 	}
+
+	/**
+	 * Ajoute un mapping pour la conversion d'un prefixe de namespace et un dossier.
+	 * @param string $prefix
+	 * @param string $dir
+	 */
+	public function add_prefix_namespace(string $prefix, string $dir)
+	{
+		if (is_string($dir) && file_exists($dir) && is_readable($dir))
+		{
+			$dir = str_replace("\\", "/", $dir);
+			$prefix = (substr($prefix, 0, 1) === "\\") ? (substr($prefix, 1)) : ($prefix);
+			$this->_namespaces[$prefix] = (substr($dir, -1) !== "/") ? ($dir . "/") : ($dir);
+		}
+	}
 	
 	/**
 	 * Définie l'extention des fichiers.
@@ -72,7 +97,7 @@ class ClassLoader
 		$this->_exts = [];
 		foreach ($exts as $e) 
 		{
-			$this->_exts[] = (substr($e, 0, 1) != ".") ? (".".$e) : ($e);
+			$this->_exts[] = (substr($e, 0, 1) !== ".") ? ("." . $e) : ($e);
 		}
 	}
 	
@@ -81,7 +106,7 @@ class ClassLoader
 	 */
 	public function enable()
 	{
-		spl_autoload_register(array($this,"load"),TRUE);
+		spl_autoload_register([$this, "load"], TRUE);
 	}
 	
 	/**
@@ -89,7 +114,7 @@ class ClassLoader
 	 */
 	public function disable()
 	{
-		spl_autoload_unregister(array($this,"load"));
+		spl_autoload_unregister([$this, "load"]);
 	}
 	
 	/**
@@ -120,40 +145,53 @@ class ClassLoader
 	/**
 	 * Charge une classe ou interface.
 	 * @param string $name Nom de la classe ou interface.
-	 * @return bool
 	 */
-	public function load(string $name) : bool
+	public function load(string $name) 
 	{
-		if (count($this->_dirs) === 0 || class_exists($name))
+		if (class_exists($name))
 		{
 			return FALSE;
 		}
-		$find = FALSE;
-		$files = [];
-		foreach ($this->_exts as $e) 
+		if (strpos($name, "\\") > -1) // Cas du namespace.
 		{
-			$files[] = strtolower($name.$e);
-		}
-		foreach ($this->_dirs as $dir)
-		{
-			$original = glob($dir."*");
-			$dir = strtolower($dir);
-			$dir_files = array_map("strtolower", $original);
-			foreach ($files as $file)
+			$name = str_replace("\\", "/", $name);
+			foreach ($this->_namespaces as $namespace => $dir)
 			{
-				if (($index = array_search($dir.$file, $dir_files)) !== FALSE)
+				if (strpos($name, $namespace) === 0) 
 				{
-					include($original[$index]);
-					$find = TRUE;
-					break;
+					$file = str_replace($namespace . "/", $dir, $name);
+					foreach ($this->_exts as $e) 
+					{
+						if (file_exists($file . $e))
+						{
+							include($file . $e);
+						}
+					}
 				}
 			}
 		}
-		if ($find === FALSE)
+		else 
 		{
-			throw new Exception("Class or interface \"" . $name . "\" not found");
+			$files = [];
+			foreach ($this->_exts as $e) 
+			{
+				$files[] = strtolower($name . $e);
+			}
+			foreach ($this->_dirs as $dir)
+			{
+				$original = glob($dir . "*");
+				$dir = strtolower($dir);
+				$dir_files = array_map("strtolower", $original);
+				foreach ($files as $file)
+				{
+					if (($index = array_search($dir . $file, $dir_files)) !== FALSE)
+					{
+						include($original[$index]);
+						break;
+					}
+				}
+			}
 		}
-		return TRUE;
 	}
 }
 ?>

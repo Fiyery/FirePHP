@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Event;
 /**
  * Logger défini le comportement minimal d'un d'une classe qui traite les journaux d'événements.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -23,10 +24,12 @@ abstract class Logger implements Observer
     /**
      * Traite l'action suite à un événement généré par la classe à observer.
      * @param Event $event
+	 * @return bool
      */
     public function notify(Event $event) : bool
     {
         $this->_events[] = $event;
+		return TRUE;
     }
 
     /**

@@ -1,4 +1,12 @@
 <?php
+namespace FirePHP\Core;
+
+use ReflectionClass;
+use FirePHP\Event\Event;
+use FirePHP\Event\Observer;
+use FirePHP\Event\Observable;
+use FirePHP\Exception\Exception;
+use FirePHP\Architecture\Singleton;
 /**
  * ServiceContainer permet de charger des services et de gérer les injections de dépendance.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -139,7 +147,7 @@ class ServiceContainer extends Singleton implements Observable
 	{
 		if ($instance != NULL && is_object($instance))
 		{
-			$name = ($name !== NULL) ? ($name) : (strtolower((new \ReflectionClass($instance))->getName()));
+			$name = ($name !== NULL) ? ($name) : (strtolower((new ReflectionClass($instance))->getName()));
 			if (isset($this->_instances[$name]) === FALSE)
 			{
 				$this->_instances[$name] = $instance;
@@ -150,7 +158,7 @@ class ServiceContainer extends Singleton implements Observable
 	/**
 	 * Initialise un service d'instance multiple.
 	 * @param string $name Nom du service.
-	 * @param callable $call Closure d'intialisation du service.
+	 * @param Callable $call Closure d'intialisation du service.
 	 */
 	public function set_factory(string $name, Callable $call)
 	{
@@ -188,7 +196,7 @@ class ServiceContainer extends Singleton implements Observable
 		}
 		catch (Exception $e)
 		{
-			throw new FireException('Unable to solve service "'.$name.'"', 1);
+			throw new Exception('Unable to solve service "'.$name.'"', 1);
 		}
 		if ($reflected_class->isInstantiable())
 		{
@@ -211,7 +219,7 @@ class ServiceContainer extends Singleton implements Observable
 						}
 					    catch (Exception $e)
 					    {
-					        throw new FireException('Unable to solve service "'.$name.'" : undefined default parameter for "'.$param->getName().'"', 1);
+					        throw new Exception('Unable to solve service "'.$name.'" : undefined default parameter for "'.$param->getName().'"', 1);
 					    }
 					}
 				}
@@ -223,7 +231,7 @@ class ServiceContainer extends Singleton implements Observable
 			}
 			return $this->_instances[$name];
 		}
-		throw new FireException('Unable to solve service "'.$name.'"', 1); 	   
+		throw new Exception('Unable to solve service "'.$name.'"', 1); 	   
 	}
 
 	/**
@@ -247,13 +255,15 @@ class ServiceContainer extends Singleton implements Observable
 	/**
      * Génère un événement.
      * @param Event $event
+	 * @return bool
      */
-    public function notify(Event $event)
+    public function notify(Event $event) : bool
 	{
 		foreach ($this->get_observers() as $observer)
 		{
 			$observer->notify($event);
 		}
+		return TRUE;
 	}
     
     /**

@@ -1,4 +1,8 @@
 <?php
+use FirePHP\Controller\Module; 
+use FirePHP\Html\Template; 
+use FirePHP\File\File; 
+
 class DebugBarModule extends Module
 {
     /**

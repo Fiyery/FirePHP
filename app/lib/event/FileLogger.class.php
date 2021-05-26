@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Event;
 /**
  * FileLogger enregistre les événéments dans des fichiers.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

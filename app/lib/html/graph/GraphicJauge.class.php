@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Graph;
+
 /**
  * GraphicJauge est une spécialisation de Graphic sous forme d'une jauge remplissable.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\File;
+
+use FirePHP\Exception\Exception;
+
 /**
  * Helper pour la lecture des fichiers CSV.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

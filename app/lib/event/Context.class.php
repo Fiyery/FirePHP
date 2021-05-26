@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Event;
 /**
  * Context est une classe qui sauvegarde les informations de base de l'environnement à sa création.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Security;
+
 /**
  * Access gère les accès des utilisateurs aux pages du site. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

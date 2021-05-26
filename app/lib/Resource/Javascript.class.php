@@ -1,29 +1,13 @@
 <?php
+namespace FirePHP\Resource;
+
 /**
  * Javascript gère le traitement des fichiers JS.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Ressource
  */
-class Javascript extends Ressource
+class Javascript extends Resource
 {	
-	/**
-	 * Nom du dossier JS.
-	 * @var string
-	 */
-	private $_dirname = NULL;
-	
-	/**
-	 * Nom du module.
-	 * @var string
-	 */
-	private $_module = NULL;
-	
-	/**
-	 * Nom de l'action du module.
-	 * @var string
-	 */
-	private $_action = NULL;
-
 	/**
 	 * Constructeur.
 	 * @param string $dirname Nom du dossier de destination des fichiers JS
@@ -40,9 +24,9 @@ class Javascript extends Ressource
 	 * @param string $name Nom du package associé.
 	 * @param string $dir Chemin du dossier.
 	 * @param string[] Liste des extensions à importer si renseigné. Par défaut, c'est ".js".
-	 * @return boolean
+	 * @return bool
 	 */
-	public function add_package($name, $dir, $exts=NULL)
+	public function add_package($name, $dir, $exts=NULL) : bool
 	{
 	    if ($exts == NULL)
 	    {

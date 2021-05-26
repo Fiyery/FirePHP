@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Config;
+
+use stdClass;
+use FirePHP\Exception\Exception;
+
 /**
  * Config est la classe qui contient l'ensemble des paramètres du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -58,9 +63,9 @@ class Config
 	
 	/**
 	 * Remplace les variables du fichier de configuration par leur valeur.
-	 * @param stdClass $data Objet des paramètres.
+	 * @param ConfigValue $data Objet des paramètres.
 	 */
-	private function _parse($data)
+	private function _parse(ConfigValue $data)
 	{
 		foreach ($data->iterate() as &$d)
 		{
@@ -100,7 +105,7 @@ class Config
 		}
 		if ($i !== $max) 
 		{
-			throw FireException("Undefined var \"$".implode(".", $args)."\" in the configuration file");
+			throw new Exception("Undefined var \"$".implode(".", $args)."\" in the configuration file");
 		}
 		return $value;
 	}

@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Response;
+
 /**
  * Classe de gestion des données à retourner en Ajax.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

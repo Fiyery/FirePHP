@@ -1,4 +1,10 @@
 <?php
+namespace FirePHP\Exception;
+
+use Error;
+use Throwable;
+use ReflectionClass;
+use Exception as PHPException;
 /**
  * ExceptionManager est la classe de gestion des erreurs et exceptions PHP personnalisée ou standard.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -218,7 +224,7 @@ class ExceptionManager
 	 * @param Exception $e Exception à traiter.
 	 * @return bool
 	 */
-	public function handle_exception(Exception $e) : bool
+	public function handle_exception(PHPException $e) : bool
 	{
 		if ($this->is_enabled())
 		{

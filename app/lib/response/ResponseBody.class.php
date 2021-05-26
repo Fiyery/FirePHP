@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Response;
+
 /**
  * Classe de gestion pour le corps de la réponse.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

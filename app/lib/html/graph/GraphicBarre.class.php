@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Graph;
+
 /**
  * GraphicBarre est une spécialisation de Graphic sous forme de barres.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

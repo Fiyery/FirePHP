@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Time;
+
+use DateInterval;
+
 /**
  * Interval est un outil de simplification de la classe DateInterval.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -13,43 +17,43 @@ class Interval
 	
 	/**
 	 * Nombre de secondes.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_second;
 	
 	/**
 	 * Nombre de minutes.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_minute;
 	
 	/**
 	 * Nombre d'heures.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_hour;
 	
 	/**
 	 * Nombre de jours.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_day;
 	
 	/**
 	 * Nombre total de jours.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_day_all;
 	
 	/**
 	 * Nombre de mois.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_month;
 	
 	/**
 	 * Nombre d'années.
-	 * @var numeric
+	 * @var int
 	 */
 	private $_year;
 	
@@ -78,63 +82,63 @@ class Interval
 	
 	/**
 	 * Retourne la seconde de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function second()
+	public function second() : int
 	{
 		return $this->_second;
 	}
 	
 	/**
 	 * Retourne la minute de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function minute()
+	public function minute() : int
 	{
 		return $this->_minute;
 	}
 	
 	/**
 	 * Retourne l'heure de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function hour()
+	public function hour() : int
 	{
 		return $this->_hour;
 	}
 	
 	/**
 	 * Retourne le jour de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function day()
+	public function day() : int
 	{
 		return $this->_day;
 	}
 	
 	/**
 	 * Retourne le mois de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function month()
+	public function month() : int
 	{
 		return $this->_month;
 	}
 	
 	/**
 	 * Retourne l'année de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function year()
+	public function year() : int
 	{
 		return $this->_year;
 	}
 	
 	/**
 	 * Retourne toutes les secondes de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function all_second()
+	public function all_second() : int
 	{
 		$seconds = $this->_second;
 		$seconds += $this->_minute * 60;
@@ -145,9 +149,9 @@ class Interval
 	
 	/**
 	 * Retourne toutes les minutes de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function all_minute()
+	public function all_minute() : int
 	{
 		$minutes = $this->_minute;
 		$minutes += $this->_hour * 60;
@@ -157,9 +161,9 @@ class Interval
 
 	/**
 	 * Retourne toutes les heures de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function all_hour()
+	public function all_hour() : int
 	{
 		$hours = $this->_hour;
 		$hours += $this->_day_all * 24;
@@ -168,18 +172,18 @@ class Interval
 	
 	/**
 	 * Retourne tous les jours de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function all_day()
+	public function all_day() : int
 	{
 		return $this->_day_all;
 	}
 	
 	/**
 	 * Retourne tous les mois de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function all_month()
+	public function all_month() : int
 	{
 		$mois = $this->_month;
 		$mois += $this->_year * 12;
@@ -188,9 +192,9 @@ class Interval
 	
 	/**
 	 * Retourne toutes les années de la date courante.
-	 * @return numeric
+	 * @return int
 	 */
-	public function all_year()
+	public function all_year() : int
 	{
 		return $this->_year;
 	}
@@ -199,7 +203,7 @@ class Interval
 	 * Vérifie si deux l'interval est NULL (si la première date est égale à la seconde date).
 	 * @return boolean
 	 */
-	public function is_egal()
+	public function is_egal() : bool
 	{
 		return ($this->_signe == 0);
 	}
@@ -208,7 +212,7 @@ class Interval
 	 * Vérifie si deux l'interval est négatif (si la première date est antérieure à la seconde date).
 	 * @return boolean
 	 */
-	public function is_previous()
+	public function is_previous() : bool
 	{
 		return ($this->_signe < 0);
 	}
@@ -217,7 +221,7 @@ class Interval
 	 * Vérifie si deux l'interval est positif (si la première date est postérieure à la seconde date).
 	 * @return boolean
 	 */
-	public function is_later()
+	public function is_later() : bool
 	{
 		return ($this->_signe > 0);
 	}

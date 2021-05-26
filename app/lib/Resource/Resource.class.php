@@ -1,17 +1,16 @@
 <?php
+namespace FirePHP\Resource;
+
+use FirePHP\Exception\Exception;
+use FirePHP\Exception\ResourceException;
+
 /**
  * Ressource gère le traitement des fichiers externes à une page web tels que les fichiers CSS, JavaScript, ...
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Minifier
  */
-class Ressource 
+class Resource 
 {
-	/**
-	 * Dossier des ressources par défaut.
-	 * @var string
-	 */
-	private static $_default_dir = './';
-	
 	/**
 	 * Temps du cache en seconde.
 	 * @var int
@@ -38,7 +37,7 @@ class Ressource
 	
 	/**
 	 * Liste des ressources.
-	 * @var string[]
+	 * @var array
 	 */
 	private $_list = NULL;
 	
@@ -50,7 +49,7 @@ class Ressource
 	
 	/**
 	 * Liste des liens des packages de ressources.
-	 * @var string[]
+	 * @var array<string>
 	 */
 	private $_links = NULL;
 	
@@ -98,9 +97,9 @@ class Ressource
 	/**
 	 * Sélectionne un package.
 	 * @param string $name Nom du package.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function select($name)
+	public function select(string $name) : bool
 	{
 		if (is_string($name) && array_key_exists($name, $this->_list))
 		{
@@ -113,12 +112,12 @@ class Ressource
 	/**
 	 * Ajoute une ressource au package de ressources.
 	 * @param string $link Lien du fichier à ajouter au package.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function add($link)
+	public function add($link) : bool
 	{
 		$this->check();
-		if (file_exists($link) && in_array($link,$this->_list[$this->_file]) == FALSE)
+		if (file_exists($link) && in_array($link, $this->_list[$this->_file]) == FALSE)
 		{
 			$this->_list[$this->_file][] = $link;
 			return TRUE;
@@ -131,9 +130,9 @@ class Ressource
 	 * @param string $name Nom du package associé.
 	 * @param string $dir Chemin du dossier.
 	 * @param string[] $exts Liste des extensions à importer si renseigné.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function add_package($name, $dir, $exts=NULL)
+	public function add_package($name, $dir, $exts=NULL) : bool
 	{
 		if (file_exists($dir))
 		{
@@ -329,14 +328,13 @@ class Ressource
 	
 	/**
 	 * Vérifie si la ressource est utilisable.
-	 * @throws RessourceException
+	 * @throws ResourceException
 	 */
 	private function check()
 	{
 		if ($this->_file == NULL)
 		{
-		    $caller = Debug::get_caller(2);
-			throw new RessourceException("Ressource invalide. La ressource doit être créée avant d'être utilisée", $caller['file'], $caller['line']);
+			throw new ResourceException("Ressource invalide. La ressource doit être créée avant d'être utilisée");
 		}
 	}
 	

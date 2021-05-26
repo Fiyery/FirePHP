@@ -1,4 +1,11 @@
 <?php
+namespace FirePHP\File;
+
+use FirePHP\Exception\UploadBadFileFormatException;
+use FirePHP\Exception\UploadFileNotFoundException;
+use FirePHP\Exception\UploadMoveFileException;
+use FirePHP\Exception\UploadLimitSizeExceededException;
+
 /**
 * Upload manage le traitement du téléchargement de fichiers.
 * @author Yoann Chaumin <yoann.chaumin@gmail.com>

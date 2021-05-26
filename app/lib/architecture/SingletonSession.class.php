@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Architecture;
 /**
  * SingletonSession est une spécialisation de Singleton. Le Singleton est aussi sauvegardé en session.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

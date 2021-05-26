@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Event;
 /**
  * Observer définit un observateur d'événement d'une classe Observable.
  */
@@ -14,7 +15,7 @@ interface Observer
     /**
      * Traite l'action suite à un événement généré par la classe à observer.
      * @param Event $event
-     * @return bool
+	 * @return bool
      */
     public function notify(Event $event) : bool;
 }

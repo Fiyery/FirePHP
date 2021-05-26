@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Helper;
+
 /**
  * Cron permet de simuler la commande cronjob en PHP.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -137,9 +139,9 @@ class Cron
 	{
 	    foreach ($this->_tasks as $i => $t)
 	    {
-	        Debug::show('Task '.$i);
+	        var_dump('Task '.$i);
 	        $this->_tasks[$i]['next_time'] = $this->_build_next_time_task($i);
-	        Debug::show(date('d/m/Y à H:i',$this->_tasks[$i]['next_time']));
+	        var_dump(date('d/m/Y à H:i',$this->_tasks[$i]['next_time']));
 	    }
 	}
 	
@@ -150,9 +152,10 @@ class Cron
 	private function _get_next_time()
 	{
 	    $index = -1;
+		$time = 0;
 		foreach($this->_tasks as $i => $t)
 		{
-			if(isset($time) == FALSE || $t['next_time'] < $time)
+			if($time === 0 || $t['next_time'] < $time)
 			{
 			    $time = $t['next_time'];
 			    $index = $i;
@@ -400,7 +403,7 @@ class Cron
 	 */
 	private function _execute($index)
 	{
-	    Debug::show('exec');
+	    var_dump('exec');
 	    $this->_stop();
 	    $begin = time();
 	    if (is_callable($this->_tasks[$index]['call']))
@@ -420,7 +423,7 @@ class Cron
 	 */
 	private function _stop()
 	{
-	    Debug::show('stop');
+	    var_dump('stop');
 	    if (file_exists(self::$_dir.self::NAME_CRON_END))
 	    {
 	        $this->__destruct();
@@ -435,20 +438,11 @@ class Cron
 	 */
 	public static function set_dir($dir)
 	{
-	    if (file_exist($dir) && is_dir($dir))
+	    if (file_exists($dir) && is_dir($dir))
 	    {
 	        self::$_dir = (substr($dir, -1) != '/') ? ($dir.'/') : ($dir);
 	        return TRUE;
 	    }
 	    return FALSE;
-	}
-	
-	
-	public static function task1()
-	{
-		$i = 0;
-		while (file_exists('task1-'.$i.'.txt')) $i++;
-		file_put_contents('task1-'.$i.'.txt', time());
-	}
-	
+	}	
 }

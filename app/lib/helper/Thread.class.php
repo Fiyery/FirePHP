@@ -1,4 +1,9 @@
 <?php
+namespace FirePHP\Helper;
+
+use stdClass;
+use CurlMultiHandle;
+
 /**
  * Thread gère l'exécution de script en parallèle (multiplexage) par le biais de l'extension cURL.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -19,7 +24,7 @@ class Thread
 
 	/**
 	 * Gestionnaire d'appels multi cURL.
-	 * @var ressource
+	 * @var CurlMultiHandle
 	 */
 	private $_multi_handler = NULL;
 
@@ -103,7 +108,7 @@ class Thread
 	 * @param int $index Numéro de l'appel.
 	 * @return stdClass 
 	 */
-	public function response(int $index) : stdClass
+	public function response(int $index) : ?stdClass
 	{
 		return (isset($this->_responses[$index])) ? ($this->_responses[$index]) : (NULL);
 	}

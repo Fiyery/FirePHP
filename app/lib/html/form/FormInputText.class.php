@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputText génère input type text pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

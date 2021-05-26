@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Security;
+
+use FirePHP\Architecture\SingletonSession;
+
 /**
  * SecureBFA (Brut-Force Attack) protège contre les attaques massives.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

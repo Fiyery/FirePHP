@@ -1,4 +1,8 @@
 <?php
+namespace FirePHP\Html;
+
+use ReflectionClass;
+
 /**
  * Component permet la segmentation de code HTML et leur réusilisation.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

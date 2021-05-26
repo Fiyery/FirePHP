@@ -1,4 +1,5 @@
 <?php
+use FirePHP\Controller\Module; 
 class AccessRuleModule extends Module
 {
     /**

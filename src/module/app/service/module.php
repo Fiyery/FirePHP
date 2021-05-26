@@ -1,4 +1,12 @@
 <?php
+use FirePHP\Controller\Module; 
+use FirePHP\Debug\Debug; 
+use FirePHP\Html\Form\Form; 
+use FirePHP\Database\Dao; 
+use FirePHP\Database\DaoInitializer; 
+use FirePHP\Architecture\SingletonSession;
+use FirePHP\Html\Template;
+
 class ServiceModule extends Module
 {
     /**
@@ -199,7 +207,7 @@ class ServiceModule extends Module
     {
         if ($this->config->mail->enable === FALSE)
         {
-            $service->disable();
+            $this->mail->disable();
         }
         $this->mail->sender($this->config->mail->sender_mail, $this->config->mail->sender_name);
     }

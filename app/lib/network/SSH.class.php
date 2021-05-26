@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Network;
+
 /**
  * SSH est une interface qui permet la connexion simple à un serveur en SSH et également de faire du SFTP avec ce serveur.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -47,7 +49,7 @@ class SSH
 	/**
 	 * Établie ma connexion en SSH.
 	 * @param string $host Adresse du serveur cible.
-	 * @param string $port Num�ro de port de la connexion.
+	 * @param string $port Numéro de port de la connexion.
 	 * @return boolean
 	 */
 	public function connect($host, $port)
@@ -78,7 +80,7 @@ class SSH
 	/**
 	 * Exécute une commande.
 	 * Attention sur un serveur Windows, il faut précéder la commande de cmd \c.
-	 * @param string $cmd Commande � ex�cuter.
+	 * @param string $cmd Commande à exécuter.
 	 * @return string
 	 */
 	public function exec($cmd)
@@ -151,7 +153,7 @@ class SSH
 	/**
 	 * Récupère un fichier du serveur et l'enregistre localement.
 	 * @param string $server_file Nom du fichier à télécharger.
-	 * @param string $local_file Nom du fichier enregistr�.
+	 * @param string $local_file Nom du fichier enregistré.
 	 * @return boolean
 	 */
 	public function get($server_file, $local_file)

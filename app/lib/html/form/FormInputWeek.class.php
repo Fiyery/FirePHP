@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html\Form;
+
 /**
  * FormInputWeek génère input type week pour des formulaires.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

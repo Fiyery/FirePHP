@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Resource;
 
 /**
  * Minifier gère la minification des fichiers CSS et JS.

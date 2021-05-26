@@ -1,4 +1,10 @@
 <?php
+namespace FirePHP\Controller;
+
+use Throwable;
+use FirePHP\Event\Event;
+use FirePHP\Cache\Cache;
+use FirePHP\Core\ServiceContainer;
 /**
  * FrontController est la classe de chargement des modules du site.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

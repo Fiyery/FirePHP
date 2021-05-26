@@ -1,4 +1,5 @@
 <?php
+namespace FirePHP\Event;
 /**
  * Event est la classe fondamentale à la gestion des événements.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -32,7 +33,7 @@ class Event
 
     /**
      * Type de l'événement.
-     * @var string
+     * @var Context
      */
     protected $_context = NULL;
 

@@ -11,5 +11,4 @@ interface DataSource
     
     public function search(array $fields);
 }
-
 ?>

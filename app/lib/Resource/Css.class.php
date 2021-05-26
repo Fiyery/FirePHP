@@ -1,34 +1,16 @@
 <?php
+namespace FirePHP\Resource;
+
 /**
  * Css gère le traitement des fichiers CSS.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  * @uses Ressource
  */
-class Css extends Ressource
+class Css extends Resource
 {	
-	/**
-	 * Nom du dossier CSS.
-	 * @var string
-	 */
-	private $_dirname = NULL;
-	
-	/**
-	 * Nom du module.
-	 * @var string
-	 */
-	private $_module = NULL;
-	
-	/**
-	 * Nom de l'action du module.
-	 * @var string
-	 */
-	private $_action = NULL;
-
 	/**
 	 * Constructeur.
 	 * @param string $dirname Nom du dossier de destination des fichiers CSS
-	 * @param string $module Nom du module.
-	 * @param string $action Nom de l'action.
 	 */
 	public function __construct($dirname)
 	{
@@ -40,9 +22,9 @@ class Css extends Ressource
 	 * @param string $name Nom du package associé.
 	 * @param string $dir Chemin du dossier.
 	 * @param string[] Liste des extensions à importer si renseigné. Par défaut, c'est ".css".
-	 * @return boolean
+	 * @return bool
 	 */
-	public function add_package($name, $dir, $exts=NULL)
+	public function add_package($name, $dir, $exts=NULL) : bool
 	{
 	    if ($exts == NULL)
 	    {
@@ -57,7 +39,7 @@ class Css extends Ressource
 	 * @param string $root_url Adresse URL du dossier racine.
 	 * @return string Code HTMl du CSS.
 	 */
-	public function get_html($root_dir=NULL, $root_url=NULL)
+	public function get_html($root_dir = NULL, $root_url = NULL) : string
 	{
 	    $links = $this->get_link_packages();
 	    $html = '';

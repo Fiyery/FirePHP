@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Event;
+
 /**
  * Observable définit un objet qui peut être suivi par un Observer.
  */
@@ -19,8 +21,9 @@ interface Observable
     /**
      * Génère un événement.
      * @param Event $event
+	 * @return bool
      */
-    public function notify(Event $event);
+    public function notify(Event $event) : bool;
     
     /**
      * Retourne tous les observateurs de l'objet.

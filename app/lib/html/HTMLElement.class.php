@@ -1,4 +1,6 @@
 <?php
+namespace FirePHP\Html;
+
 /**
  * HTMLElement est la classe représentant un élément HTML.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
