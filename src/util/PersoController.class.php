@@ -1,4 +1,6 @@
 <?php
+use FirePHP\Controller\FrontController;
+
 /**
  * PersoController est la spécialisation générale au site de FrontController.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>

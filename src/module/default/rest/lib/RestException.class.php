@@ -1,9 +1,11 @@
 <?php
+use FirePHP\Exception\Exception;
+
 /**
  * HTTP REST Exception.
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
  */
-class RestException extends FireException
+class RestException extends Exception
 {
     const ERROR_SQL = 'ERROR_SQL';
     const INVALID_FOREIGN_KEY = 'INVALID_FOREIGN_KEY';

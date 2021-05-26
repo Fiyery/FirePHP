@@ -1,6 +1,7 @@
 <?php
 use FirePHP\Controller\Module; 
 
+
 class RestModule extends Module
 {
     public function action_index()

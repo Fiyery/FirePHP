@@ -5,7 +5,17 @@ class IndexModule extends Module
 {
 	public function action_index()
 	{
-		
+
+		$c = new FirePHP\Security\Captcha();
+		// var_dump($c);
+		$c->get_captcha(TRUE);
+
+		// $c = "\FirePHP\Helper\Color";
+		// var_dump($c::rgb_to_hex([51, 51, 255]));
+		// var_dump($c::hex_to_rgb('#3333FF'));
+
+
+		exit();
 	
 
 

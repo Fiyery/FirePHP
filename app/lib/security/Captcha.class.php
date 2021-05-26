@@ -1,6 +1,8 @@
 <?php
 namespace FirePHP\Security;
 
+use FirePHP\Helper\Color;
+
 /**
  * Captcha est une classe qui génère des images type captcha. 
  * @author Yoann Chaumin <yoann.chaumin@gmail.com>
@@ -93,35 +95,34 @@ class Captcha
 	/**
 	 * Définie le nombre de caractères du captcha.
 	 * @param int $nb Nombre de caractères du captcha.
-	 * @return Captcha|boolean Si le paramètre est bien un int, cette fonction retourne l'instance, sinon FALSE.
+	 * @return Captcha Si le paramètre est bien un int, cette fonction retourne l'instance, sinon FALSE.
 	 */
-	public function set_length($nb=7)
+	public function set_length($nb = 7) : Captcha
 	{
 		if (is_int($nb))
 		{
 			$this->_length = $nb;
-			return $this;
 		}
-		return FALSE;
+		return $this;
 	}
 	
 	/**
 	 * Définie la couleur de la police.
 	 * @param string $color Couleur de la police.
-	 * @return Captcha|boolean Si le paramètre est bien une couleur, cette fonction retourne l'instance, sinon FALSE.
+	 * @return Captcha Si le paramètre est bien une couleur, cette fonction retourne l'instance, sinon FALSE.
 	 */
-	public function set_color($color)
+	public function set_color($color) : Captcha
 	{
 		if (is_string($color))
 		{
-			$color = Toolbox::hex_to_rvb($color);
+			$color = Color::hex_to_rgb($color);
 		}
-		if (count($color) == 3)
+		if (count($color) === 3)
 		{
 			$valid = TRUE;
 			foreach ($color as $c)
 			{
-				if (is_numeric($c) == FALSE || $c > 255 || $c < 0)
+				if (is_numeric($c) === FALSE || $c > 255 || $c < 0)
 				{
 					$valid = FALSE;
 				}
@@ -129,56 +130,51 @@ class Captcha
 			if ($valid)
 			{
 				$this->_color = $color;
-				return $this;
 			}
 		}
-		
-		return FALSE;
+		return $this;
 	}
 	
 	/**
 	 * Définie la largeur du captcha.
 	 * @param int $width Largeur du captcha.
-	 * @return Captcha|boolean Si la largeur est bien un int, cette fonction retourne l'instance, sinon FALSE.
+	 * @return Captcha Si la largeur est bien un int, cette fonction retourne l'instance, sinon FALSE.
 	 */
-	public function set_width($width)
+	public function set_width($width) : Captcha
 	{
 		if (is_numeric($width))
 		{
 			$this->_width = $width;
-			return $this;
 		}
-		return FALSE;
+		return $this;
 	}
 	
 	/**
 	 * Définie la hauteur du captcha.
 	 * @param int $height Hauteur du captcha.
-	 * @return Captcha|boolean Si la hauteur est bien un int, cette fonction retourne l'instance, sinon FALSE.
+	 * @return Captcha Si la hauteur est bien un int, cette fonction retourne l'instance, sinon FALSE.
 	 */
-	public function set_height($height)
+	public function set_height($height) : Captcha
 	{
 		if (is_numeric($height))
 		{
 			$this->_height = $height;
-			return $this;
 		}
-		return FALSE;
+		return $this;
 	}
 	
 	/**
 	 * Définie la taille de la police.
 	 * @param int $nb Taille de la police en pixel.
-	 * @return Captcha|boolean Si le paramètre est bien un int, cette fonction retourne l'instance, sinon FALSE.
+	 * @return Captcha Si le paramètre est bien un int, cette fonction retourne l'instance, sinon FALSE.
 	 */
-	public function set_size($nb=7)
+	public function set_size($nb=7) : Captcha
 	{
 		if (is_int($nb))
 		{
 			$this->_size = $nb;
-			return $this;
 		}
-		return FALSE;
+		return $this;
 	}
 	
 	/**
@@ -187,9 +183,9 @@ class Captcha
 	 */
 	private function get_word()
 	{
-		$letters = array_merge(range('a','z'),range('A','Z'),range('0','9'));
-		$word = '';
-		for($i=0;$i<$this->_length;$i++)
+		$letters = array_merge(range("a","z"),range("A","Z"),range("0","9"));
+		$word = "";
+		for($i=0; $i < $this->_length; $i++)
 		{
 			$word .= $letters[array_rand($letters)];
 		}
@@ -199,9 +195,9 @@ class Captcha
 	
 	/**
 	 * Génère l'image du captcha.
-	 * @param boolean $show Si TRUE, le captcha sera affiché directement sinon, il sera sauvegardé dans le dossier des captchas.
+	 * @param bool $show Si TRUE, le captcha sera affiché directement sinon, il sera sauvegardé dans le dossier des captchas.
 	 */
-	public function get_captcha($show=FALSE)
+	public function get_captcha(bool $show = FALSE)
 	{
 		$image = imagecreate($this->_width, $this->_height);
 		$white = imagecolorallocate($image, 255, 255, 255);
@@ -214,14 +210,14 @@ class Captcha
 		foreach ($letters as $w)
 		{
 			$c = $colors[array_rand($colors)];
-			if (count($fonts) == 0)
+			if (count($fonts) === 0)
 			{
-				imagechar($image,5,$x,$y,$w,$c);
+				imagechar($image, 5, $x, $y, $w, $c);
 			}
 			else 
 			{
 				$f = $fonts[array_rand($fonts)];
-				$a = rand(self::$_rotation_min,self::$_rotation_max);
+				$a = rand(self::$_rotation_min, self::$_rotation_max);
 				imagettftext($image,18, $a, $x, $y, $c, $f, $w);
 			}
 			
@@ -234,7 +230,7 @@ class Captcha
 		}
 		else
 		{
-			imagepng($image,self::$_dir.'captcha-'.md5($this->_word).'.png');
+			imagepng($image, self::$_dir."captcha-".md5($this->_word).".png");
 		}
 		imagedestroy($image);
 	}
@@ -242,7 +238,7 @@ class Captcha
 	/**
 	 * Génère un ensemble de couleurs pour la police du captcha.
 	 * @param resource $image Image du captcha.
-	 * @return array<
+	 * @return array
 	 */
 	private function get_colors($image)
 	{
@@ -269,7 +265,7 @@ class Captcha
 	{
 		if (self::$_dir_backgrounds !== NULL)
 		{
-			$list = glob(self::$_dir_backgrounds.'*.jpg');
+			$list = glob(self::$_dir_backgrounds."*.jpg");
 			if (is_array($list) && count($list) > 0)
 			{
 				$background = $list[array_rand($list)];
@@ -290,7 +286,7 @@ class Captcha
 		$fonts = array();
 		if (self::$_dir_fonts !== NULL)
 		{
-			$fonts = glob(self::$_dir_fonts.'*.ttf');
+			$fonts = glob(self::$_dir_fonts . "*.ttf");
 			if (is_array($fonts) == FALSE)
 			{
 				$fonts = array();
@@ -313,15 +309,15 @@ class Captcha
 	 * @param string $dir Dossier de destination des images.
 	 * @return boolean TRUE si dossier valide et chargé sinon FALSE.
 	 */
-	public static function set_dir($dir)
+	public static function set_dir(string $dir)
 	{
-		if (!file_exists($dir))
+		if (file_exists($dir) === FALSE)
 		{
-			mkdir($dir,0755,TRUE);
+			mkdir($dir, 0755, TRUE);
 		}
 		if (file_exists($dir) && is_readable($dir) && is_dir($dir))
 		{
-			self::$_dir = (substr($dir,-1) == '/') ? ($dir) : ($dir.'/');
+			self::$_dir = (substr($dir,-1) === "/") ? ($dir) : ($dir."/");
 			return FALSE;
 		}	
 		else
@@ -337,8 +333,8 @@ class Captcha
 	{
 		if (self::$_dir != NULL)
 		{
-			$files = glob(self::$_dir.'captcha-*.png');
-			array_map('unlink',$files);
+			$files = glob(self::$_dir . "captcha-*.png");
+			array_map("unlink",$files);
 		}
 	}
 	
@@ -350,7 +346,7 @@ class Captcha
 	{
 		if (file_exists($dir))
 		{
-			self::$_dir_backgrounds = (substr($dir,-1) !== '/') ? ($dir.'/') : ($dir);
+			self::$_dir_backgrounds = (substr($dir,-1) !== "/") ? ($dir."/") : ($dir);
 		}
 	}
 	
@@ -362,7 +358,7 @@ class Captcha
 	{
 		if (file_exists($dir))
 		{
-			self::$_dir_fonts = (substr($dir,-1) !== '/') ? ($dir.'/') : ($dir);
+			self::$_dir_fonts = (substr($dir,-1) !== "/") ? ($dir."/") : ($dir);
 		}
 	}
 	
