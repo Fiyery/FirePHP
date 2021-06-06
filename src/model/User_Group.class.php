@@ -1,4 +1,6 @@
 <?php
+use FirePHP\Database\Dao; 
+
 class User_Group extends Dao
 {
 	protected $nom;
