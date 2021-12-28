@@ -151,7 +151,7 @@ class Browser
 		    else 
 		    {
 		        $user_agent = $_SERVER['HTTP_USER_AGENT'];
-		        $list = array(
+		        $list = [
 		        	'windows nt 5.1' 			=> 'Microsoft Windows XP',
 		        	'offbyone; windows 2000'	=> 'Microsoft Windows XP',
 		        	'windows nt 6.1' 			=> 'Microsoft Windows 7',
@@ -184,15 +184,15 @@ class Browser
 		        	'symbian-crystal' 			=> 'Symbian OS',
 		        	'nintendo wii' 				=> 'Nintendo Wii',
 		        	'playstation portable' 		=> 'PlayStation Portable'
-		        );
+				];
 		        $name_os = "";
-		        while ((list($needle, $name) = each($list)) && $name_os == NULL)
-		        {
-		        	if (stripos($user_agent, $needle) !== FALSE)
+				foreach ($list as $name => $needle)
+				{
+					if (stripos($user_agent, $needle) !== FALSE)
 		        	{
 		        		$name_os = $name;
-		        	}
-		        }
+		        	}	
+				}
 		        $this->_plateform = $name_os;
 		    }
 		}
@@ -242,7 +242,7 @@ class Browser
 	    	else
 	    	{
     			$user_agent = $_SERVER['HTTP_USER_AGENT'];
-    			$navs = array(
+    			$navs = [
     				'msie' 									=> 'IE',
     				'firefox'								=> 'Firefox',
     				'chrome'								=> 'Chrome',
@@ -279,15 +279,15 @@ class Browser
     				'scooter' 								=> 'AltaVista Scooter bot',
     				'wget' 									=> 'Wget bot',
     				'w3c_validator' 						=> 'W3C validator bot'
-    			);
+				];
     			$this->_name = NULL;
-    			while ((list($needle,$name) = each($navs)) && $this->_name == NULL)
-    			{
-    				if (stripos($user_agent, $needle) !== FALSE)
-    				{
-    					$this->_name = $name;
-    				}
-    			}
+				foreach ($navs as $name => $needle)
+				{
+					if (stripos($user_agent, $needle) !== FALSE)
+		        	{
+		        		$this->_name = $name;
+		        	}	
+				}
 	    	}
 		}
 		return $this->_name;
