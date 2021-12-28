@@ -74,6 +74,18 @@ class HTMLQuery
 		return $this->get_elements_by_xpath($xpath);		
 	}
 
+	
+	/**
+	 * Retourne la liste des URL dans les balises de lien du code HTML
+	 * @return array
+	 */
+	public function get_links() : array
+	{
+		$html = $this->get_elements_by_xpath("body");
+		preg_match_all('/<a[^>]*href=["|\']([^#][^"\']+)["|\']/iU', $html[0], $match);
+		return $match[1];
+	}
+
 	/**
 	 * Retourne le code HTML analysé.
 	 * @return string
