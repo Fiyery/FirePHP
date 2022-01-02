@@ -41,27 +41,6 @@ class ServiceModule extends Module
     }
 
     /**
-     * Paramétrage du Service ErrorManager.
-     */
-    public function action_config_error()
-    {
-        $this->error->start();
-        $this->error->set_file($this->config->path->root_dir.$this->config->path->log.'error.log');
-        $this->error->add_data('ip',(isset($_SERVER['REMOTE_ADDR'])) ? ($_SERVER['REMOTE_ADDR']) : ('null'));
-        $this->error->add_data('url', $_SERVER['REQUEST_URI']);
-        $this->error->active_error();
-        $this->error->active_exception();
-        if ($this->config->feature->error_log)
-        {
-            $this->error->active_save();
-        }
-        if ($this->config->tpl->enable === FALSE || $this->config->feature->error_show == FALSE)
-        {
-            $this->error->hide();
-        }
-    }
-
-    /**
      * Paramétrage du Service Session.
      */
     public function action_config_session()

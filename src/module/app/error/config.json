@@ -1,0 +1,13 @@
+// Config du module.
+{
+    // Si le module peut être appelé par une requête HTTP.
+    "allow_http_request" : true,
+
+    // Défini les événements qui déclenche le module.
+    "load_on_event" : [
+        "Core::init"
+    ],
+
+	// Ordre de priorité d'execution lors de la notification d'un événément (Si vide, ordre alphabétique selon arborescence).
+	"execution_order" : 1
+}
