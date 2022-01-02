@@ -40,7 +40,21 @@ class Hook implements Observer
     public function add(Module $module)
     {
         $this->_modules[] = $module;
+		usort($this->_modules, [$this, "_sort_execution"]);
     }
+
+	/**
+	 * Trie l'ordre d'excution des modules.
+	 * @param Module $module1
+	 * @param Module $module2
+	 * @return bool
+	 */
+	protected function _sort_execution(Module $module1, Module $module2) : bool
+	{
+		$order1 = (isset($module1->params()->execution_order)) ? ($module1->params()->execution_order) : (NULL);
+		$order2 = (isset($module2->params()->execution_order)) ? ($module2->params()->execution_order) : (NULL);
+		return !(is_numeric($order1) && (is_numeric($order2) === FALSE || $order1 < $order2));
+	}
 
     /**
      * Informe les modules du déclenchement d'un événement.
@@ -53,19 +67,11 @@ class Hook implements Observer
         $throwables = [];
         foreach ($this->_modules as $m)
         {
-            // On entoure la notification d'un try catch pour permettre l'execution des autres modules en cas d'arrêt.
-            try
-            {
-                if ($m->notify($e))
-                {
-                    $this->_last_loaded = $m;
-                    $return = TRUE;
-                }
-            }
-            catch (Throwable $t)
-            {
-                $throwables[] = $t;
-            }
+            if ($m->notify($e))
+			{
+				$this->_last_loaded = $m;
+				$return = TRUE;
+			}
         }
         
         // Lance les Throwable à la fin de la notification de tous les modules.

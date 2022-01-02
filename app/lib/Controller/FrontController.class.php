@@ -38,7 +38,7 @@ class FrontController
 		}
 		catch (Throwable $t)
 		{
-			$this->error->handle_throwable($t);
+			$this->handle_throwable($t);
 		}
 	}
 	
@@ -214,17 +214,7 @@ class FrontController
 		}
 		catch (Throwable $t)
 		{
-			// En cas d'Exception
-			// On log l'erreur.
-			$this->error->handle_throwable($t);
-
-			// On fait appel au module d'erreur.
-			$this->router->controller('Default');
-			$this->router->module('error');
-			$this->router->action('500');
-			$this->response->status_code(500);
-			$this->tpl->assign('error_msg', $t->getMessage());
-			$this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action())));
+			$this->handle_throwable($t);
 		}
 
 		// Event pour lancer les actions du Hook.
@@ -234,7 +224,7 @@ class FrontController
 		}
 		catch (Throwable $t)
 		{
-			$this->error->handle_throwable($t);
+			$this->handle_throwable($t);
 		}
 		
 		// Exécution des commandes spécifiques après le chargements du modules.
@@ -284,6 +274,31 @@ class FrontController
 		{
 			$this->error->handle_throwable($t);
 		}
+	}
+
+	/**
+	 * Permet l'affichage personnalisé des erreurs et exceptions.
+	 * @param Throwable $t
+	 */
+	public function handle_throwable(Throwable $t)
+	{
+		// En cas d'Exception
+
+		// On log l'erreur.
+		$this->error->handle_throwable($t);
+
+		// On fait appel au module d'erreur.
+		$this->router->controller('Default');
+		$this->router->module('error');
+		$this->router->action('500');
+		$this->response->status_code(500);
+		$this->tpl->assign('error_msg', $t->getMessage());
+		$this->tpl->assign('error_code', $t->getCode());
+		$this->tpl->assign('error_file', $t->getFile());
+		$this->tpl->assign('error_line', $t->getLine());
+		$this->tpl->assign('error_trace', $t->getTrace());
+		var_dump($t->getTrace());
+		$this->hook->notify(new Event(($this->router->module()).'::'.($this->router->action())));
 	}
 	
 	/**
