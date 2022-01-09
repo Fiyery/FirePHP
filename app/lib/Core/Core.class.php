@@ -68,6 +68,7 @@ class Core
 		$loader->add_dir_recursive($this->_dir."lib", ["obsolete"]);
 
 		// Chargement des classes du framework avec namespace.
+		$loader->add_prefix_namespace("FirePHP\\Model", realpath(dirname(__DIR__)."/../../src/model/"));
 		$loader->add_prefix_namespace("FirePHP", dirname(__DIR__)."/");
 		$loader->enable();
 

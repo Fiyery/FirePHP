@@ -1,10 +1,13 @@
 <?php
-use FirePHP\Controller\Module; 
+
+use FirePHP\Controller\Module;
+use FirePHP\Model\User;
 
 class IndexModule extends Module
 {
 	public function action_index()
 	{
+		$u = new User();
 
 		// $c = new FirePHP\Security\Captcha();
 		// var_dump($c);

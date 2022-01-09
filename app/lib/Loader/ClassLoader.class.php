@@ -84,7 +84,7 @@ class ClassLoader
 		{
 			$dir = str_replace("\\", "/", $dir);
 			$prefix = (substr($prefix, 0, 1) === "\\") ? (substr($prefix, 1)) : ($prefix);
-			$this->_namespaces[$prefix] = (substr($dir, -1) !== "/") ? ($dir . "/") : ($dir);
+			$this->_namespaces[str_replace("\\", "/", $prefix)] = (substr($dir, -1) !== "/") ? ($dir . "/") : ($dir);
 		}
 	}
 	
@@ -160,12 +160,19 @@ class ClassLoader
 				if (strpos($name, $namespace) === 0) 
 				{
 					$file = str_replace($namespace . "/", $dir, $name);
+					$find = FALSE;
 					foreach ($this->_exts as $e) 
 					{
 						if (file_exists($file . $e))
 						{
 							include($file . $e);
+							$find = TRUE;
+							break;
 						}
+					}
+					if ($find) 
+					{
+						break;
 					}
 				}
 			}

@@ -1,4 +1,7 @@
 <?php
+
+namespace FirePHP\Model;
+
 use FirePHP\Database\Dao; 
 
 class User_Group extends Dao
