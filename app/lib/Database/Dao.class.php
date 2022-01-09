@@ -242,7 +242,8 @@ abstract class Dao implements ArrayAccess
      */
 	public static function table_name() : string
 	{
-		return strtolower(self::$_table_prefix.get_called_class());
+		// La fonction basename() permet de traiter les classes avec namespace.
+		return strtolower(self::$_table_prefix.basename(get_called_class()));
 	}    
 
     /**
@@ -407,7 +408,7 @@ abstract class Dao implements ArrayAccess
      * @param string $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value) 
+    public function offsetSet($offset, $value) : void
     {
         $this->__set($offset, $value);
     }
@@ -427,7 +428,7 @@ abstract class Dao implements ArrayAccess
      * @param string $offset
      * @return void
      */
-    public function offsetUnset($offset) 
+    public function offsetUnset($offset) : void
     {
         unset($this->$offset);
     }
