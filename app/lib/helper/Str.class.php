@@ -9,7 +9,7 @@ class Str
 {
     /**
      * Liste des méthodes utilisées pour la comparaison.
-     * @var unknown
+     * @var int
      */
     const CMP_LEVENSHTEIN = 1;
     const CMP_SOUNDER = 2;
@@ -26,24 +26,33 @@ class Str
     const CMP_STRENGTH_METAPHONE = 1;
     const CMP_STRENGTH_LENGTH = 1;
     const CMP_STRENGTH_SIMILAR = 2;
+
+    /**
+     * Place de caractères sélectionnable dans la génération d'une chaîne aléatoire.
+     * @var int
+     */
+    const RAND_NUMBER = 1;
+    const RAND_ALPHA_LOW = 2;
+    const RAND_ALPHA_UP = 4;
+    const RAND_SPECIAL = 8;
     
     /**
      * Formate une chaine pour la mettre dans l'url.
      * @param string $string Chaîne de caractères à traiter.
-     * @return string Chaîne formatée.
+     * @return string
      */
-    public static function format_url($string)
+    public static function format_url(string $string) : string
     {
-    	return self::format($string,'_');
+    	return self::format($string, '_');
     }
     
     /**
      * Formate une chaine en enlevant tous les caractères spéciaux.
      * @param string $string Chaîne de caractères à traiter.
      * @param char $space Caractère de remplacement des espaces.
-     * @return string Chaîne formatée.
+     * @return string
      */
-    public static function format($string, $space='')
+    public static function format(string $string, string $space='') : string
     {
         $special_char = ['À','Á','Â','Ã','Ä','Å','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ò','Ó','Ô','Õ','Ö','Ù','Ú','Û','Ü','Ý','à','á','â','ã','ä','å','ç','è','é','ê','ë','ì','í','î','ï','ð','ò','ó','ô','õ','ö','ù','ú','û','ü','ý','ÿ'];
         $normal_char = ['A','A','A','A','A','A','C','E','E','E','E','I','I','I','I','O','O','O','O','O','U','U','U','U','Y','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','o','o','o','o','o','o','u','u','u','u','y','y'];
@@ -68,7 +77,7 @@ class Str
      * @param boolean $reduce Si TRUE, les chaînes seront formatées en enlevant tous les caractères spéciaux et remplacant les majuscules.
      * @return float Nombre compris entre 1 (chaîne égale) et 0 (chaîne totalement différente).
      */
-    public static function similar($string1, $string2, $options=31, $reduce=FALSE)
+    public static function similar(string $string1, string $string2, int $options = 31, bool $reduce = FALSE) : float
     {
         if (is_string($string1) == FALSE || is_string($string2) == FALSE)
         {
@@ -150,6 +159,38 @@ class Str
 			}
 		}
 		return $reduced;
+	}
+
+	/**
+	 * Génère une chaîne aléatoire.
+	 * @param integer $length Taille de la chaîne aléatoire.
+	 * @param integer $option Option liée aux charactères à faire apparaitre dans la chaîne (constante RANDOM_*).
+	 * @return string
+	 */
+	public static function random(int $length = 10, int $option) : string
+	{
+		$characters = "";
+		$config = [
+			self::RAND_SPECIAL => '&-|_\\@=+$*%!:.;,?',
+			self::RAND_ALPHA_UP => "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+			self::RAND_ALPHA_LOW => "abcdefghijklmnopqrstuvwxyz",
+			self::RAND_NUMBER => "0123456789"
+		];
+		foreach ($config as $value => $list)
+		{
+			if ($option - $value >= 0)
+			{
+				$characters .= $list;
+				$option = $option - $value;
+			}
+		}
+		$char_length = strlen($characters);
+		$random = '';
+		for ($i = 0; $i < $length; $i++) 
+		{
+			$random .= $characters[rand(0, $char_length - 1)];
+		}
+		return $random;
 	}
 }
 ?>
