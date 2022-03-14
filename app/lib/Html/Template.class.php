@@ -1,6 +1,7 @@
 <?php
 namespace FirePHP\Html;
 
+use FirePHP\Debug\Debug;
 use FirePHP\Exception\Exception;
 
 /**
@@ -53,7 +54,7 @@ class Template
 	
 	/**
 	 * Si TRUE, les templates ne seront plus automatiquement supprimés.
-	 * @var boolean
+	 * @var bool
 	 */
 	private $_save_tpl = FALSE;
 
@@ -97,9 +98,9 @@ class Template
 	 * Assigne une valeur à une variable du template.
 	 * @param mixed $name Nom de la variable.
 	 * @param mixed $value Valeur de la variable.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function assign($name, $value = NULL)
+	public function assign($name, $value = NULL) : bool
 	{
 		if (is_array($name))
 		{
@@ -139,18 +140,18 @@ class Template
 	/**
 	 * Retourne la valeur de la variable.
 	 * @param string $name Nom de la variable.
-	 * @return mixed Valeur de la variable ou FALSE si elle n'est pas définie.
+	 * @return mixed Valeur de la variable ou NULL si elle n'est pas définie.
 	 */
-	public function get($name)
+	public function get($name) : string
 	{
-		return ($this->_assigns[$name]) ?? (FALSE);
+		return ($this->_assigns[$name]) ?? (NULL);
 	}
 
 	/**
 	 * Affiche le template.
 	 * @param string $template Chemin du template.
 	 */
-	public function display($template=NULL)
+	public function display(string $template = NULL)
 	{
 		echo $this->fetch($template);
 	}
@@ -160,7 +161,7 @@ class Template
 	 * @param string $template Chemin du template.
 	 * @return string Template complété.
 	 */
-	public function fetch($template=NULL)
+	public function fetch(string $template = NULL) : string
 	{
 		if (empty($template) || !file_exists($template) || !is_readable($template))
 		{
@@ -176,7 +177,7 @@ class Template
 	 * @param string $template Chemin du template.
 	 * @return string Template complété.
 	 */
-	private function parse($template)
+	private function parse(string $template) : string
 	{
 		foreach ($this->_assigns as $name => $value)
 		{
@@ -186,60 +187,83 @@ class Template
 		if ($this->_syntaxe == self::SMARTY || $this->_syntaxe == self::SMARTY_STRICT)
 		{
 		    $content = file_get_contents($template);
-		    if ($this->_syntaxe == self::SMARTY)
-		    {
-		    	// Variable tableau
+			
+			// Traitement des includes
+			$dirname = dirname($template) . "/";
+			$root = getcwd() . "/";
+			while (preg_match('#\{\s*include\(([^\}]+)\)\}#', $content, $match))
+			{
+				$filename = $original_filename = str_replace("\\", "/", $match[1]);
+				if (substr($filename, 0, 1) === "/")
+				{
+					$filename = $root . substr($filename, 1);
+				}
+				else 
+				{
+					$filename = (substr($filename, 0, 2) === "./") ? ($dirname . substr($filename, 2)) : ($dirname . $filename);
+				}
+				if (file_exists($filename) === FALSE) 
+				{
+					throw new Exception("Unexisted included file \"" . $original_filename. "\" in template : " . str_replace("\\", "/", $template));
+				}
+				$content = str_replace($match[0], file_get_contents($filename), $content);
+			}
+			
+			if ($this->_syntaxe == self::SMARTY)
+			{
+				// Variable tableau
 				do 
 				{
 					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
 						return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
 					}, $content, -1, $count);
 				} while ($count > 0);
-		    		
-		    	// Instruction if.
-		    	$content = preg_replace("#\{\s*if([^\}]+)\}#", "<?php if($1):?>", $content);
-		    	$content = preg_replace("#\{\s*else\s*\}#", "<?php else:?>", $content);
-		    	$content = preg_replace("#\{\s*(\/if)\s*\}#", "<?php endif;?>", $content);
-		    		
-		    	// Instruction foreach.
-		    	$content = preg_replace("#\{\s*foreach([^\}]+)\}#", "<?php foreach($1):?>", $content);
-		    	$content = preg_replace("#\{\s*(\/foreach)\s*\}#", "<?php endforeach;?>", $content);
-		    		
-		    	// Commentaires Smarty.
-		    	$content = preg_replace("#\{\s*\*#", "<?php /*", $content);
-		    	$content = preg_replace("#\*\s*\}#", "*/ ?>", $content);
-		    		
-		    	// Balise PHP.
-		    	$content = preg_replace('#([\{]\s*[\$])#', '<?php echo $', $content);
-		    	$content = str_replace(array("}", "{"), array("?>", "<?php "), $content);
-		    }
-		    elseif ($this->_syntaxe == self::SMARTY_STRICT)
-		    {
-		    	// Variable tableau
+					
+				// Instruction if.
+				$content = preg_replace("#\{\s*if([^\}]+)\}#", "<?php if($1):?>", $content);
+				$content = preg_replace("#\{\s*else\s*\}#", "<?php else:?>", $content);
+				$content = preg_replace("#\{\s*(\/if)\s*\}#", "<?php endif;?>", $content);
+					
+				// Instruction foreach.
+				$content = preg_replace("#\{\s*foreach([^\}]+)\}#", "<?php foreach($1):?>", $content);
+				$content = preg_replace("#\{\s*(\/foreach)\s*\}#", "<?php endforeach;?>", $content);
+					
+				// Commentaires Smarty.
+				$content = preg_replace("#\{\s*\*#", "<?php /*", $content);
+				$content = preg_replace("#\*\s*\}#", "*/ ?>", $content);
+					
+				// Balise PHP.
+				$content = preg_replace('#([\{]\s*[\$])#', '<?php echo $', $content);
+				$content = str_replace(array("}", "{"), array("?>", "<?php "), $content);
+			}
+			elseif ($this->_syntaxe == self::SMARTY_STRICT)
+			{
+				// Variable tableau
 				do 
 				{
 					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
 						return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
 					}, $content, -1, $count);
 				} while ($count > 0);
-		    
-		    	// Instruction if.
-		    	$content = preg_replace("#\{if([^\}]+)\}#", "<?php if($1):?>", $content);
-		    	$content = str_replace("{else}", "<?php else:?>", $content);
-		    	$content = str_replace("{/if}", "<?php endif;?>", $content);
-		    
-		    	// Instruction foreach.
-		    	$content = preg_replace("#\{\s*foreach([^\}]+)\}#", "<?php foreach($1):?>", $content);
-		    	$content = str_replace("{/foreach}", "<?php endforeach;?>", $content);
-		    
-		    	// Commentaires Smarty.
-		    	$content = str_replace("{*", "<?php /*", $content);
-		    	$content = str_replace("*}", "*/ ?>", $content);
-		    
-		    	// Balise PHP.
-		    	$content = str_replace('{$', '<?php echo $', $content);
-		    	$content = str_replace(array("}", "{"), array("?>", "<?php "), $content);
-		    }
+			
+				// Instruction if.
+				$content = preg_replace("#\{if([^\}]+)\}#", "<?php if($1):?>", $content);
+				$content = str_replace("{else}", "<?php else:?>", $content);
+				$content = str_replace("{/if}", "<?php endif;?>", $content);
+			
+				// Instruction foreach.
+				$content = preg_replace("#\{\s*foreach([^\}]+)\}#", "<?php foreach($1):?>", $content);
+				$content = str_replace("{/foreach}", "<?php endforeach;?>", $content);
+			
+				// Commentaires Smarty.
+				$content = str_replace("{*", "<?php /*", $content);
+				$content = str_replace("*}", "*/ ?>", $content);
+			
+				// Balise PHP.
+				$content = str_replace('{$', '<?php echo $', $content);
+				$content = str_replace(array("}", "{"), array("?>", "<?php "), $content);
+			} 
+
 		    $filename = $this->_tmp_dir.basename($template).'-'.md5(time()).rand(0,100).'.php';
 		    file_put_contents($filename, $content);
 		    require($filename);
