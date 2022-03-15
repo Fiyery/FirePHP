@@ -243,7 +243,7 @@ abstract class Dao implements ArrayAccess
 	public static function table_name() : string
 	{
 		// La fonction basename() permet de traiter les classes avec namespace.
-		return strtolower(self::$_table_prefix.basename(get_called_class()));
+		return strtolower(self::$_table_prefix . basename(str_replace("\\", "/", get_called_class())));
 	}    
 
     /**

@@ -58,7 +58,7 @@ class Core
     private function _init_class_loader() : ClassLoader
     {
         // Recherche du loader.
-        require($this->_dir."lib/loader/ClassLoader.class.php");
+        require($this->_dir."lib/Loader/ClassLoader.class.php");
         $loader = new ClassLoader();
 
         // Extention des classes.
