@@ -3,7 +3,7 @@
 error_reporting(E_ALL); 
 ini_set("display_errors", "stdout");
 
-require(__DIR__.'/lib/core/Core.class.php');
+require(__DIR__.'/lib/Core/Core.class.php');
 use FirePHP\Core\Core;
 use FirePHP\Event\Event;
 use FirePHP\Controller\FrontController;
