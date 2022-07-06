@@ -214,7 +214,7 @@ class Template
 				// Variable tableau
 				do 
 				{
-					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
+					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z0-9\_\.]+)([^\}]*)\}#', function($match){
 						return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
 					}, $content, -1, $count);
 				} while ($count > 0);
@@ -241,7 +241,7 @@ class Template
 				// Variable tableau
 				do 
 				{
-					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z\_\.]+)([^\}]*)\}#', function($match){
+					$content = preg_replace_callback('#\{([^\{]*)(\$\w+)\.([a-zA-Z0-9\_\.]+)([^\}]*)\}#', function($match){
 						return "{".$match[1].$match[2]."['".implode("']['", explode(".", $match[3]))."']".$match[4]."}";
 					}, $content, -1, $count);
 				} while ($count > 0);
