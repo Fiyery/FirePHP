@@ -309,7 +309,7 @@ class File
         {
         	return FALSE;
         }
-        if ($this->is_image() === FALSE || in_array($this->ext(),array("jpg","jpeg","png","gif")) === FALSE)
+        if ($this->is_image() === FALSE || in_array($this->ext(),array("jpg","jpeg","png","gif", "webp")) === FALSE)
         {
         	return FALSE;
         }
@@ -367,6 +367,13 @@ class File
         	imagecopyresampled($miniature,$image,0,0,0,0,$x,$y,$image_x,$image_y);
         	imagegif($miniature,$this->_file);
         }
+		elseif ($mime === "image/webp")
+		{
+			$image = imagecreatefromwebp($this->_file);
+        	$miniature = imagecreateTRUEcolor($x, $y);
+        	imagecopyresampled($miniature, $image, 0, 0, 0, 0, $x, $y, $image_x, $image_y);
+        	imagewebp($miniature, $this->_file);
+		}
         else
         {
             return FALSE;
