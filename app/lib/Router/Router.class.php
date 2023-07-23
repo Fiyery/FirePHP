@@ -85,7 +85,7 @@ class Router
      * @var array
      */
     private $_shortcut = array(
-    	'*' 	=> '(.*)',
+    	'*' 	=> '([^\/]*)',
     	'/' 	=> '\/',
     	'[n]' 	=> '([0-9]+)',
     	'[w]' 	=> '([a-z]+)',
